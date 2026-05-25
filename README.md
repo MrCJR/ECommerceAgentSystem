@@ -1,0 +1,296 @@
+# ArkOps AI Commerce Platform
+
+ArkOps is a cloud-based, multi-tenant AI commerce operations platform. It turns business goals into governed, auditable agent workflows for multi-store and multi-platform e-commerce teams.
+
+ArkOps is designed to help teams manage operations with autonomous AI agents, controlled execution, tenant isolation, and human approval for high-risk actions.
+
+The platform targets scenarios where official platform APIs are limited, traditional RPA scripts are brittle, and manual operations cannot keep up with real-time changes in traffic, ROI, compliance rules, and customer behavior.
+
+## Project Vision
+
+Modern e-commerce operations are increasingly complex:
+
+- Merchants often run multiple stores across several marketplaces.
+- Advertising ROI, CPC, CTR, inventory risk, and customer activity change continuously.
+- Platform compliance rules and risk-control policies evolve frequently.
+- Many high-value actions are not fully covered by official APIs.
+- Manual workflows are slow, expensive, and difficult to audit at scale.
+
+ArkOps addresses these problems with a four-layer multi-agent architecture that combines LLM reasoning, visual browser automation, compliance controls, isolated execution environments, and Human-in-the-Loop approval.
+
+## Core Architecture
+
+ArkOps is organized into four vertical layers:
+
+```text
+Portal Layer
+    |
+Master Layer
+    |
+Manager Layer
+    |
+Worker Layer
+```
+
+### 1. Portal Layer
+
+The Portal is the user-facing entry point for tenants and operators.
+
+Main responsibilities:
+
+- Multi-store operations dashboard
+- Real-time GMV, ROI, advertising spend, and task status views
+- Tenant and store configuration
+- SOP threshold management
+- Webhook, Feishu, DingTalk, and alert channel configuration
+- Billing, subscription, quota, and AI token usage tracking
+
+### 2. Master Layer
+
+The Master layer acts as the global orchestration brain.
+
+Main responsibilities:
+
+- Receive user instructions from the Portal
+- Coordinate company-level resources
+- Manage task priority and global risk policies
+- Retrieve platform rules, category policies, historical cases, and tenant SOPs through RAG
+- Enforce multi-tenant RBAC
+- Generate candidate strategies through LLM-based decision engines
+
+Key modules:
+
+- CEO Orchestrator
+- Global Knowledge Base / RAG
+- Multi-Tenant RBAC
+- AI Decision Engine
+
+### 3. Manager Layer
+
+The Manager layer validates strategies and dispatches domain-specific agents.
+
+Main responsibilities:
+
+- Review AI-generated content, images, and operational actions
+- Block prohibited words, risky claims, and infringing assets
+- Apply tenant-specific thresholds and compliance policies
+- Dispatch specialized agents for traffic, product launch, CRM, and finance workflows
+
+Key agents:
+
+- Compliance Guard
+- Traffic Agent
+- Launch and CRM Agent
+- Finance Agent
+
+### 4. Worker Layer
+
+The Worker layer performs isolated execution.
+
+Main responsibilities:
+
+- Run store-level browser automation in isolated Docker environments
+- Execute Playwright-based actions such as clicking, scrolling, price changes, customer replies, and review submissions
+- Maintain isolated browser profiles, cookies, credentials, and execution contexts per store
+- Apply network, frequency, concurrency, and circuit-breaker controls
+- Capture screenshots, browser traces, step logs, and execution evidence
+
+Key modules:
+
+- Docker Claw Runner
+- Playwright Automation
+- Session and Environment Isolation
+- Network and Frequency Governance
+
+## Automation Workflows
+
+ArkOps is designed around reusable workflows that can be executed by agents and controlled by risk policies.
+
+### Advertising Agent
+
+Capabilities:
+
+- Monitor ROI, CPC, and CTR in real time
+- Adjust bids and routine budgets
+- Replace low-conversion creative assets
+- Dynamically shift traffic allocation
+
+Risk controls:
+
+- Trigger a circuit breaker after 2-3 consecutive days without conversions
+- Trigger approval when ROI drops below configured targets
+- Require human confirmation for large budget changes
+
+### Product Launch Agent
+
+Capabilities:
+
+- Generate SEO-friendly titles
+- Fill product attributes
+- Build product detail page structures
+- Run A/B tests
+
+Risk controls:
+
+- Raise warnings when performance is below category benchmarks for several days
+- Suspend execution when infringing images or prohibited marketing claims are detected
+
+### CRM Retention Agent
+
+Capabilities:
+
+- Segment users by value
+- Identify repurchase windows
+- Wake dormant users
+- Issue coupons automatically
+
+Risk controls:
+
+- Move users into win-back flows after long inactivity periods
+- Apply tenant-level messaging and coupon limits
+
+### Finance Audit Agent
+
+Capabilities:
+
+- Calculate real-time profit
+- Track platform fees
+- Identify risky inventory
+- Generate automated reports
+
+Risk controls:
+
+- Reserve 10%-15% of sales as a configurable risk buffer
+- Surface abnormal cost, fee, or inventory patterns for review
+
+## Human-in-the-Loop Control
+
+ArkOps does not assume that every AI-generated action should be executed automatically.
+
+Human approval is required for high-risk operations such as:
+
+- Large advertising budget changes
+- Bulk price updates
+- Bulk coupon issuance
+- Product delisting
+- Compliance-sensitive content
+- Suspicious platform behavior
+
+Approval channels can include:
+
+- Portal
+- Feishu
+- DingTalk
+- WeCom / Enterprise WeChat
+- Webhook integrations
+
+Every approval records the approver, timestamp, before-and-after values, recommended action, and agent reasoning summary.
+
+## Task Control Plane
+
+The platform uses a unified execution model:
+
+- `Task`: a business goal triggered by a user or system, such as changing price, launching a product, replacing creative assets, or recalling customers.
+- `Workflow`: a reusable process template that turns business goals into repeatable SOPs.
+- `Run`: a concrete execution instance of a workflow.
+- `Step`: an individual executable or reviewable unit within a run.
+- `Queue`: a scheduler that dispatches work by tenant, store, priority, and risk level.
+- `Approval`: a controlled checkpoint for high-risk actions.
+- `Audit Log`: a durable record of decisions, approvals, browser actions, retries, and final outcomes.
+
+This model supports pause, retry, rollback, compensation, and replay.
+
+## Multi-Tenant Isolation
+
+ArkOps is designed for enterprise-grade multi-tenant operations.
+
+### Data Isolation
+
+- Enterprise tenants can use dedicated databases or dedicated schemas.
+- Standard tenants can use a shared database with `tenant_id` and row-level security.
+- Orders, products, ads, customers, assets, tasks, and audit logs must always include tenant and store ownership.
+- Cross-tenant analytics should only use anonymized platform-level views.
+
+### Secret Isolation
+
+- Store tokens, cookies, platform accounts, webhooks, LLM keys, and proxy settings are stored in a dedicated Secret Vault.
+- Workers receive only the minimum required credentials during execution.
+- Sensitive access is logged and can be revoked by tenants.
+
+### Resource Quotas
+
+Quotas can be applied by plan, tenant, store, and platform:
+
+- Worker count
+- Concurrent tasks
+- LLM token usage
+- Asset storage
+- Browser sessions
+- Daily operation count
+- Budget-related action limits
+
+Abnormal tenants can be rate-limited, paused, or moved into manual review mode.
+
+## Observability and Replay
+
+ArkOps emphasizes traceability for both AI decisions and browser execution.
+
+Evidence collected during execution may include:
+
+- Step screenshots
+- Page state summaries
+- Browser traces
+- Exception screenshots
+- RAG hit summaries
+- Model input/output summaries
+- Risk scores
+- Strategy versions
+- Click, input, submit, API call, retry, and final result logs
+
+This allows incidents to be reviewed by tenant, store, task, agent, and timeline.
+
+## MVP Roadmap
+
+### Phase 1: Platform Foundation
+
+- Tenant, user, role, and store authorization models
+- Secret Vault
+- Quota and billing foundation
+- Unified task center with Task, Workflow, Run, Step, Approval, and Audit Log
+- Worker sandbox with store-level browser sessions, queue consumption, screenshots, and execution logs
+
+### Phase 2: First High-Value Agent
+
+- Start with an advertising monitoring agent or product launch agent
+- Add strategy thresholds, compliance checks, circuit breakers, and human approval
+- Convert successful flows into reusable SOP templates
+
+### Phase 3: Scaled Operations
+
+- Extend marketplace adapters for platforms such as Taobao, Douyin, JD, TikTok Shop, Amazon, Shopee, Lazada, Walmart, and Shopify
+- Add strategy experiments, A/B testing, automated reports, tenant health scores, and cost dashboards
+- Build an operations console for Worker scaling, failure replay, task pause, and tenant-level risk control
+
+## Suggested Technology Stack
+
+- Frontend: Vue or React
+- Orchestration: Kubernetes
+- Isolation: Docker
+- Browser automation: Playwright
+- Agent execution: Claw Runner / OpenClaw-compatible execution engine
+- AI reasoning: LLM cluster
+- Knowledge retrieval: Vector database / RAG
+- Business and audit storage: PostgreSQL
+- Scheduling: Queue / MQ
+- Secrets: Secret Vault
+- Monitoring: Observability stack with logs and traces
+
+## Repository Contents
+
+This repository currently contains early design artifacts for the ArkOps platform:
+
+- `system design updated.html`: the latest visual architecture document
+- `system design.html`: an earlier system design document
+- `document requirement.docx`: requirement notes
+
+Implementation code, infrastructure definitions, and service modules can be added as the MVP is built.
