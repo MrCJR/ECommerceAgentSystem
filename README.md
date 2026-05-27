@@ -403,6 +403,7 @@ This repository currently contains early design artifacts for the ArkOps platfor
 
 - `ArkOps_V0.1.html`: the latest high-level visual architecture document
 - `ArkOps_Internal_Technical_Route_V0.1.html`: internal technical route and MuleRun beta integration plan
+- `ArkOps_Platform_Architecture_Diagram_V0.1.html`: overall platform architecture diagram
 - `ArkOps_SaaS_Technical_Architecture_V0.1.html`: SaaS platform technical architecture
 - `ArkOps_SaaS_Database_Design_V0.1.html`: SaaS platform database design
 - `ArkOps_SaaS_API_Specification_V0.1.html`: SaaS platform API specification
