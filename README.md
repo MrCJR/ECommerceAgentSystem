@@ -402,7 +402,7 @@ Because ArkOps stores only a runtime session reference, MuleRun can later be rep
 This repository currently contains early design artifacts for the ArkOps platform:
 
 - `ArkOps_V0.1.html`: the latest high-level visual architecture document
-- `ArkOps_Internal_Technical_Route_V0.1.html`: internal technical route and MuleRun beta integration plan
+- `ArkOps_Internal_Technical_Route_V0.1.html`: combined platform architecture, internal technical route, and MuleRun beta integration plan
 - `ArkOps_Platform_Architecture_Diagram_V0.1.html`: overall platform architecture diagram
 - `ArkOps_SaaS_Technical_Architecture_V0.1.html`: SaaS platform technical architecture
 - `ArkOps_SaaS_Database_Design_V0.1.html`: SaaS platform database design
