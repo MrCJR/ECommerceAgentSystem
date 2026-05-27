@@ -249,6 +249,117 @@ Evidence collected during execution may include:
 
 This allows incidents to be reviewed by tenant, store, task, agent, and timeline.
 
+## Internal Beta MuleRun Integration
+
+During the internal beta stage, ArkOps can integrate with MuleRun through a lightweight `connectToken` flow. This allows the SaaS platform team and the agent team to work independently while still enabling realistic integration tests.
+
+The recommended beta split is:
+
+- ArkOps owns tenants, users, stores, permissions, task records, approvals, audit logs, quotas, and billing.
+- MuleRun owns early high-value agent experiments, browser sandbox execution, and persisted browser sessions during beta testing.
+- ArkOps stores a runtime session reference instead of directly storing MuleRun browser cookies or platform tokens.
+
+### Store Login Bootstrap
+
+For platforms such as TikTok Shop, login may require captcha, 2FA, or other human verification. ArkOps should model this as a Human Session Bootstrap or Re-authentication flow.
+
+In this flow, the user or operator completes the login manually inside the MuleRun browser sandbox. The agent then reuses the legally established browser session for later operations.
+
+The beta flow is:
+
+```text
+1. A user adds a TikTok Shop store in ArkOps.
+2. ArkOps creates a pending Store Authorization record.
+3. ArkOps generates a short-lived connectToken.
+4. The user manually opens the TikTok Shop Login Bootstrap Agent in MuleRun.
+5. The user enters the connectToken into the MuleRun Agent.
+6. MuleRun opens its browser sandbox/profile.
+7. The user manually logs in to TikTok Shop and completes captcha, 2FA, or other checks.
+8. MuleRun persists the browser profile/session.
+9. MuleRun Agent calls ArkOps to bind the session back to the store.
+10. ArkOps marks the store as connected and stores the MuleRun session reference.
+```
+
+The binding callback can use a payload like:
+
+```json
+{
+  "connectToken": "arkops_connect_xxx",
+  "storeId": "store_001",
+  "platform": "tiktok_shop",
+  "runtimeProvider": "mulerun",
+  "runtimeSessionId": "mr_session_xxx",
+  "status": "connected"
+}
+```
+
+ArkOps should store the result as a store authorization record:
+
+```json
+{
+  "storeId": "store_001",
+  "platform": "tiktok_shop",
+  "authMode": "mulerun_browser_profile",
+  "runtimeProvider": "mulerun",
+  "runtimeSessionId": "mr_session_xxx",
+  "status": "connected"
+}
+```
+
+### Agent Task Execution
+
+After the store session is bound, ArkOps can create agent tasks without sending the original store password or long-lived cookies to MuleRun.
+
+Example task payload:
+
+```json
+{
+  "taskId": "task_123",
+  "runId": "run_456",
+  "tenantId": "tenant_a",
+  "storeId": "store_001",
+  "platform": "tiktok_shop",
+  "agentType": "ads_optimizer",
+  "runtimeProvider": "mulerun",
+  "runtimeSessionId": "mr_session_xxx",
+  "goal": "Analyze low-ROI campaigns and propose budget changes",
+  "constraints": {
+    "maxBudgetChangePercent": 15,
+    "requiresApprovalAboveAmount": 500
+  },
+  "callbackUrl": "https://api.arkops.example.com/agent-events"
+}
+```
+
+MuleRun loads the referenced browser profile, verifies that the session is still valid, runs the agent workflow, and sends status updates, screenshots, logs, approval requests, and final results back to ArkOps.
+
+If the session expires or a new human verification step appears, MuleRun should stop automation and send a `login_required` event to ArkOps:
+
+```json
+{
+  "eventType": "login_required",
+  "tenantId": "tenant_a",
+  "storeId": "store_001",
+  "runId": "run_456",
+  "reason": "TikTok Shop session expired or requires human verification"
+}
+```
+
+ArkOps can then notify the user and start another bootstrap or re-authentication flow.
+
+### Future Upgrade Path
+
+The `connectToken` flow is intentionally simple for beta testing. If MuleRun later provides an API that can create a user-facing browser session URL, ArkOps can upgrade to this flow:
+
+```text
+ArkOps Backend -> MuleRun API -> create session -> return login URL
+ArkOps Frontend -> opens login URL for the user
+MuleRun -> persists browser profile
+MuleRun -> callbacks ArkOps with session_established
+```
+
+Because ArkOps stores only a runtime session reference, MuleRun can later be replaced or complemented by a self-hosted Claw Runner without redesigning the tenant, store, task, approval, and audit models.
+
 ## MVP Roadmap
 
 ### Phase 1: Platform Foundation
@@ -278,6 +389,7 @@ This allows incidents to be reviewed by tenant, store, task, agent, and timeline
 - Isolation: Docker
 - Browser automation: Playwright
 - Agent execution: Claw Runner / OpenClaw-compatible execution engine
+- Beta agent runtime: MuleRun with connectToken-based session binding
 - AI reasoning: LLM cluster
 - Knowledge retrieval: Vector database / RAG
 - Business and audit storage: PostgreSQL
@@ -289,7 +401,11 @@ This allows incidents to be reviewed by tenant, store, task, agent, and timeline
 
 This repository currently contains early design artifacts for the ArkOps platform:
 
-- `system design updated.html`: the latest visual architecture document
+- `ArkOps_V0.1.html`: the latest high-level visual architecture document
+- `ArkOps_Internal_Technical_Route_V0.1.html`: internal technical route and MuleRun beta integration plan
+- `ArkOps_SaaS_Technical_Architecture_V0.1.html`: SaaS platform technical architecture
+- `ArkOps_SaaS_Database_Design_V0.1.html`: SaaS platform database design
+- `ArkOps_SaaS_API_Specification_V0.1.html`: SaaS platform API specification
 - `system design.html`: an earlier system design document
 - `document requirement.docx`: requirement notes
 
