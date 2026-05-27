@@ -804,9 +804,9 @@
       </div>
       <div class="module-grid">
         <div class="mod">
-          <span class="mod-icon">🐳</span>
-          <h4>Docker Claw Runner</h4>
-          <p>店铺级环境隔离。独立容器运行模拟真实人类的操作行为流。</p>
+          <span class="mod-icon">🤖</span>
+          <h4>MuleRun / Claw Runner</h4>
+          <p>内测阶段使用 MuleRun 浏览器沙盒与会话复用；成熟阶段演进为自研 Claw Runner 执行层。</p>
         </div>
         <div class="mod">
           <span class="mod-icon">🎭</span>
@@ -982,7 +982,7 @@
       <ul>
         <li>租户、用户、角色、店铺授权、Secret Vault、资源配额与计费基础。</li>
         <li>统一任务中心：Task / Workflow / Run / Step / Approval / Audit Log。</li>
-        <li>Worker 沙箱：店铺级浏览器会话、队列消费、截图与执行日志。</li>
+        <li>MuleRun 内测接入：connectToken 绑定、店铺级浏览器会话、截图与执行日志回传。</li>
       </ul>
     </div>
 
@@ -1000,7 +1000,7 @@
       <ul>
         <li>扩展多平台适配层，抽象平台差异：淘宝、抖音、京东、TikTok Shop、Amazon 等。</li>
         <li>引入策略实验、A/B 测试、自动报表、租户健康分和成本看板。</li>
-        <li>建立运维控制台，支持 Worker 伸缩、失败重放、任务暂停与租户级风控。</li>
+        <li>建立运维控制台，支持 Claw Runner 演进、Worker 伸缩、失败重放、任务暂停与租户级风控。</li>
       </ul>
     </div>
   </div>
@@ -1058,33 +1058,33 @@
   <div class="stack-grid">
     <div class="stack-item">
       <span class="stack-icon">💻</span>
-      <h4>Vue / React</h4>
+      <h4>React + TS</h4>
       <p>Portal 前端</p>
     </div>
     <div class="stack-item">
-      <span class="stack-icon">☁️</span>
-      <h4>Kubernetes</h4>
-      <p>资源调度</p>
+      <span class="stack-icon">🧩</span>
+      <h4>NestJS</h4>
+      <p>后端服务</p>
     </div>
     <div class="stack-item">
-      <span class="stack-icon">🐳</span>
-      <h4>Docker</h4>
-      <p>环境隔离</p>
+      <span class="stack-icon">🎛️</span>
+      <h4>Ant Design</h4>
+      <p>中后台 UI</p>
     </div>
     <div class="stack-item">
       <span class="stack-icon">🤖</span>
+      <h4>MuleRun</h4>
+      <p>Beta Runtime</p>
+    </div>
+    <div class="stack-item">
+      <span class="stack-icon">🐾</span>
       <h4>Claw Runner</h4>
-      <p>执行引擎</p>
+      <p>未来执行层</p>
     </div>
     <div class="stack-item">
-      <span class="stack-icon">📚</span>
-      <h4>Vector DB</h4>
-      <p>记忆 / RAG</p>
-    </div>
-    <div class="stack-item">
-      <span class="stack-icon">🧠</span>
-      <h4>LLM Cluster</h4>
-      <p>AI 推理</p>
+      <span class="stack-icon">🔁</span>
+      <h4>Redis + BullMQ</h4>
+      <p>缓存 / 队列</p>
     </div>
     <div class="stack-item">
       <span class="stack-icon">🗄️</span>
@@ -1092,19 +1092,19 @@
       <p>业务数据 / 审计</p>
     </div>
     <div class="stack-item">
-      <span class="stack-icon">📨</span>
-      <h4>Queue / MQ</h4>
-      <p>任务调度</p>
+      <span class="stack-icon">📦</span>
+      <h4>S3 Storage</h4>
+      <p>截图 / Trace</p>
     </div>
     <div class="stack-item">
       <span class="stack-icon">🔑</span>
-      <h4>Secret Vault</h4>
+      <h4>HashiCorp Vault</h4>
       <p>密钥隔离</p>
     </div>
     <div class="stack-item">
       <span class="stack-icon">📈</span>
-      <h4>Observability</h4>
-      <p>日志 / Trace</p>
+      <h4>OTel Stack</h4>
+      <p>指标 / 日志</p>
     </div>
   </div>
 

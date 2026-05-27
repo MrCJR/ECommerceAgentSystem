@@ -384,18 +384,19 @@ Because ArkOps stores only a runtime session reference, MuleRun can later be rep
 
 ## Suggested Technology Stack
 
-- Frontend: Vue or React
-- Orchestration: Kubernetes
-- Isolation: Docker
-- Browser automation: Playwright
-- Agent execution: Claw Runner / OpenClaw-compatible execution engine
+- Frontend: React + TypeScript
+- UI framework: Ant Design
+- Backend: Node.js + NestJS + TypeScript
+- ORM: Prisma
+- Database: PostgreSQL
+- Cache and queue: Redis + BullMQ
+- Object storage: S3-compatible storage
+- Secret management: HashiCorp Vault
 - Beta agent runtime: MuleRun with connectToken-based session binding
+- Future agent execution: Claw Runner / OpenClaw-compatible execution engine
 - AI reasoning: LLM cluster
 - Knowledge retrieval: Vector database / RAG
-- Business and audit storage: PostgreSQL
-- Scheduling: Queue / MQ
-- Secrets: Secret Vault
-- Monitoring: Observability stack with logs and traces
+- Observability: OpenTelemetry + Prometheus + Grafana + Loki
 
 ## Repository Contents
 
@@ -403,7 +404,6 @@ This repository currently contains early design artifacts for the ArkOps platfor
 
 - `ArkOps_V0.1.html`: the latest high-level visual architecture document
 - `ArkOps_Internal_Technical_Route_V0.1.html`: combined platform architecture, internal technical route, and MuleRun beta integration plan
-- `ArkOps_Platform_Architecture_Diagram_V0.1.html`: overall platform architecture diagram
 - `ArkOps_SaaS_Technical_Architecture_V0.1.html`: SaaS platform technical architecture
 - `ArkOps_SaaS_Database_Design_V0.1.html`: SaaS platform database design
 - `ArkOps_SaaS_API_Specification_V0.1.html`: SaaS platform API specification
