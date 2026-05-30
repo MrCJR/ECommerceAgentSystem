@@ -4,11 +4,13 @@ import { Button, Card, Descriptions, Space, Typography, message } from 'antd';
 import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import { approvalsApi } from '../api/approvals';
+import { useI18n } from '../app/i18n';
 import { EmptyState } from '../components/EmptyState';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
 
 export function ApprovalDetailPage() {
+  const { t } = useI18n();
   const { approvalId } = useParams();
   const queryClient = useQueryClient();
   const { data: approval } = useQuery({
@@ -18,13 +20,13 @@ export function ApprovalDetailPage() {
   const decide = useMutation({
     mutationFn: (status: 'approved' | 'rejected') => approvalsApi.decide(approvalId!, status),
     onSuccess: () => {
-      message.success('Approval updated');
+      message.success(t('approvals.updated'));
       queryClient.invalidateQueries({ queryKey: ['approval', approvalId] });
       queryClient.invalidateQueries({ queryKey: ['approvals'] });
     }
   });
 
-  if (!approval) return <EmptyState description="Approval not found" />;
+  if (!approval) return <EmptyState description={t('approval.notFound')} />;
 
   return (
     <div className="page-stack">
@@ -35,10 +37,10 @@ export function ApprovalDetailPage() {
           approval.status === 'pending' ? (
             <Space>
               <Button icon={<CloseOutlined />} danger onClick={() => decide.mutate('rejected')}>
-                Reject
+                {t('approvals.reject')}
               </Button>
               <Button type="primary" icon={<CheckOutlined />} onClick={() => decide.mutate('approved')}>
-                Approve
+                {t('approvals.approve')}
               </Button>
             </Space>
           ) : null
@@ -46,25 +48,25 @@ export function ApprovalDetailPage() {
       />
       <Card>
         <Descriptions column={2}>
-          <Descriptions.Item label="Status">
+          <Descriptions.Item label={t('stores.status')}>
             <StatusBadge value={approval.status} />
           </Descriptions.Item>
-          <Descriptions.Item label="Risk">
+          <Descriptions.Item label={t('tasks.risk')}>
             <StatusBadge value={approval.riskLevel} />
           </Descriptions.Item>
-          <Descriptions.Item label="Task">{approval.taskId}</Descriptions.Item>
-          <Descriptions.Item label="Store">{approval.storeId}</Descriptions.Item>
-          <Descriptions.Item label="Requested">{dayjs(approval.requestedAt).format('YYYY-MM-DD HH:mm')}</Descriptions.Item>
-          <Descriptions.Item label="Decided">
-            {approval.decidedAt ? dayjs(approval.decidedAt).format('YYYY-MM-DD HH:mm') : 'Waiting'}
+          <Descriptions.Item label={t('entity.task')}>{approval.taskId}</Descriptions.Item>
+          <Descriptions.Item label={t('stores.store')}>{approval.storeId}</Descriptions.Item>
+          <Descriptions.Item label={t('approvals.requested')}>{dayjs(approval.requestedAt).format('YYYY-MM-DD HH:mm')}</Descriptions.Item>
+          <Descriptions.Item label={t('approvals.decided')}>
+            {approval.decidedAt ? dayjs(approval.decidedAt).format('YYYY-MM-DD HH:mm') : t('approvals.waiting')}
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Card title="Proposed action">
+      <Card title={t('approvals.proposedAction')}>
         <Typography.Paragraph>{approval.proposedAction}</Typography.Paragraph>
         <Descriptions column={1}>
-          <Descriptions.Item label="Before">{approval.beforeValue}</Descriptions.Item>
-          <Descriptions.Item label="After">{approval.afterValue}</Descriptions.Item>
+          <Descriptions.Item label={t('approvals.before')}>{approval.beforeValue}</Descriptions.Item>
+          <Descriptions.Item label={t('approvals.after')}>{approval.afterValue}</Descriptions.Item>
         </Descriptions>
       </Card>
     </div>

@@ -1,4 +1,5 @@
 import { Tag } from 'antd';
+import { useI18n } from '../app/i18n';
 import type { ApprovalStatus, RiskLevel, StoreStatus, TaskStatus } from '../types/domain';
 
 const colors: Record<string, string> = {
@@ -23,5 +24,6 @@ const colors: Record<string, string> = {
 };
 
 export function StatusBadge({ value }: { value: StoreStatus | TaskStatus | ApprovalStatus | RiskLevel }) {
-  return <Tag color={colors[value]}>{value.replace(/_/g, ' ')}</Tag>;
+  const { t } = useI18n();
+  return <Tag color={colors[value]}>{t(`status.${value}`)}</Tag>;
 }

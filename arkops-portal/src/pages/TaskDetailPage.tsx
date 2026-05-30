@@ -4,16 +4,18 @@ import { Alert, Card, Descriptions, Space, Timeline, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import { tasksApi } from '../api/tasks';
+import { useI18n } from '../app/i18n';
 import { EmptyState } from '../components/EmptyState';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
 
 export function TaskDetailPage() {
+  const { t } = useI18n();
   const { taskId } = useParams();
   const { data: task } = useQuery({ queryKey: ['task', taskId], queryFn: () => tasksApi.get(taskId!) });
 
   if (!task) {
-    return <EmptyState description="Task not found" />;
+    return <EmptyState description={t('task.notFound')} />;
   }
 
   return (
@@ -21,25 +23,25 @@ export function TaskDetailPage() {
       <PageHeader title={task.title} description={task.goal} />
       <Card>
         <Descriptions column={4}>
-          <Descriptions.Item label="Status">
+          <Descriptions.Item label={t('stores.status')}>
             <StatusBadge value={task.status} />
           </Descriptions.Item>
-          <Descriptions.Item label="Risk">
+          <Descriptions.Item label={t('tasks.risk')}>
             <StatusBadge value={task.riskLevel} />
           </Descriptions.Item>
-          <Descriptions.Item label="Agent">{task.agentType}</Descriptions.Item>
-          <Descriptions.Item label="Store">{task.storeId}</Descriptions.Item>
+          <Descriptions.Item label={t('tasks.agent')}>{t(`agent.${task.agentType}`)}</Descriptions.Item>
+          <Descriptions.Item label={t('stores.store')}>{task.storeId}</Descriptions.Item>
         </Descriptions>
       </Card>
       {task.status === 'waiting_approval' ? (
         <Alert
           type="warning"
           showIcon
-          message="Human approval is required"
-          description="This task is paused until an approver reviews the proposed action."
+          message={t('tasks.approvalRequired')}
+          description={t('tasks.approvalRequiredDescription')}
         />
       ) : null}
-      <Card title="Run timeline">
+      <Card title={t('tasks.timeline')}>
         <Timeline
           items={task.timeline.map((event) => ({
             color: event.type.includes('failed') ? 'red' : event.type.includes('approval') ? 'orange' : 'blue',

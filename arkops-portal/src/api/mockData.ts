@@ -6,7 +6,7 @@ const now = dayjs('2026-05-30T10:00:00+08:00');
 export const stores: Store[] = [
   {
     id: 'store_001',
-    name: 'TikTok Shop US Flagship',
+    name: 'TikTok Shop 美国旗舰店',
     platform: 'tiktok_shop',
     status: 'connected',
     runtimeProvider: 'mulerun',
@@ -17,7 +17,7 @@ export const stores: Store[] = [
   },
   {
     id: 'store_002',
-    name: 'Amazon Outdoor Store',
+    name: 'Amazon 户外用品店',
     platform: 'amazon',
     status: 'login_required',
     runtimeProvider: 'mulerun',
@@ -28,7 +28,7 @@ export const stores: Store[] = [
   },
   {
     id: 'store_003',
-    name: 'Shopify DTC Site',
+    name: 'Shopify 独立站',
     platform: 'shopify',
     status: 'pending_login',
     runtimeProvider: 'mulerun',
@@ -40,10 +40,10 @@ export const stores: Store[] = [
 export const tasks: Task[] = [
   {
     id: 'task_001',
-    title: 'Reduce wasteful ad spend',
+    title: '降低低效广告消耗',
     storeId: 'store_001',
     agentType: 'ads_optimizer',
-    goal: 'Find low-ROI campaigns and propose budget changes.',
+    goal: '识别低 ROI 广告计划，并提出预算调整建议。',
     status: 'waiting_approval',
     riskLevel: 'high',
     createdAt: now.subtract(90, 'minute').toISOString(),
@@ -52,33 +52,33 @@ export const tasks: Task[] = [
       {
         id: 'evt_001',
         type: 'run_started',
-        title: 'Run started',
-        summary: 'MuleRun loaded the bound TikTok Shop browser profile.',
+        title: '任务开始执行',
+        summary: 'MuleRun 已加载绑定的 TikTok Shop 浏览器 Profile。',
         at: now.subtract(90, 'minute').toISOString()
       },
       {
         id: 'evt_002',
         type: 'step_completed',
-        title: 'Campaign ROI analyzed',
-        summary: 'Found 3 campaigns below target ROI for the last 7 days.',
+        title: '广告 ROI 分析完成',
+        summary: '近 7 天内发现 3 个广告计划低于目标 ROI。',
         at: now.subtract(40, 'minute').toISOString(),
         artifactUrl: 's3://arkops-artifacts/task_001/roi-dashboard.png'
       },
       {
         id: 'evt_003',
         type: 'approval_required',
-        title: 'Approval required',
-        summary: 'Pausing campaign C-102 exceeds tenant risk threshold.',
+        title: '需要人工审批',
+        summary: '暂停广告计划 C-102 超过租户风险阈值，需要审批确认。',
         at: now.subtract(12, 'minute').toISOString()
       }
     ]
   },
   {
     id: 'task_002',
-    title: 'Launch new camping product',
+    title: '上架新品露营装备',
     storeId: 'store_001',
     agentType: 'product_launch',
-    goal: 'Generate SEO title and prepare product listing draft.',
+    goal: '生成 SEO 标题，并准备商品上架草稿。',
     status: 'succeeded',
     riskLevel: 'medium',
     createdAt: now.subtract(1, 'day').toISOString(),
@@ -87,25 +87,25 @@ export const tasks: Task[] = [
       {
         id: 'evt_004',
         type: 'run_started',
-        title: 'Run started',
-        summary: 'Product launch SOP started.',
+        title: '新品上架 SOP 开始',
+        summary: 'Agent 已开始执行新品上架流程。',
         at: now.subtract(1, 'day').toISOString()
       },
       {
         id: 'evt_005',
         type: 'run_succeeded',
-        title: 'Listing draft completed',
-        summary: 'Generated title, attributes, and detail-page outline.',
+        title: '商品草稿已完成',
+        summary: '已生成标题、属性和详情页结构。',
         at: now.subtract(23, 'hour').toISOString()
       }
     ]
   },
   {
     id: 'task_003',
-    title: 'Re-authenticate Amazon store',
+    title: '重新认证 Amazon 店铺',
     storeId: 'store_002',
     agentType: 'login_bootstrap',
-    goal: 'Ask operator to refresh marketplace session.',
+    goal: '提醒运营人员刷新平台登录会话。',
     status: 'failed',
     riskLevel: 'low',
     createdAt: now.subtract(6, 'hour').toISOString(),
@@ -114,15 +114,15 @@ export const tasks: Task[] = [
       {
         id: 'evt_006',
         type: 'login_required',
-        title: 'Login required',
-        summary: 'Amazon seller center requested a new human verification step.',
+        title: '需要重新登录',
+        summary: 'Amazon 卖家中心要求重新进行人机校验。',
         at: now.subtract(5, 'hour').toISOString()
       },
       {
         id: 'evt_007',
         type: 'run_failed',
-        title: 'Run stopped',
-        summary: 'Automation stopped until the operator refreshes the session.',
+        title: '任务已停止',
+        summary: '自动化已暂停，等待运营人员刷新登录会话。',
         at: now.subtract(5, 'hour').toISOString()
       }
     ]
@@ -134,11 +134,11 @@ export const approvals: Approval[] = [
     id: 'approval_001',
     taskId: 'task_001',
     storeId: 'store_001',
-    title: 'Pause low-ROI TikTok campaign',
-    reason: 'Campaign C-102 has spent $612 with ROI 42% below target.',
-    proposedAction: 'Pause campaign C-102 and shift 15% budget to campaign C-088.',
-    beforeValue: 'Campaign C-102 daily budget: $420',
-    afterValue: 'Campaign C-102 paused; C-088 daily budget: +$63',
+    title: '暂停低 ROI TikTok 广告计划',
+    reason: '广告计划 C-102 已消耗 612 美元，ROI 低于目标值 42%。',
+    proposedAction: '暂停广告计划 C-102，并将 15% 预算转移到广告计划 C-088。',
+    beforeValue: '广告计划 C-102 日预算：420 美元',
+    afterValue: '广告计划 C-102 暂停；C-088 日预算增加 63 美元',
     riskLevel: 'high',
     status: 'pending',
     requestedAt: now.subtract(12, 'minute').toISOString()
@@ -147,11 +147,11 @@ export const approvals: Approval[] = [
     id: 'approval_002',
     taskId: 'task_002',
     storeId: 'store_001',
-    title: 'Approve generated product claims',
-    reason: 'Agent generated benefit statements for a new listing.',
-    proposedAction: 'Publish listing draft after compliance review.',
-    beforeValue: 'Listing status: draft',
-    afterValue: 'Listing status: ready for publish',
+    title: '审核新品卖点文案',
+    reason: 'Agent 为新品详情页生成了卖点描述。',
+    proposedAction: '合规审核通过后，将商品草稿标记为可发布。',
+    beforeValue: '商品状态：草稿',
+    afterValue: '商品状态：待发布',
     riskLevel: 'medium',
     status: 'approved',
     requestedAt: now.subtract(1, 'day').toISOString(),
@@ -163,34 +163,34 @@ export const auditLogs: AuditLog[] = [
   {
     id: 'audit_001',
     actor: 'MuleRun Agent',
-    action: 'approval_required',
-    entity: 'task',
+    action: '需要审批',
+    entity: '任务',
     entityId: 'task_001',
-    summary: 'Budget action exceeded tenant threshold.',
+    summary: '预算调整动作超过租户阈值。',
     at: now.subtract(12, 'minute').toISOString()
   },
   {
     id: 'audit_002',
-    actor: 'Li Peng',
-    action: 'store_connected',
-    entity: 'store',
+    actor: '李鹏',
+    action: '店铺已连接',
+    entity: '店铺',
     entityId: 'store_001',
-    summary: 'TikTok Shop session bound through connectToken.',
+    summary: 'TikTok Shop 通过 connectToken 完成会话绑定。',
     at: now.subtract(5, 'day').toISOString()
   },
   {
     id: 'audit_003',
-    actor: 'ArkOps System',
-    action: 'login_required',
-    entity: 'store',
+    actor: 'ArkOps 系统',
+    action: '需要重新登录',
+    entity: '店铺',
     entityId: 'store_002',
-    summary: 'Amazon store session expired.',
+    summary: 'Amazon 店铺会话已失效。',
     at: now.subtract(5, 'hour').toISOString()
   }
 ];
 
 export const members: Member[] = [
-  { id: 'mem_001', name: 'Li Peng', email: 'lipeng@example.com', role: 'Owner', status: 'active' },
-  { id: 'mem_002', name: 'Ops Lead', email: 'ops@example.com', role: 'Admin', status: 'active' },
-  { id: 'mem_003', name: 'Approver', email: 'risk@example.com', role: 'Approver', status: 'invited' }
+  { id: 'mem_001', name: '李鹏', email: 'lipeng@example.com', role: 'Owner', status: 'active' },
+  { id: 'mem_002', name: '运营负责人', email: 'ops@example.com', role: 'Admin', status: 'active' },
+  { id: 'mem_003', name: '风控审批人', email: 'risk@example.com', role: 'Approver', status: 'invited' }
 ];

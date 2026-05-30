@@ -1,31 +1,33 @@
 import { useQuery } from '@tanstack/react-query';
 import { Card, Progress, Statistic } from 'antd';
 import { settingsApi } from '../api/settings';
+import { useI18n } from '../app/i18n';
 import { PageHeader } from '../components/PageHeader';
 
 export function BillingSettingsPage() {
+  const { t } = useI18n();
   const { data } = useQuery({ queryKey: ['billing'], queryFn: settingsApi.billing });
   return (
     <div className="page-stack">
-      <PageHeader title="Billing & quota" description="Internal beta plan, resource limits, and usage counters." />
+      <PageHeader title={t('settings.billingTitle')} description={t('settings.billingDescription')} />
       <div className="metric-grid">
         <Card>
-          <Statistic title="Plan" value={data?.plan ?? 'Internal Beta'} />
+          <Statistic title={t('settings.plan')} value={data?.plan ?? '内部测试版'} />
         </Card>
         <Card>
-          <Statistic title="Worker limit" value={data?.workerLimit ?? 0} />
+          <Statistic title={t('settings.workerLimit')} value={data?.workerLimit ?? 0} />
         </Card>
         <Card>
-          <Statistic title="Browser sessions" value={data?.browserSessionLimit ?? 0} />
+          <Statistic title={t('settings.browserSessions')} value={data?.browserSessionLimit ?? 0} />
         </Card>
         <Card>
-          <Statistic title="Daily operations" value={data?.operationUsage ?? 0} />
+          <Statistic title={t('settings.dailyOperations')} value={data?.operationUsage ?? 0} />
         </Card>
       </div>
-      <Card title="Usage">
-        <p className="muted">LLM token usage</p>
+      <Card title={t('settings.usage')}>
+        <p className="muted">{t('settings.llmTokenUsage')}</p>
         <Progress percent={Math.round(((data?.tokenUsage ?? 0) / 300000) * 100)} />
-        <p className="muted">Daily operations</p>
+        <p className="muted">{t('settings.dailyOperations')}</p>
         <Progress percent={Math.round(((data?.operationUsage ?? 0) / 1000) * 100)} status="active" />
       </Card>
     </div>

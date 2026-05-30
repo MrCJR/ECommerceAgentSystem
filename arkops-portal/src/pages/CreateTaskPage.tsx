@@ -3,9 +3,11 @@ import { Button, Card, Form, Input, Select } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { storesApi } from '../api/stores';
 import { tasksApi } from '../api/tasks';
+import { useI18n } from '../app/i18n';
 import { PageHeader } from '../components/PageHeader';
 
 export function CreateTaskPage() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const { data: stores = [] } = useQuery({ queryKey: ['stores'], queryFn: storesApi.list });
   const createTask = useMutation({
@@ -16,8 +18,8 @@ export function CreateTaskPage() {
   return (
     <div className="page-stack">
       <PageHeader
-        title="Create Agent task"
-        description="Create a controlled Agent run for a connected store. Data is currently mocked for MVP review."
+        title={t('tasks.createTitle')}
+        description={t('tasks.createDescription')}
       />
       <Card>
         <Form
@@ -25,25 +27,30 @@ export function CreateTaskPage() {
           onFinish={(values) => createTask.mutate(values)}
           initialValues={{ agentType: 'ads_optimizer' }}
         >
-          <Form.Item label="Store" name="storeId" rules={[{ required: true }]}>
-            <Select options={stores.map((store) => ({ value: store.id, label: `${store.name} (${store.status})` }))} />
+          <Form.Item label={t('stores.store')} name="storeId" rules={[{ required: true }]}>
+            <Select
+              options={stores.map((store) => ({
+                value: store.id,
+                label: `${store.name}（${t(`status.${store.status}`)}）`
+              }))}
+            />
           </Form.Item>
-          <Form.Item label="Agent type" name="agentType" rules={[{ required: true }]}>
+          <Form.Item label={t('tasks.agentType')} name="agentType" rules={[{ required: true }]}>
             <Select
               options={[
-                { value: 'login_bootstrap', label: 'Login Bootstrap Agent' },
-                { value: 'ads_optimizer', label: 'Advertising Agent' },
-                { value: 'product_launch', label: 'Product Launch Agent' },
-                { value: 'crm_retention', label: 'CRM Retention Agent' },
-                { value: 'finance_audit', label: 'Finance Audit Agent' }
+                { value: 'login_bootstrap', label: t('agent.login_bootstrap') },
+                { value: 'ads_optimizer', label: t('agent.ads_optimizer') },
+                { value: 'product_launch', label: t('agent.product_launch') },
+                { value: 'crm_retention', label: t('agent.crm_retention') },
+                { value: 'finance_audit', label: t('agent.finance_audit') }
               ]}
             />
           </Form.Item>
-          <Form.Item label="Goal" name="goal" rules={[{ required: true }]}>
-            <Input.TextArea rows={5} placeholder="Analyze low-ROI campaigns and propose budget changes." />
+          <Form.Item label={t('tasks.goal')} name="goal" rules={[{ required: true }]}>
+            <Input.TextArea rows={5} placeholder={t('task.placeholder')} />
           </Form.Item>
           <Button type="primary" htmlType="submit" loading={createTask.isPending}>
-            Submit task
+            {t('tasks.submit')}
           </Button>
         </Form>
       </Card>
