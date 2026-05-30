@@ -1,0 +1,442 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1400" font-family="'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Header gradient -->
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0c1445;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Layer gradients -->
+    <linearGradient id="layer1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="layer2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="layer3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="layer4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="layer5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d97706;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="layer6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0891b2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="layer7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#64748b;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow filters -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.15"/>
+    </filter>
+    <filter id="lightShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+    </filter>
+    
+    <!-- Arrow markers -->
+    <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowWhite" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="white"/>
+    </marker>
+    
+    <!-- Grid pattern -->
+    <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="1400" fill="url(#bgGrad)" rx="16"/>
+  <rect width="1600" height="1400" fill="url(#gridPattern)" rx="16" opacity="0.3"/>
+
+  <!-- Title Section -->
+  <rect x="50" y="20" width="1500" height="90" rx="12" fill="url(#headerGrad)" filter="url(#shadow)"/>
+  <text x="800" y="58" text-anchor="middle" font-size="34" font-weight="800" fill="white" letter-spacing="2">AllMall Operation Suite 融合架构</text>
+  <text x="800" y="92" text-anchor="middle" font-size="16" fill="#94a3b8">AI 驱动的全自动跨平台电商运营中台 · 产品 + 技术一体化整体架构</text>
+
+  <!-- ============================================ -->
+  <!-- Layer 1: 终端应用层 -->
+  <!-- ============================================ -->
+  <rect x="50" y="130" width="1500" height="130" rx="12" fill="white" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="50" y="130" width="1500" height="36" rx="12" fill="url(#layer1)"/>
+  <text x="800" y="155" text-anchor="middle" font-size="16" font-weight="700" fill="white">终端应用层</text>
+  
+  <g>
+    <!-- 商家工作台 -->
+    <rect x="80" y="180" width="220" height="65" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="190" y="203" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">商家工作台</text>
+    <text x="190" y="222" text-anchor="middle" font-size="11" fill="#475569">单店运营 · AI 代劳</text>
+    
+    <!-- 品牌运营中心 -->
+    <rect x="330" y="180" width="220" height="65" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="440" y="203" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">品牌运营中心</text>
+    <text x="440" y="222" text-anchor="middle" font-size="11" fill="#475569">多店管理 · 跨平台对比</text>
+    
+    <!-- 代运营管控台 -->
+    <rect x="580" y="180" width="220" height="65" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="690" y="203" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">代运营管控台</text>
+    <text x="690" y="222" text-anchor="middle" font-size="11" fill="#475569">批量管店 · 客户隔离</text>
+    
+    <!-- 客服工作台 -->
+    <rect x="830" y="180" width="220" height="65" rx="8" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+    <text x="940" y="203" text-anchor="middle" font-size="13" font-weight="600" fill="#5b21b6">AI 客服工作台</text>
+    <text x="940" y="222" text-anchor="middle" font-size="11" fill="#475569">智能回复 · 人工接管</text>
+    
+    <!-- 数据看板 -->
+    <rect x="1080" y="180" width="220" height="65" rx="8" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+    <text x="1190" y="203" text-anchor="middle" font-size="13" font-weight="600" fill="#059669">数据看板</text>
+    <text x="1190" y="222" text-anchor="middle" font-size="11" fill="#475569">日/周/月报 · 异常预警</text>
+    
+    <!-- 平台管理后台 -->
+    <rect x="1330" y="180" width="200" height="65" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="1430" y="203" text-anchor="middle" font-size="13" font-weight="600" fill="#d97706">平台管理后台</text>
+    <text x="1430" y="222" text-anchor="middle" font-size="11" fill="#475569">租户管理 · 全局配置</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="800" y1="260" x2="800" y2="280" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ============================================ -->
+  <!-- Layer 2: 产品功能层 -->
+  <!-- ============================================ -->
+  <rect x="50" y="280" width="1500" height="180" rx="12" fill="white" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="50" y="280" width="1500" height="36" rx="12" fill="url(#layer2)"/>
+  <text x="800" y="305" text-anchor="middle" font-size="16" font-weight="700" fill="white">产品功能层</text>
+  
+  <!-- Row 1: 核心业务模块 -->
+  <g>
+    <!-- 店铺与商品 -->
+    <rect x="80" y="330" width="280" height="110" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+    <text x="220" y="353" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">店铺与商品管理</text>
+    
+    <rect x="95" y="365" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="155" y="384" text-anchor="middle" font-size="10" fill="#1e40af">OAuth 一键授权</text>
+    
+    <rect x="225" y="365" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="285" y="384" text-anchor="middle" font-size="10" fill="#1e40af">全量数据同步</text>
+    
+    <rect x="95" y="400" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="155" y="419" text-anchor="middle" font-size="10" fill="#1e40af">AI 拍照上架</text>
+    
+    <rect x="225" y="400" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="285" y="419" text-anchor="middle" font-size="10" fill="#1e40af">竞品监控分析</text>
+    
+    <!-- 订单与客服 -->
+    <rect x="390" y="330" width="280" height="110" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+    <text x="530" y="353" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">订单与智能客服</text>
+    
+    <rect x="405" y="365" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="465" y="384" text-anchor="middle" font-size="10" fill="#1e40af">订单异常拦截</text>
+    
+    <rect x="535" y="365" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="595" y="384" text-anchor="middle" font-size="10" fill="#1e40af">AI 智能客服</text>
+    
+    <rect x="405" y="400" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="465" y="419" text-anchor="middle" font-size="10" fill="#1e40af">RAG 知识库</text>
+    
+    <rect x="535" y="400" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="595" y="419" text-anchor="middle" font-size="10" fill="#1e40af">快捷回复</text>
+    
+    <!-- 广告与规则 -->
+    <rect x="700" y="330" width="280" height="110" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+    <text x="840" y="353" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">广告投放与规则引擎</text>
+    
+    <rect x="715" y="365" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="775" y="384" text-anchor="middle" font-size="10" fill="#1e40af">付费投放管理</text>
+    
+    <rect x="845" y="365" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="905" y="384" text-anchor="middle" font-size="10" fill="#1e40af">ROI/CTR 自动优化</text>
+    
+    <rect x="715" y="400" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="775" y="419" text-anchor="middle" font-size="10" fill="#1e40af">规则引擎配置</text>
+    
+    <rect x="845" y="400" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="905" y="419" text-anchor="middle" font-size="10" fill="#1e40af">预警通知推送</text>
+    
+    <!-- 客户与数据 -->
+    <rect x="1010" y="330" width="280" height="110" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+    <text x="1150" y="353" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">客户运营与数据复盘</text>
+    
+    <rect x="1025" y="365" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="1085" y="384" text-anchor="middle" font-size="10" fill="#1e40af">RFM 客户分层</text>
+    
+    <rect x="1155" y="365" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="1215" y="384" text-anchor="middle" font-size="10" fill="#1e40af">沉睡客户唤醒</text>
+    
+    <rect x="1025" y="400" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="1085" y="419" text-anchor="middle" font-size="10" fill="#1e40af">数据复盘报表</text>
+    
+    <rect x="1155" y="400" width="120" height="28" rx="4" fill="white" stroke="#60a5fa" stroke-width="1"/>
+    <text x="1215" y="419" text-anchor="middle" font-size="10" fill="#1e40af">财务核算管理</text>
+    
+    <!-- AI 内容工厂 -->
+    <rect x="1320" y="330" width="220" height="110" rx="8" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+    <text x="1430" y="353" text-anchor="middle" font-size="13" font-weight="600" fill="#5b21b6">AI 内容工厂</text>
+    
+    <rect x="1335" y="365" width="190" height="28" rx="4" fill="white" stroke="#a78bfa" stroke-width="1"/>
+    <text x="1430" y="384" text-anchor="middle" font-size="10" fill="#5b21b6">标题/卖点/详情文案</text>
+    
+    <rect x="1335" y="400" width="190" height="28" rx="4" fill="white" stroke="#a78bfa" stroke-width="1"/>
+    <text x="1430" y="419" text-anchor="middle" font-size="10" fill="#5b21b6">主图/详情图/短视频</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="800" y1="460" x2="800" y2="480" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ============================================ -->
+  <!-- Layer 3: 核心能力引擎层 -->
+  <!-- ============================================ -->
+  <rect x="50" y="480" width="1500" height="150" rx="12" fill="white" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="50" y="480" width="1500" height="36" rx="12" fill="url(#layer3)"/>
+  <text x="800" y="505" text-anchor="middle" font-size="16" font-weight="700" fill="white">核心能力引擎层</text>
+  
+  <g>
+    <!-- AI 引擎 -->
+    <rect x="80" y="530" width="360" height="85" rx="8" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+    <text x="260" y="553" text-anchor="middle" font-size="14" font-weight="600" fill="#5b21b6">AI 智能引擎</text>
+    
+    <rect x="95" y="565" width="160" height="38" rx="6" fill="url(#layer3)"/>
+    <text x="175" y="583" text-anchor="middle" font-size="11" font-weight="600" fill="white">LLM 大模型</text>
+    <text x="175" y="598" text-anchor="middle" font-size="9" fill="#ede9fe">GPT-4o / 千问</text>
+    
+    <rect x="265" y="565" width="160" height="38" rx="6" fill="url(#layer3)"/>
+    <text x="345" y="583" text-anchor="middle" font-size="11" font-weight="600" fill="white">AI 视觉识别</text>
+    <text x="345" y="598" text-anchor="middle" font-size="9" fill="#ede9fe">商品拍照识别</text>
+    
+    <!-- 规则引擎 -->
+    <rect x="470" y="530" width="360" height="85" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="650" y="553" text-anchor="middle" font-size="14" font-weight="600" fill="#1e40af">规则引擎</text>
+    
+    <rect x="485" y="565" width="160" height="38" rx="6" fill="url(#layer2)"/>
+    <text x="565" y="583" text-anchor="middle" font-size="11" font-weight="600" fill="white">条件评估引擎</text>
+    <text x="565" y="598" text-anchor="middle" font-size="9" fill="#dbeafe">ROI/CTR/CVR 阈值</text>
+    
+    <rect x="655" y="565" width="160" height="38" rx="6" fill="url(#layer2)"/>
+    <text x="735" y="583" text-anchor="middle" font-size="11" font-weight="600" fill="white">动作执行引擎</text>
+    <text x="735" y="598" text-anchor="middle" font-size="9" fill="#dbeafe">关停/降价/换素材</text>
+    
+    <!-- 客服引擎 -->
+    <rect x="860" y="530" width="360" height="85" rx="8" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+    <text x="1040" y="553" text-anchor="middle" font-size="14" font-weight="600" fill="#059669">智能客服引擎</text>
+    
+    <rect x="875" y="565" width="160" height="38" rx="6" fill="url(#layer4)"/>
+    <text x="955" y="583" text-anchor="middle" font-size="11" font-weight="600" fill="white">意图识别</text>
+    <text x="955" y="598" text-anchor="middle" font-size="9" fill="#d1fae5">NLP 语义理解</text>
+    
+    <rect x="1045" y="565" width="160" height="38" rx="6" fill="url(#layer4)"/>
+    <text x="1125" y="583" text-anchor="middle" font-size="11" font-weight="600" fill="white">自动回复生成</text>
+    <text x="1125" y="598" text-anchor="middle" font-size="9" fill="#d1fae5">LLM + RAG 检索</text>
+    
+    <!-- 合规引擎 -->
+    <rect x="1250" y="530" width="280" height="85" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="1390" y="553" text-anchor="middle" font-size="14" font-weight="600" fill="#d97706">合规检测引擎</text>
+    
+    <rect x="1265" y="565" width="120" height="38" rx="6" fill="url(#layer5)"/>
+    <text x="1325" y="583" text-anchor="middle" font-size="11" font-weight="600" fill="white">极限词检测</text>
+    <text x="1325" y="598" text-anchor="middle" font-size="9" fill="#fef3c7">敏感词过滤</text>
+    
+    <rect x="1395" y="565" width="120" height="38" rx="6" fill="url(#layer5)"/>
+    <text x="1455" y="583" text-anchor="middle" font-size="11" font-weight="600" fill="white">盗图检测</text>
+    <text x="1455" y="598" text-anchor="middle" font-size="9" fill="#fef3c7">图片合规</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="800" y1="630" x2="800" y2="650" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ============================================ -->
+  <!-- Layer 4: 知识库 & 资源层 -->
+  <!-- ============================================ -->
+  <rect x="50" y="650" width="1500" height="130" rx="12" fill="white" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="50" y="650" width="1500" height="36" rx="12" fill="url(#layer4)"/>
+  <text x="800" y="675" text-anchor="middle" font-size="16" font-weight="700" fill="white">知识库 &amp; 资源层</text>
+  
+  <g>
+    <!-- RAG 知识库 -->
+    <rect x="80" y="700" width="360" height="65" rx="8" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+    <text x="260" y="723" text-anchor="middle" font-size="13" font-weight="600" fill="#5b21b6">RAG 知识库体系</text>
+    <text x="260" y="745" text-anchor="middle" font-size="11" fill="#475569">pgvector 向量存储 · Embedding 语义检索 · 文档召回</text>
+    
+    <!-- 内容模板库 -->
+    <rect x="470" y="700" width="360" height="65" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="650" y="723" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">内容模板库</text>
+    <text x="650" y="745" text-anchor="middle" font-size="11" fill="#475569">平台预置模板 + 租户私有模板 · Jinja2 动态渲染</text>
+    
+    <!-- 规则模板库 -->
+    <rect x="860" y="700" width="360" height="65" rx="8" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+    <text x="1040" y="723" text-anchor="middle" font-size="13" font-weight="600" fill="#059669">规则模板库</text>
+    <text x="1040" y="745" text-anchor="middle" font-size="11" fill="#475569">平台全局规则 + 租户自定义规则 · JSON 条件组</text>
+    
+    <!-- 文件存储 -->
+    <rect x="1250" y="700" width="280" height="65" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="1390" y="723" text-anchor="middle" font-size="13" font-weight="600" fill="#d97706">文件存储</text>
+    <text x="1390" y="745" text-anchor="middle" font-size="11" fill="#475569">MinIO / S3 兼容 · 商品图片/素材/报表</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="800" y1="780" x2="800" y2="800" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ============================================ -->
+  <!-- Layer 5: 工作流调度层 -->
+  <!-- ============================================ -->
+  <rect x="50" y="800" width="1500" height="130" rx="12" fill="white" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="50" y="800" width="1500" height="36" rx="12" fill="url(#layer5)"/>
+  <text x="800" y="825" text-anchor="middle" font-size="16" font-weight="700" fill="white">工作流调度层</text>
+  
+  <g>
+    <!-- Celery 任务队列 -->
+    <rect x="80" y="850" width="360" height="65" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="260" y="873" text-anchor="middle" font-size="13" font-weight="600" fill="#d97706">Celery 异步任务队列</text>
+    <text x="260" y="895" text-anchor="middle" font-size="11" fill="#475569">Redis Broker · 数据抓取/AI 生成/报告生成</text>
+    
+    <!-- Celery Beat 定时调度 -->
+    <rect x="470" y="850" width="360" height="65" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="650" y="873" text-anchor="middle" font-size="13" font-weight="600" fill="#d97706">Celery Beat 定时调度</text>
+    <text x="650" y="895" text-anchor="middle" font-size="11" fill="#475569">日/周/月定时任务 · 复盘/盘点/活动提报</text>
+    
+    <!-- 自动化工作流 -->
+    <rect x="860" y="850" width="360" height="65" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="1040" y="873" text-anchor="middle" font-size="13" font-weight="600" fill="#d97706">自动化工作流</text>
+    <text x="1040" y="895" text-anchor="middle" font-size="11" fill="#475569">授权→同步→AI 上架→运营→复盘 全链路</text>
+    
+    <!-- SOP 任务管理 -->
+    <rect x="1250" y="850" width="280" height="65" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="1390" y="873" text-anchor="middle" font-size="13" font-weight="600" fill="#d97706">SOP 任务管理</text>
+    <text x="1390" y="895" text-anchor="middle" font-size="11" fill="#475569">团队协作任务 · 任务看板</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="800" y1="930" x2="800" y2="950" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ============================================ -->
+  <!-- Layer 6: 统一管控平台 -->
+  <!-- ============================================ -->
+  <rect x="50" y="950" width="1500" height="130" rx="12" fill="white" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="50" y="950" width="1500" height="36" rx="12" fill="url(#layer6)"/>
+  <text x="800" y="975" text-anchor="middle" font-size="16" font-weight="700" fill="white">统一管控平台</text>
+  
+  <g>
+    <!-- 多租户管理 -->
+    <rect x="80" y="1000" width="280" height="65" rx="8" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.5"/>
+    <text x="220" y="1023" text-anchor="middle" font-size="13" font-weight="600" fill="#0891b2">多租户管理</text>
+    <text x="220" y="1045" text-anchor="middle" font-size="11" fill="#475569">tenant_id 硬隔离 · 团队协作</text>
+    
+    <!-- 订阅计费 -->
+    <rect x="390" y="1000" width="280" height="65" rx="8" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.5"/>
+    <text x="530" y="1023" text-anchor="middle" font-size="13" font-weight="600" fill="#0891b2">订阅计费管理</text>
+    <text x="530" y="1045" text-anchor="middle" font-size="11" fill="#475569">三档订阅 · 增值计费 · 用量管控</text>
+    
+    <!-- 权限认证 -->
+    <rect x="700" y="1000" width="280" height="65" rx="8" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.5"/>
+    <text x="840" y="1023" text-anchor="middle" font-size="13" font-weight="600" fill="#0891b2">权限认证</text>
+    <text x="840" y="1045" text-anchor="middle" font-size="11" fill="#475569">JWT 认证 · Flask-Limiter 限流</text>
+    
+    <!-- 安全合规 -->
+    <rect x="1010" y="1000" width="280" height="65" rx="8" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.5"/>
+    <text x="1150" y="1023" text-anchor="middle" font-size="13" font-weight="600" fill="#0891b2">安全合规</text>
+    <text x="1150" y="1045" text-anchor="middle" font-size="11" fill="#475569">CORS/CSRF/CSP · 数据加密</text>
+    
+    <!-- 操作日志 -->
+    <rect x="1320" y="1000" width="210" height="65" rx="8" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.5"/>
+    <text x="1425" y="1023" text-anchor="middle" font-size="13" font-weight="600" fill="#0891b2">操作日志</text>
+    <text x="1425" y="1045" text-anchor="middle" font-size="11" fill="#475569">全链路审计追踪</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="800" y1="1080" x2="800" y2="1100" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ============================================ -->
+  <!-- Layer 7: 底层技术底座 -->
+  <!-- ============================================ -->
+  <rect x="50" y="1100" width="1500" height="130" rx="12" fill="white" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="50" y="1100" width="1500" height="36" rx="12" fill="url(#layer7)"/>
+  <text x="800" y="1125" text-anchor="middle" font-size="16" font-weight="700" fill="white">底层技术底座</text>
+  
+  <g>
+    <!-- Web 框架 -->
+    <rect x="80" y="1150" width="220" height="65" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="190" y="1173" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">Web 框架</text>
+    <text x="190" y="1195" text-anchor="middle" font-size="11" fill="#475569">Flask 3.x + Jinja2</text>
+    
+    <!-- ORM -->
+    <rect x="330" y="1150" width="220" height="65" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="440" y="1173" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">ORM 模型层</text>
+    <text x="440" y="1195" text-anchor="middle" font-size="11" fill="#475569">SQLAlchemy + Flask-Migrate</text>
+    
+    <!-- 数据库 -->
+    <rect x="580" y="1150" width="220" height="65" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="690" y="1173" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">数据库</text>
+    <text x="690" y="1195" text-anchor="middle" font-size="11" fill="#475569">PostgreSQL 15 + pgvector</text>
+    
+    <!-- 缓存 -->
+    <rect x="830" y="1150" width="220" height="65" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="940" y="1173" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">缓存 / 消息队列</text>
+    <text x="940" y="1195" text-anchor="middle" font-size="11" fill="#475569">Redis 7</text>
+    
+    <!-- 前端 UI -->
+    <rect x="1080" y="1150" width="220" height="65" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="1190" y="1173" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">前端 UI</text>
+    <text x="1190" y="1195" text-anchor="middle" font-size="11" fill="#475569">Bootstrap 5 + Chart.js + HTMX</text>
+    
+    <!-- 部署 -->
+    <rect x="1330" y="1150" width="200" height="65" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="1430" y="1173" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">部署架构</text>
+    <text x="1430" y="1195" text-anchor="middle" font-size="11" fill="#475569">Gunicorn + Nginx + Docker</text>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- Side labels -->
+  <!-- ============================================ -->
+  <g>
+    <!-- Left side arrow flow indicator -->
+    <rect x="15" y="130" width="25" height="1100" rx="8" fill="#0f172a" opacity="0.05"/>
+    <text x="27" y="200" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 27, 200)">应用输出</text>
+    <text x="27" y="400" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 27, 400)">产品功能</text>
+    <text x="27" y="560" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 27, 560)">能力引擎</text>
+    <text x="27" y="720" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 27, 720)">知识资源</text>
+    <text x="27" y="870" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 27, 870)">工作流调度</text>
+    <text x="27" y="1020" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 27, 1020)">统一管控</text>
+    <text x="27" y="1170" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 27, 1170)">技术底座</text>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- Platform adapters bar -->
+  <!-- ============================================ -->
+  <rect x="50" y="1250" width="1500" height="70" rx="12" fill="#0f172a" filter="url(#shadow)"/>
+  <text x="800" y="1278" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">平台 API 适配器层</text>
+  
+  <g>
+    <rect x="200" y="1290" width="280" height="20" rx="4" fill="#1e3a8a"/>
+    <text x="340" y="1305" text-anchor="middle" font-size="10" fill="#93c5fd">淘宝开放平台 · 拼多多开放平台 · 抖音开放平台 · 京东开放平台</text>
+    
+    <rect x="600" y="1290" width="200" height="20" rx="4" fill="#1e3a8a"/>
+    <text x="700" y="1305" text-anchor="middle" font-size="10" fill="#93c5fd">平台客服 API 接入</text>
+    
+    <rect x="850" y="1290" width="200" height="20" rx="4" fill="#1e3a8a"/>
+    <text x="950" y="1305" text-anchor="middle" font-size="10" fill="#93c5fd">AI 供应商适配器</text>
+    
+    <rect x="1100" y="1290" width="200" height="20" rx="4" fill="#1e3a8a"/>
+    <text x="1200" y="1305" text-anchor="middle" font-size="10" fill="#93c5fd">SD/DALL·E/可灵/Runway</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="800" y="1385" text-anchor="middle" font-size="14" fill="#64748b">© 2026 AllMall Operation Suite V5.2 · 产品 + 技术一体化整体架构图 · CONFIDENTIAL</text>
+</svg>
