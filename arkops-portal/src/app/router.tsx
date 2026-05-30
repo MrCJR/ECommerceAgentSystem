@@ -14,29 +14,34 @@ import { StoreListPage } from '../pages/StoreListPage';
 import { TaskDetailPage } from '../pages/TaskDetailPage';
 import { TaskListPage } from '../pages/TaskListPage';
 
-const router = createBrowserRouter([
-  { path: '/login', element: <LoginPage /> },
-  {
-    path: '/',
-    element: <AppShell />,
-    children: [
-      { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: 'dashboard', element: <DashboardPage /> },
-      { path: 'stores', element: <StoreListPage /> },
-      { path: 'stores/new', element: <StoreDetailPage mode="new" /> },
-      { path: 'stores/:storeId', element: <StoreDetailPage /> },
-      { path: 'tasks', element: <TaskListPage /> },
-      { path: 'tasks/new', element: <CreateTaskPage /> },
-      { path: 'tasks/:taskId', element: <TaskDetailPage /> },
-      { path: 'approvals', element: <ApprovalListPage /> },
-      { path: 'approvals/:approvalId', element: <ApprovalDetailPage /> },
-      { path: 'audit-logs', element: <AuditLogsPage /> },
-      { path: 'settings/members', element: <MembersSettingsPage /> },
-      { path: 'settings/notifications', element: <NotificationsSettingsPage /> },
-      { path: 'settings/billing', element: <BillingSettingsPage /> }
-    ]
-  }
-]);
+const routerBase = import.meta.env.BASE_URL === '/' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const router = createBrowserRouter(
+  [
+    { path: '/login', element: <LoginPage /> },
+    {
+      path: '/',
+      element: <AppShell />,
+      children: [
+        { index: true, element: <Navigate to="/dashboard" replace /> },
+        { path: 'dashboard', element: <DashboardPage /> },
+        { path: 'stores', element: <StoreListPage /> },
+        { path: 'stores/new', element: <StoreDetailPage mode="new" /> },
+        { path: 'stores/:storeId', element: <StoreDetailPage /> },
+        { path: 'tasks', element: <TaskListPage /> },
+        { path: 'tasks/new', element: <CreateTaskPage /> },
+        { path: 'tasks/:taskId', element: <TaskDetailPage /> },
+        { path: 'approvals', element: <ApprovalListPage /> },
+        { path: 'approvals/:approvalId', element: <ApprovalDetailPage /> },
+        { path: 'audit-logs', element: <AuditLogsPage /> },
+        { path: 'settings/members', element: <MembersSettingsPage /> },
+        { path: 'settings/notifications', element: <NotificationsSettingsPage /> },
+        { path: 'settings/billing', element: <BillingSettingsPage /> }
+      ]
+    }
+  ],
+  { basename: routerBase }
+);
 
 export function AppRouter() {
   return <RouterProvider router={router} />;
