@@ -9,6 +9,39 @@ export const dashboardApi = {
       pendingApprovals: approvals.filter((approval) => approval.status === 'pending').length,
       loginRequiredStores: stores.filter((store) => store.status === 'login_required').length,
       recentTasks: tasks.slice(0, 5),
-      recentApprovals: approvals.slice(0, 5)
+      recentApprovals: approvals.slice(0, 5),
+      operationTrend: [
+        { dayKey: 'dashboard.dayMon', runs: 12, approvals: 2, failures: 1 },
+        { dayKey: 'dashboard.dayTue', runs: 18, approvals: 4, failures: 1 },
+        { dayKey: 'dashboard.dayWed', runs: 16, approvals: 3, failures: 0 },
+        { dayKey: 'dashboard.dayThu', runs: 24, approvals: 5, failures: 2 },
+        { dayKey: 'dashboard.dayFri', runs: 22, approvals: 4, failures: 1 },
+        { dayKey: 'dashboard.daySat', runs: 10, approvals: 1, failures: 0 },
+        { dayKey: 'dashboard.daySun', runs: 8, approvals: 1, failures: 0 }
+      ],
+      taskStatusBreakdown: [
+        { status: 'succeeded', count: 18 },
+        { status: 'waiting_approval', count: 5 },
+        { status: 'running', count: 3 },
+        { status: 'failed', count: 2 }
+      ],
+      quotaUsage: [
+        { key: 'dashboard.quotaWorker', used: 3, limit: 5, color: '#2563eb' },
+        { key: 'dashboard.quotaBrowser', used: 7, limit: 12, color: '#0f766e' },
+        { key: 'dashboard.quotaDailyOps', used: 392, limit: 1000, color: '#7c3aed' },
+        { key: 'dashboard.quotaToken', used: 184200, limit: 500000, color: '#ea580c' }
+      ],
+      agentMix: [
+        { agentType: 'ads_optimizer', count: 11, color: '#2563eb' },
+        { agentType: 'product_launch', count: 7, color: '#0f766e' },
+        { agentType: 'login_bootstrap', count: 4, color: '#ea580c' },
+        { agentType: 'crm_retention', count: 3, color: '#7c3aed' }
+      ],
+      healthSignals: [
+        { key: 'dashboard.healthSessions', value: '7 / 12', status: 'healthy' },
+        { key: 'dashboard.healthSuccessRate', value: '93.4%', status: 'healthy' },
+        { key: 'dashboard.healthApprovalLeadTime', value: '18 min', status: 'warning' },
+        { key: 'dashboard.healthReauth', value: '1', status: 'warning' }
+      ]
     })
 };

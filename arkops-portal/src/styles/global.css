@@ -82,10 +82,278 @@ body {
   gap: 16px;
 }
 
+.metric-card .ant-card-body {
+  display: grid;
+  gap: 12px;
+}
+
+.metric-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.metric-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 18px;
+}
+
+.metric-icon-blue {
+  background: #2563eb;
+}
+
+.metric-icon-teal {
+  background: #0f766e;
+}
+
+.metric-icon-orange {
+  background: #ea580c;
+}
+
+.metric-icon-red {
+  background: #dc2626;
+}
+
+.mini-spark {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 28px;
+}
+
+.mini-spark span {
+  width: 100%;
+  max-width: 18px;
+  min-width: 7px;
+  border-radius: 999px 999px 0 0;
+  background: rgba(37, 99, 235, 0.2);
+}
+
+.mini-spark-teal span {
+  background: rgba(15, 118, 110, 0.2);
+}
+
+.mini-spark-orange span {
+  background: rgba(234, 88, 12, 0.2);
+}
+
+.mini-spark-red span {
+  background: rgba(220, 38, 38, 0.18);
+}
+
 .two-col-grid {
   display: grid;
   grid-template-columns: 1.25fr 0.75fr;
   gap: 16px;
+}
+
+.trend-chart {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(48px, 1fr));
+  gap: 14px;
+  min-height: 210px;
+  padding: 10px 4px 0;
+  border-bottom: 1px solid var(--ark-border);
+}
+
+.trend-column {
+  display: grid;
+  align-content: end;
+  justify-items: center;
+  gap: 10px;
+}
+
+.trend-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 160px;
+}
+
+.trend-bar {
+  display: block;
+  width: 12px;
+  min-height: 6px;
+  border-radius: 999px 999px 3px 3px;
+}
+
+.trend-bar-runs {
+  background: #2563eb;
+}
+
+.trend-bar-approvals {
+  background: #0f766e;
+}
+
+.trend-bar-failures {
+  background: #dc2626;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 14px;
+  color: var(--ark-muted);
+  font-size: 13px;
+}
+
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.legend-runs {
+  background: #2563eb;
+}
+
+.legend-approvals {
+  background: #0f766e;
+}
+
+.legend-failures {
+  background: #dc2626;
+}
+
+.status-visual {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 22px;
+  align-items: center;
+  min-height: 238px;
+}
+
+.donut-chart {
+  display: grid;
+  place-items: center;
+  width: 158px;
+  height: 158px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(23, 32, 51, 0.05);
+}
+
+.donut-chart > div {
+  display: grid;
+  place-items: center;
+  width: 98px;
+  height: 98px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.donut-chart strong {
+  color: var(--ark-ink);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.donut-chart span {
+  color: var(--ark-muted);
+  font-size: 13px;
+}
+
+.status-list,
+.quota-list,
+.agent-mix-list,
+.health-list {
+  display: grid;
+  gap: 14px;
+}
+
+.status-row,
+.health-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.status-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.status-label i,
+.health-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.quota-row {
+  display: grid;
+  gap: 8px;
+}
+
+.quota-row > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.agent-mix-row {
+  display: grid;
+  grid-template-columns: minmax(128px, 1fr) minmax(88px, 1.1fr) 28px;
+  gap: 10px;
+  align-items: center;
+}
+
+.agent-mix-row > div {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eef2f7;
+}
+
+.agent-mix-row > div span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.health-row {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.health-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.health-row > div {
+  display: grid;
+  gap: 2px;
+  margin-right: auto;
+}
+
+.health-dot-healthy {
+  background: #16a34a;
+}
+
+.health-dot-warning {
+  background: #ea580c;
+}
+
+.health-dot-blocked {
+  background: #dc2626;
 }
 
 .login-page {
@@ -103,6 +371,36 @@ body {
 @media (max-width: 1100px) {
   .metric-grid,
   .two-col-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trend-chart {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-header {
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+  }
+
+  .app-content {
+    padding: 16px;
+  }
+
+  .status-visual {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .status-list {
+    width: 100%;
+  }
+
+  .agent-mix-row {
     grid-template-columns: 1fr;
   }
 }
