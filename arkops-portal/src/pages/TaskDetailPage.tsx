@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import { tasksApi } from '../api/tasks';
 import { useI18n } from '../app/i18n';
+import { AgentLiveConsole } from '../components/AgentLiveConsole';
 import { EmptyState } from '../components/EmptyState';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
@@ -41,6 +42,7 @@ export function TaskDetailPage() {
           description={t('tasks.approvalRequiredDescription')}
         />
       ) : null}
+      <AgentLiveConsole task={task} />
       <Card title={t('tasks.timeline')}>
         <Timeline
           items={task.timeline.map((event) => ({

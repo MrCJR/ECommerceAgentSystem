@@ -12,6 +12,7 @@ import { Card, Col, List, Progress, Row, Space, Statistic, Tag, Typography } fro
 import { Link } from 'react-router-dom';
 import { dashboardApi } from '../api/dashboard';
 import { useI18n } from '../app/i18n';
+import { DashboardLiveFeed } from '../components/DashboardLiveFeed';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
 
@@ -170,6 +171,7 @@ export function DashboardPage() {
           </Card>
         </Col>
       </Row>
+      <DashboardLiveFeed tasks={data?.recentTasks ?? []} approvals={data?.recentApprovals ?? []} />
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={8}>
           <Card title={t('dashboard.quotaTitle')}>
