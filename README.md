@@ -400,14 +400,17 @@ Because ArkOps stores only a runtime session reference, MuleRun can later be rep
 
 ## Repository Contents
 
-This repository currently contains early design artifacts for the ArkOps platform:
+This repository currently contains design artifacts, business planning materials, and the ArkOps Portal MVP frontend:
 
-- `ArkOps_V0.1.html`: the latest high-level visual architecture document
-- `ArkOps_Internal_Technical_Route_V0.1.html`: combined platform architecture, internal technical route, and MuleRun beta integration plan
-- `ArkOps_SaaS_Technical_Architecture_V0.1.html`: SaaS platform technical architecture
-- `ArkOps_SaaS_Database_Design_V0.1.html`: SaaS platform database design
-- `ArkOps_SaaS_API_Specification_V0.1.html`: SaaS platform API specification
-- `system design.html`: an earlier system design document
-- `document requirement.docx`: requirement notes
+- `docs/architecture/ArkOps_V0.1.html`: the latest high-level visual architecture document
+- `docs/architecture/ArkOps_Internal_Technical_Route_V0.1.html`: combined platform architecture, internal technical route, and MuleRun beta integration plan
+- `docs/architecture/ArkOps_SaaS_Technical_Architecture_V0.1.html`: SaaS platform technical architecture
+- `docs/architecture/ArkOps_SaaS_Database_Design_V0.1.html`: SaaS platform database design
+- `docs/architecture/ArkOps_SaaS_API_Specification_V0.1.html`: SaaS platform API specification
+- `docs/architecture/ArkOps_AI_Vertical_Model_Technical_Route_V0.1.html`: AI vertical model technical architecture and roadmap
+- `docs/architecture/system design.html`: an earlier system design document
+- `arkops-portal/`: React + TypeScript + Vite + Ant Design frontend MVP
+- `Business Plan/`: business plan markdown, PDF, and architecture diagrams
+- `docs/document requirement.docx`: requirement notes
 
-Implementation code, infrastructure definitions, and service modules can be added as the MVP is built.
+Backend services, infrastructure definitions, and production runtime modules can be added as the MVP is built.
