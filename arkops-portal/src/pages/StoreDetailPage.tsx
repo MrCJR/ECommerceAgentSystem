@@ -104,7 +104,7 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
             <Descriptions.Item label={t('stores.runtimeSession')}>{store?.runtimeSessionId ?? t('stores.notBound')}</Descriptions.Item>
           </Descriptions>
           {tokenMutation.data ? (
-            <Card size="small" style={{ marginTop: 16, background: '#f8fafc' }}>
+            <Card size="small" style={{ marginTop: 16, background: 'var(--ark-panel-soft)' }}>
               <Typography.Text strong>connectToken</Typography.Text>
               <Typography.Paragraph copyable style={{ marginTop: 8 }}>
                 {tokenMutation.data.connectToken}

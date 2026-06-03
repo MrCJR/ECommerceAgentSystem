@@ -1,11 +1,33 @@
 :root {
   --ark-bg: #f5f7fb;
   --ark-panel: #ffffff;
+  --ark-panel-soft: #f8fafc;
   --ark-border: #dbe3ef;
+  --ark-border-soft: #eef2f7;
   --ark-ink: #172033;
   --ark-muted: #5b6b84;
   --ark-blue: #2563eb;
   --ark-green: #16a34a;
   --ark-orange: #ea580c;
   --ark-purple: #7c3aed;
+  --ark-card-shadow: 0 10px 32px rgba(31, 45, 71, 0.05);
+  --ark-login-bg: linear-gradient(135deg, #eff6ff 0%, #f8fafc 56%, #f0fdf4 100%);
+  --ark-dashboard-feed-grid: rgba(37, 99, 235, 0.035);
+}
+
+:root[data-theme="dark"] {
+  --ark-bg: #0b1120;
+  --ark-panel: #111827;
+  --ark-panel-soft: #162033;
+  --ark-border: #253247;
+  --ark-border-soft: #1f2a3d;
+  --ark-ink: #e5eefc;
+  --ark-muted: #94a3b8;
+  --ark-blue: #60a5fa;
+  --ark-green: #22c55e;
+  --ark-orange: #f59e0b;
+  --ark-purple: #a78bfa;
+  --ark-card-shadow: 0 16px 38px rgba(0, 0, 0, 0.22);
+  --ark-login-bg: linear-gradient(135deg, #0b1120 0%, #111827 58%, #12201e 100%);
+  --ark-dashboard-feed-grid: rgba(96, 165, 250, 0.055);
 }

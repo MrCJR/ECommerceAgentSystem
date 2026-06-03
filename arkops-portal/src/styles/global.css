@@ -16,7 +16,7 @@ body {
   position: sticky;
   top: 0;
   height: 100vh;
-  background: #ffffff !important;
+  background: var(--ark-panel) !important;
   border-right: 1px solid var(--ark-border);
 }
 
@@ -26,7 +26,7 @@ body {
   align-items: center;
   height: 72px;
   padding: 0 18px;
-  border-bottom: 1px solid #eef2f7;
+  border-bottom: 1px solid var(--ark-border-soft);
 }
 
 .brand-mark {
@@ -51,7 +51,7 @@ body {
   align-items: center;
   height: 64px;
   padding: 0 24px;
-  background: #ffffff;
+  background: var(--ark-panel);
   border-bottom: 1px solid var(--ark-border);
 }
 
@@ -251,7 +251,7 @@ body {
   width: 98px;
   height: 98px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--ark-panel);
 }
 
 .donut-chart strong {
@@ -319,7 +319,7 @@ body {
   height: 9px;
   overflow: hidden;
   border-radius: 999px;
-  background: #eef2f7;
+  background: var(--ark-border-soft);
 }
 
 .agent-mix-row > div span {
@@ -330,7 +330,7 @@ body {
 
 .health-row {
   padding-bottom: 12px;
-  border-bottom: 1px solid #eef2f7;
+  border-bottom: 1px solid var(--ark-border-soft);
 }
 
 .health-row:last-child {
@@ -361,7 +361,7 @@ body {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 56%, #f0fdf4 100%);
+  background: var(--ark-login-bg);
 }
 
 .login-card {
@@ -559,13 +559,13 @@ body {
 
 .dashboard-live-card.agent-live-card {
   border-color: var(--ark-border);
-  background: #ffffff;
-  box-shadow: 0 10px 32px rgba(31, 45, 71, 0.05);
+  background: var(--ark-panel);
+  box-shadow: var(--ark-card-shadow);
 }
 
 .dashboard-live-card.agent-live-card .ant-card-head {
-  border-bottom-color: #e5edf6;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  border-bottom-color: var(--ark-border-soft);
+  background: linear-gradient(180deg, var(--ark-panel) 0%, var(--ark-panel-soft) 100%);
   color: var(--ark-ink);
 }
 
@@ -575,9 +575,9 @@ body {
 
 .dashboard-live-card.agent-live-card .ant-card-body {
   background:
-    linear-gradient(rgba(37, 99, 235, 0.035) 1px, transparent 1px),
+    linear-gradient(var(--ark-dashboard-feed-grid) 1px, transparent 1px),
     linear-gradient(90deg, rgba(15, 118, 110, 0.025) 1px, transparent 1px),
-    #ffffff;
+    var(--ark-panel);
   background-size: 30px 30px;
 }
 
@@ -593,18 +593,18 @@ body {
 }
 
 .dashboard-live-card .agent-live-meta {
-  border-bottom-color: #e5edf6;
-  color: #64748b;
+  border-bottom-color: var(--ark-border-soft);
+  color: var(--ark-muted);
 }
 
 .dashboard-live-card .agent-live-meta span {
-  border-color: #dbeafe;
-  background: rgba(239, 246, 255, 0.78);
-  color: #31556f;
+  border-color: var(--ark-border);
+  background: var(--ark-panel-soft);
+  color: var(--ark-muted);
 }
 
 .dashboard-live-card .agent-live-terminal {
-  color: #334155;
+  color: var(--ark-ink);
 }
 
 .dashboard-live-card .dashboard-live-terminal {
@@ -614,13 +614,13 @@ body {
 
 .dashboard-live-card .dashboard-live-line {
   grid-template-columns: 88px 28px minmax(136px, 0.6fr) minmax(0, 2.4fr);
-  border-color: #e3eaf5;
-  background: rgba(255, 255, 255, 0.86);
+  border-color: var(--ark-border);
+  background: color-mix(in srgb, var(--ark-panel) 86%, transparent);
   box-shadow: 0 8px 22px rgba(31, 45, 71, 0.04);
 }
 
 .dashboard-live-card .agent-live-time {
-  color: #64748b;
+  color: var(--ark-muted);
 }
 
 .dashboard-live-card .agent-live-icon {
@@ -648,11 +648,11 @@ body {
 }
 
 .dashboard-live-card .agent-live-copy .ant-typography {
-  color: #172033;
+  color: var(--ark-ink);
 }
 
 .dashboard-live-card .agent-live-copy .ant-typography + .ant-typography {
-  color: #5b6b84;
+  color: var(--ark-muted);
 }
 
 .dashboard-live-card .dashboard-live-line a {

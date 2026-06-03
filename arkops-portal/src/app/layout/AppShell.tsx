@@ -4,13 +4,17 @@ import {
   CheckSquareOutlined,
   CreditCardOutlined,
   DashboardOutlined,
+  DesktopOutlined,
+  MoonOutlined,
   RobotOutlined,
   ShopOutlined,
+  SunOutlined,
   TeamOutlined
 } from '@ant-design/icons';
 import { Avatar, Badge, Button, Layout, Menu, Segmented, Space, Typography } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n';
+import { useTheme } from '../theme';
 
 const { Header, Sider, Content } = Layout;
 
@@ -18,6 +22,7 @@ export function AppShell() {
   const location = useLocation();
   const navigate = useNavigate();
   const { language, setLanguage, t } = useI18n();
+  const { mode, setMode } = useTheme();
   const menuItems = [
     { key: '/dashboard', icon: <DashboardOutlined />, label: t('nav.dashboard') },
     { key: '/stores', icon: <ShopOutlined />, label: t('nav.stores') },
@@ -63,6 +68,16 @@ export function AppShell() {
             <Typography.Text type="secondary">{t('app.tenant')}</Typography.Text>
           </Space>
           <Space>
+            <Segmented
+              size="small"
+              value={mode}
+              onChange={(value) => setMode(value as 'system' | 'light' | 'dark')}
+              options={[
+                { label: <span title={t('theme.system')}><DesktopOutlined /></span>, value: 'system' },
+                { label: <span title={t('theme.light')}><SunOutlined /></span>, value: 'light' },
+                { label: <span title={t('theme.dark')}><MoonOutlined /></span>, value: 'dark' }
+              ]}
+            />
             <Segmented
               size="small"
               value={language}
