@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArkOps 平台整体架构与内部技术路线 V0.1</title>
+  <title>AllMall 平台整体架构与内部技术路线 V0.1</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -224,10 +224,10 @@
 <body>
   <main class="page">
     <header class="hero">
-      <p class="eyebrow">ArkOps Internal Route · V0.1</p>
+      <p class="eyebrow">AllMall Internal Route · V0.1</p>
       <h1>平台整体架构与内部技术路线</h1>
       <p class="lead">
-        本文档用于记录 ArkOps 平台整体技术架构、内测阶段工程分工、MuleRun Agent 接入方式、店铺登录会话绑定流程，以及未来从 MuleRun 验证期演进到标准 Agent Runtime 的路线。
+        本文档用于记录 AllMall 平台整体技术架构、内测阶段工程分工、MuleRun Agent 接入方式、店铺登录会话绑定流程，以及未来从 MuleRun 验证期演进到标准 Agent Runtime 的路线。
       </p>
     </header>
 
@@ -244,7 +244,7 @@
           </div>
           <div class="arch-grid">
             <div class="arch-node blue wide">
-              <strong>ArkOps Portal</strong>
+              <strong>arkops-portal</strong>
               <span>React + TypeScript + Ant Design</span>
             </div>
             <div class="arch-node">
@@ -268,7 +268,7 @@
           <div class="arch-head">
             <span class="arch-index">2</span>
             <div>
-              <h3>ArkOps SaaS 控制面</h3>
+              <h3>AllMall SaaS 控制面</h3>
               <p>后端使用 Node.js + NestJS + TypeScript，负责业务主控、任务编排和 runtime 解耦。</p>
             </div>
           </div>
@@ -421,16 +421,16 @@
         </div>
       </div>
       <div class="note">
-        内测阶段允许 MuleRun 承载更多执行权限和浏览器会话能力，但 ArkOps 仍然需要保留租户、店铺、任务、审批、审计和状态流转的主控权。
+        内测阶段允许 MuleRun 承载更多执行权限和浏览器会话能力，但 AllMall 仍然需要保留租户、店铺、任务、审批、审计和状态流转的主控权。
       </div>
     </section>
 
     <section>
       <h2>3. 总体集成思路</h2>
       <p>
-        当前先采用 <code>connectToken + 用户手动打开 MuleRun Agent</code> 的方式进行联调。ArkOps 不直接拉起 MuleRun 浏览器沙盒，而是生成一次性绑定令牌；用户在 MuleRun Web 平台手动启动指定 Agent，并把绑定令牌交给 Agent 完成回传绑定。
+        当前先采用 <code>connectToken + 用户手动打开 MuleRun Agent</code> 的方式进行联调。AllMall 不直接拉起 MuleRun 浏览器沙盒，而是生成一次性绑定令牌；用户在 MuleRun Web 平台手动启动指定 Agent，并把绑定令牌交给 Agent 完成回传绑定。
       </p>
-      <pre><code>ArkOps Portal
+      <pre><code>arkops-portal
   -> 创建店铺授权记录
   -> 生成 connectToken
   -> 提示用户打开 MuleRun Login Bootstrap Agent
@@ -440,7 +440,7 @@ MuleRun Agent
   -> 打开浏览器沙盒 / profile
   -> 用户手动登录店铺并完成人机校验
   -> MuleRun 持久化 browser session
-  -> 回调 ArkOps 完成 storeId 与 runtimeSessionId 绑定</code></pre>
+  -> 回调 AllMall 完成 storeId 与 runtimeSessionId 绑定</code></pre>
       <p class="note">
         这样做的好处是 SaaS 平台团队和 Agent 团队不会互相阻塞。即使 MuleRun 暂时没有开放完整的外部创建 session API，也可以先完成真实登录、真实执行和真实回调链路。
       </p>
@@ -449,19 +449,19 @@ MuleRun Agent
     <section>
       <h2>4. 店铺登录会话绑定流程</h2>
       <p>
-        对 TikTok Shop 等平台，登录经常涉及 captcha、2FA 或其他人机校验。ArkOps 不应把这类动作设计为自动绕过，而应设计为 <strong>Human Session Bootstrap / Re-authentication</strong>。
+        对 TikTok Shop 等平台，登录经常涉及 captcha、2FA 或其他人机校验。AllMall 不应把这类动作设计为自动绕过，而应设计为 <strong>Human Session Bootstrap / Re-authentication</strong>。
       </p>
       <ol>
-        <li>用户在 ArkOps 中添加 TikTok Shop 店铺。</li>
-        <li>ArkOps 创建 <code>StoreAuthorization</code>，状态为 <code>pending_login</code>。</li>
-        <li>ArkOps 生成短期有效的 <code>connectToken</code>。</li>
+        <li>用户在 AllMall 中添加 TikTok Shop 店铺。</li>
+        <li>AllMall 创建 <code>StoreAuthorization</code>，状态为 <code>pending_login</code>。</li>
+        <li>AllMall 生成短期有效的 <code>connectToken</code>。</li>
         <li>用户在 MuleRun Web 平台打开 <code>TikTok Shop Login Bootstrap Agent</code>。</li>
         <li>用户将 <code>connectToken</code> 输入 MuleRun Agent。</li>
         <li>MuleRun 打开专属浏览器沙盒 / profile。</li>
         <li>用户手动登录 TikTok Shop，并完成 captcha、2FA 或其他校验。</li>
         <li>MuleRun 持久化浏览器 profile、cookie 或 session。</li>
-        <li>MuleRun Agent 调用 ArkOps 绑定接口，回传 <code>runtimeSessionId</code>。</li>
-        <li>ArkOps 将店铺状态更新为 <code>connected</code>。</li>
+        <li>MuleRun Agent 调用 AllMall 绑定接口，回传 <code>runtimeSessionId</code>。</li>
+        <li>AllMall 将店铺状态更新为 <code>connected</code>。</li>
       </ol>
       <pre><code>{
   "connectToken": "arkops_connect_xxx",
@@ -472,14 +472,14 @@ MuleRun Agent
   "status": "connected"
 }</code></pre>
       <div class="warning note">
-        内测阶段可以让 MuleRun 保存 browser session，但 ArkOps 不应把长期店铺密码、长期 cookie 或完整 token 当作普通任务参数反复传递。ArkOps 应保存 runtime session reference，并保留吊销、重绑和审计能力。
+        内测阶段可以让 MuleRun 保存 browser session，但 AllMall 不应把长期店铺密码、长期 cookie 或完整 token 当作普通任务参数反复传递。AllMall 应保存 runtime session reference，并保留吊销、重绑和审计能力。
       </div>
     </section>
 
     <section>
       <h2>5. Agent 任务执行联调</h2>
       <p>
-        店铺完成绑定后，ArkOps 创建具体业务任务，并把任务目标、约束条件和 MuleRun session reference 交给 MuleRun Agent。MuleRun 负责加载对应浏览器 profile，执行 Agent SOP，并把过程事件回传 ArkOps。
+        店铺完成绑定后，AllMall 创建具体业务任务，并把任务目标、约束条件和 MuleRun session reference 交给 MuleRun Agent。MuleRun 负责加载对应浏览器 profile，执行 Agent SOP，并把过程事件回传 AllMall。
       </p>
       <pre><code>{
   "taskId": "task_123",
@@ -513,10 +513,10 @@ MuleRun Agent
       <h2>6. 安全与边界</h2>
       <ul>
         <li><strong>connectToken 必须短期有效：</strong>建议一次性使用，绑定成功后立即失效。</li>
-        <li><strong>绑定必须校验租户与店铺：</strong>ArkOps 需要确认 token 对应的 tenant、store 和 platform。</li>
+        <li><strong>绑定必须校验租户与店铺：</strong>AllMall 需要确认 token 对应的 tenant、store 和 platform。</li>
         <li><strong>敏感信息最小化传递：</strong>任务 payload 中只传 session reference，不传长期密码或完整 cookie。</li>
         <li><strong>所有回调进入审计日志：</strong>包括绑定、登录失效、审批请求、执行步骤、截图和最终结果。</li>
-        <li><strong>保留吊销能力：</strong>租户可以在 ArkOps 中断开店铺，ArkOps 将 session 标记为 revoked，并通知 MuleRun 停止后续使用。</li>
+        <li><strong>保留吊销能力：</strong>租户可以在 AllMall 中断开店铺，AllMall 将 session 标记为 revoked，并通知 MuleRun 停止后续使用。</li>
       </ul>
     </section>
 
@@ -526,7 +526,7 @@ MuleRun Agent
         <div class="card">
           <h3>M1：独立研发</h3>
           <ul>
-            <li>ArkOps 完成租户、店铺、任务和 connectToken 基础模型。</li>
+            <li>AllMall 完成租户、店铺、任务和 connectToken 基础模型。</li>
             <li>MuleRun 完成 Login Bootstrap Agent 原型。</li>
             <li>双方约定任务 payload 和事件回调格式。</li>
           </ul>
@@ -535,7 +535,7 @@ MuleRun Agent
           <h3>M2：绑定联调</h3>
           <ul>
             <li>用户通过 connectToken 完成 TikTok Shop 登录绑定。</li>
-            <li>ArkOps 能展示店铺 connected / login_required / revoked 状态。</li>
+            <li>AllMall 能展示店铺 connected / login_required / revoked 状态。</li>
             <li>MuleRun 能回传 runtimeSessionId。</li>
           </ul>
         </div>
@@ -550,7 +550,7 @@ MuleRun Agent
         <div class="card">
           <h3>M4：演进与替换能力</h3>
           <ul>
-            <li>如果 MuleRun 提供 session API，升级为 ArkOps 后端自动创建登录 URL。</li>
+            <li>如果 MuleRun 提供 session API，升级为 AllMall 后端自动创建登录 URL。</li>
             <li>抽象 Agent Runtime Adapter，避免平台绑定。</li>
             <li>评估自建 Claw Runner 或混合 runtime。</li>
           </ul>
@@ -574,10 +574,10 @@ ArkOps Agent Runtime Adapter
   -> Platform API Runtime
 
 长期目标：
-ArkOps 保持控制面稳定，runtime 可以替换或并存。</code></pre>
+AllMall 保持控制面稳定，runtime 可以替换或并存。</code></pre>
     </section>
 
-    <p class="footer">ArkOps Platform Architecture · Team Collaboration · MuleRun Beta Integration · V0.1</p>
+    <p class="footer">AllMall Platform Architecture · Team Collaboration · MuleRun Beta Integration · V0.1</p>
   </main>
 </body>
 </html>

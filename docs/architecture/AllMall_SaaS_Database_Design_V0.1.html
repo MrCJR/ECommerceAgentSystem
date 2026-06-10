@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArkOps SaaS 数据库设计 V0.1</title>
+  <title>AllMall SaaS 数据库设计 V0.1</title>
   <style>
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f6f8fc; color: #172033; line-height: 1.72; }
     .page { max-width: 1180px; margin: 0 auto; padding: 48px 24px 72px; }
@@ -28,9 +28,9 @@
 <body>
   <main class="page">
     <header class="hero">
-      <p class="eyebrow">ArkOps Database Design · V0.1</p>
+      <p class="eyebrow">AllMall Database Design · V0.1</p>
       <h1>SaaS 平台数据库设计</h1>
-      <p>本文档定义 ArkOps 第一阶段核心数据模型，用于支持租户隔离、店铺授权、任务编排、审批、审计、额度和 MuleRun session 绑定。</p>
+      <p>本文档定义 AllMall 第一阶段核心数据模型，用于支持租户隔离、店铺授权、任务编排、审批、审计、额度和 MuleRun session 绑定。</p>
     </header>
 
     <section>
@@ -94,7 +94,7 @@ connect_tokens
 - used_at
 - created_by
 - created_at</code></pre>
-      <div class="note">ArkOps 保存的是 <code>runtime_session_id</code> 这种引用，不直接把 MuleRun 沙盒中的长期 cookie 当成普通业务字段保存。</div>
+      <div class="note">AllMall 保存的是 <code>runtime_session_id</code> 这种引用，不直接把 MuleRun 沙盒中的长期 cookie 当成普通业务字段保存。</div>
     </section>
 
     <section>

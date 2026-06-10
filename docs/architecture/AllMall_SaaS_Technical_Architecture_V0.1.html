@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArkOps SaaS 平台整体技术架构 V0.1</title>
+  <title>AllMall SaaS 平台整体技术架构 V0.1</title>
   <style>
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f6f8fc; color: #172033; line-height: 1.72; }
     .page { max-width: 1180px; margin: 0 auto; padding: 48px 24px 72px; }
@@ -32,16 +32,16 @@
 <body>
   <main class="page">
     <header class="hero">
-      <p class="eyebrow">ArkOps SaaS Architecture · V0.1</p>
+      <p class="eyebrow">AllMall SaaS Architecture · V0.1</p>
       <h1>SaaS 平台整体技术架构</h1>
-      <p>本文档描述 ArkOps SaaS 平台第一阶段的整体工程架构，聚焦租户、店铺、权限、任务、审批、审计、额度、计费和 Agent Runtime Adapter 等控制面能力。</p>
+      <p>本文档描述 AllMall SaaS 平台第一阶段的整体工程架构，聚焦租户、店铺、权限、任务、审批、审计、额度、计费和 Agent Runtime Adapter 等控制面能力。</p>
     </header>
 
     <section>
       <h2>1. 架构定位</h2>
-      <p>ArkOps SaaS 平台是整个系统的控制面，不直接追求在第一阶段完成最强 Agent 能力，而是先建立可治理、可审计、可扩展的业务平台底座。</p>
+      <p>AllMall SaaS 平台是整个系统的控制面，不直接追求在第一阶段完成最强 Agent 能力，而是先建立可治理、可审计、可扩展的业务平台底座。</p>
       <ul>
-        <li><strong>业务主控：</strong>租户、用户、角色、店铺、套餐和账单归 ArkOps 管理。</li>
+        <li><strong>业务主控：</strong>租户、用户、角色、店铺、套餐和账单归 AllMall 管理。</li>
         <li><strong>执行编排：</strong>业务目标被抽象为 Task / Workflow / Run / Step。</li>
         <li><strong>风险控制：</strong>高风险动作进入 Approval，所有执行进入 Audit Log。</li>
         <li><strong>Runtime 解耦：</strong>MuleRun 是内测阶段 runtime provider，后续可以替换或并存自研 Claw Runner。</li>
@@ -116,7 +116,7 @@
       <p>第一阶段技术栈在本文档中直接确定，后续研发按照该方案推进。目标不是追求技术复杂度，而是尽快交付稳定的 SaaS 控制面。</p>
       <table>
         <tr><th>层级</th><th>确定技术</th><th>说明</th></tr>
-        <tr><td>前端框架</td><td>React + TypeScript</td><td>用于构建 ArkOps Portal 中后台应用，统一使用函数组件、Hooks 和类型化接口模型。</td></tr>
+        <tr><td>前端框架</td><td>React + TypeScript</td><td>用于构建 arkops-portal 中后台应用，统一使用函数组件、Hooks 和类型化接口模型。</td></tr>
         <tr><td>前端构建</td><td>Vite</td><td>适合中后台应用，开发启动快，工程配置简单。</td></tr>
         <tr><td>UI 组件</td><td>Ant Design</td><td>用于表格、表单、权限管理、任务时间线、审批列表等后台场景，减少早期 UI 基建成本。</td></tr>
         <tr><td>后端框架</td><td>Node.js + NestJS + TypeScript</td><td>统一前后端 TypeScript 技术体系，NestJS 负责模块化后端、依赖注入、权限守卫和 API 分层。</td></tr>
@@ -194,7 +194,7 @@
 
     <section>
       <h2>7. 内测阶段与 MuleRun 的关系</h2>
-      <p>内测阶段先采用 MuleRun Web 平台手动启动 Agent 的方式。ArkOps 通过 connectToken 完成店铺与 MuleRun session 的绑定。</p>
+      <p>内测阶段先采用 MuleRun Web 平台手动启动 Agent 的方式。AllMall 通过 connectToken 完成店铺与 MuleRun session 的绑定。</p>
       <pre><code>ArkOps owns:
   tenant / store / task / approval / audit / quota / billing
 
@@ -247,7 +247,7 @@ Integration contract:
           <td>M3：任务控制面</td>
           <td>3-4 周</td>
           <td>Task / Run / Step、任务时间线、Agent event callback、artifact 展示</td>
-          <td>MuleRun Agent 能把执行事件、截图、日志回传并展示在 ArkOps。</td>
+          <td>MuleRun Agent 能把执行事件、截图、日志回传并展示在 AllMall。</td>
         </tr>
         <tr>
           <td>M4：审批、审计、通知</td>

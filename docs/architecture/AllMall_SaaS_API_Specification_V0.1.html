@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArkOps SaaS API 接口文档 V0.1</title>
+  <title>AllMall SaaS API 接口文档 V0.1</title>
   <style>
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f6f8fc; color: #172033; line-height: 1.72; }
     .page { max-width: 1180px; margin: 0 auto; padding: 48px 24px 72px; }
@@ -28,9 +28,9 @@
 <body>
   <main class="page">
     <header class="hero">
-      <p class="eyebrow">ArkOps API Specification · V0.1</p>
+      <p class="eyebrow">AllMall API Specification · V0.1</p>
       <h1>SaaS 平台 API 接口文档</h1>
-      <p>本文档定义 ArkOps 第一阶段 SaaS 平台 API 的资源边界和联调契约，重点覆盖店铺授权、connectToken、任务控制面、审批、Agent 回调和审计证据。</p>
+      <p>本文档定义 AllMall 第一阶段 SaaS 平台 API 的资源边界和联调契约，重点覆盖店铺授权、connectToken、任务控制面、审批、Agent 回调和审计证据。</p>
     </header>
 
     <section>
@@ -178,7 +178,7 @@ POST /api/approvals/{approvalId}/reject
 {
   "comment": "暂不调整该广告计划"
 }</code></pre>
-      <div class="note">审批通过后，ArkOps 可以通过 runtime adapter 通知 MuleRun 继续执行，或在内测阶段让 Agent 轮询审批状态。</div>
+      <div class="note">审批通过后，AllMall 可以通过 runtime adapter 通知 MuleRun 继续执行，或在内测阶段让 Agent 轮询审批状态。</div>
     </section>
 
     <section>
