@@ -124,9 +124,53 @@
 
     <section id="api-index">
       <h2>1. 接口目录</h2>
+      <h3>1.1 模块总览</h3>
+      <table>
+        <tr>
+          <th>模块</th>
+          <th>范围</th>
+          <th>包含接口 / 章节</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td><strong>登录绑定模块</strong></td>
+          <td>店铺授权、绑定码、MuleRun 沙箱登录、session 绑定。</td>
+          <td>
+            <a href="#create-login-session">启动店铺登录绑定</a><br>
+            <a href="#resolve-connect-token">解析绑定码</a><br>
+            <a href="#bind-session">绑定 MuleRun Session</a>
+          </td>
+          <td>负责把 AllMall 店铺与 MuleRun browser profile 建立关系。用户只在 MuleRun 沙箱中输入电商平台账号密码。</td>
+        </tr>
+        <tr>
+          <td><strong>竞品调研 Agent 模块</strong></td>
+          <td>竞品调研任务创建、Agent 任务输入、步骤事件、审批确认、最终报告。</td>
+          <td>
+            <a href="#create-task">创建竞品调研任务</a><br>
+            <a href="#agent-task-payload">Agent 任务载荷</a><br>
+            <a href="#agent-events">Agent 事件回调</a><br>
+            <a href="#approval-status">查询审批结果</a>
+          </td>
+          <td>负责围绕拼多多商品完成竞品采集、截图留证、人工确认和报告回传。</td>
+        </tr>
+        <tr>
+          <td><strong>通用支撑模块</strong></td>
+          <td>Header、响应格式、ID 约定、状态枚举、artifact、错误码、安全审计。</td>
+          <td>
+            <a href="#common">通用约定</a><br>
+            <a href="#artifact">Artifact 规范</a><br>
+            <a href="#errors">错误码</a><br>
+            <a href="#security">安全要求</a>
+          </td>
+          <td>登录绑定模块和竞品调研 Agent 模块共同遵守的基础规范。</td>
+        </tr>
+      </table>
+
+      <h3>1.2 接口清单</h3>
       <table>
         <tr>
           <th>#</th>
+          <th>模块</th>
           <th>场景</th>
           <th>方向</th>
           <th>Method</th>
@@ -136,6 +180,7 @@
         </tr>
         <tr>
           <td>1</td>
+          <td>登录绑定模块</td>
           <td>启动店铺登录绑定</td>
           <td>Portal -> SaaS</td>
           <td><code>POST</code></td>
@@ -145,6 +190,7 @@
         </tr>
         <tr>
           <td>2</td>
+          <td>登录绑定模块</td>
           <td>解析绑定码</td>
           <td>Agent -> SaaS</td>
           <td><code>POST</code></td>
@@ -154,6 +200,7 @@
         </tr>
         <tr>
           <td>3</td>
+          <td>登录绑定模块</td>
           <td>绑定 MuleRun session</td>
           <td>Agent -> SaaS</td>
           <td><code>POST</code></td>
@@ -163,6 +210,7 @@
         </tr>
         <tr>
           <td>4</td>
+          <td>竞品调研 Agent 模块</td>
           <td>创建竞品调研任务</td>
           <td>Portal -> SaaS</td>
           <td><code>POST</code></td>
@@ -172,6 +220,7 @@
         </tr>
         <tr>
           <td>5</td>
+          <td>竞品调研 Agent 模块</td>
           <td>Agent 任务载荷</td>
           <td>SaaS -> Agent</td>
           <td><code>N/A</code></td>
@@ -181,6 +230,7 @@
         </tr>
         <tr>
           <td>6</td>
+          <td>竞品调研 Agent 模块</td>
           <td>Agent 事件回调</td>
           <td>Agent -> SaaS</td>
           <td><code>POST</code></td>
@@ -190,6 +240,7 @@
         </tr>
         <tr>
           <td>7</td>
+          <td>竞品调研 Agent 模块</td>
           <td>查询审批结果</td>
           <td>Agent -> SaaS</td>
           <td><code>GET</code></td>
@@ -221,30 +272,50 @@ Content-Type: application/json</code></pre>
   "requestId": "req_20260613_001",
   "data": null,
   "error": {
-    "code": "CONNECT_TOKEN_EXPIRED",
-    "message": "connectToken 已过期，请重新生成。",
-    "retryable": false
+    "errorCode": 1001
   }
 }</code></pre>
+      <div class="warning note">安全约定：对外 response 中的枚举状态和错误原因只返回数字码，不返回文字说明。文字含义仅保留在本文档、SDK 枚举定义和服务端内部日志中，避免向攻击者暴露过多系统状态细节。</div>
 
       <h3>2.3 ID 与 Ref</h3>
       <table>
         <tr><th>类型</th><th>命名</th><th>示例</th><th>说明</th></tr>
         <tr><td>AllMall 内部 ID</td><td><code>*Id</code></td><td><code>storeId: 20001</code></td><td>统一使用 <code>int64 / long</code>。</td></tr>
+        <tr><td>平台字典 ID</td><td><code>platformId</code></td><td><code>platformId: 1</code></td><td>关联电商平台字典表；<code>platformCode</code> 和 <code>platformName</code> 仅用于展示、日志和 Agent 可读上下文。</td></tr>
         <tr><td>外部系统引用</td><td><code>*Ref</code></td><td><code>runtimeSessionRef: "mrs_pdd_abc"</code></td><td>MuleRun 或电商平台 opaque string。</td></tr>
         <tr><td>短期令牌</td><td><code>*Token</code></td><td><code>connectToken: "amct_7F6p9xQ2"</code></td><td>一次性校验，不作为业务主键。</td></tr>
         <tr><td>链路追踪</td><td><code>requestId / traceId</code></td><td><code>req_20260613_001</code></td><td>用于日志关联。</td></tr>
       </table>
 
-      <h3>2.4 Store Authorization 状态</h3>
+      <h3>2.4 Store Authorization 状态码</h3>
       <table>
-        <tr><th>状态</th><th>说明</th></tr>
-        <tr><td><code>disconnected</code></td><td>店铺未绑定 runtime session。</td></tr>
-        <tr><td><code>pending_login</code></td><td>已创建登录会话，等待用户在 MuleRun 沙箱完成登录。</td></tr>
-        <tr><td><code>connected</code></td><td>已绑定可用 session。</td></tr>
-        <tr><td><code>login_required</code></td><td>session 失效或平台要求重新校验。</td></tr>
-        <tr><td><code>revoked</code></td><td>用户或管理员已吊销授权。</td></tr>
-        <tr><td><code>failed</code></td><td>登录绑定失败。</td></tr>
+        <tr><th>authStatusCode</th><th>内部枚举名</th><th>说明</th></tr>
+        <tr><td><code>0</code></td><td><code>disconnected</code></td><td>店铺未绑定 runtime session。</td></tr>
+        <tr><td><code>10</code></td><td><code>pending_login</code></td><td>已创建登录会话，等待用户在 MuleRun 沙箱完成登录。</td></tr>
+        <tr><td><code>20</code></td><td><code>connected</code></td><td>已绑定可用 session。</td></tr>
+        <tr><td><code>30</code></td><td><code>login_required</code></td><td>session 失效或平台要求重新校验。</td></tr>
+        <tr><td><code>40</code></td><td><code>revoked</code></td><td>用户或管理员已吊销授权。</td></tr>
+        <tr><td><code>50</code></td><td><code>failed</code></td><td>登录绑定失败。</td></tr>
+      </table>
+
+      <h3>2.5 通用业务状态码</h3>
+      <table>
+        <tr><th>statusCode</th><th>内部枚举名</th><th>说明</th></tr>
+        <tr><td><code>10</code></td><td><code>queued</code></td><td>已创建，等待执行。</td></tr>
+        <tr><td><code>20</code></td><td><code>running</code></td><td>执行中。</td></tr>
+        <tr><td><code>30</code></td><td><code>waiting_approval</code></td><td>等待人工确认。</td></tr>
+        <tr><td><code>40</code></td><td><code>succeeded</code></td><td>成功。</td></tr>
+        <tr><td><code>50</code></td><td><code>failed</code></td><td>失败。</td></tr>
+        <tr><td><code>60</code></td><td><code>cancelled</code></td><td>已取消。</td></tr>
+      </table>
+
+      <h3>2.6 Approval 状态码</h3>
+      <table>
+        <tr><th>approvalStatusCode</th><th>内部枚举名</th><th>说明</th></tr>
+        <tr><td><code>10</code></td><td><code>pending</code></td><td>等待人工确认。</td></tr>
+        <tr><td><code>20</code></td><td><code>approved</code></td><td>已批准。</td></tr>
+        <tr><td><code>30</code></td><td><code>rejected</code></td><td>已拒绝。</td></tr>
+        <tr><td><code>40</code></td><td><code>expired</code></td><td>已过期。</td></tr>
       </table>
     </section>
 
@@ -298,7 +369,7 @@ Content-Type: application/json</code></pre>
         <tr><td>2</td><td>AllMall</td><td>生成 <code>connectToken</code>，状态变为 <code>pending_login</code>。</td><td>页面展示绑定码、有效期和 MuleRun Agent 入口。</td></tr>
         <tr><td>3</td><td>用户</td><td>手动打开 MuleRun Login Bootstrap Agent 页面。</td><td>进入 Agent 启动页。</td></tr>
         <tr><td>4</td><td>用户</td><td>在 Agent 页面输入 <code>connectToken</code>。</td><td>Agent 可向 AllMall 解析绑定上下文。</td></tr>
-        <tr><td>5</td><td>Agent</td><td>调用 <code>/api/agent/connect-tokens/resolve</code>。</td><td>获取 <code>tenantId</code>、<code>storeId</code>、<code>platform</code> 和 <code>storeName</code>。</td></tr>
+        <tr><td>5</td><td>Agent</td><td>调用 <code>/api/agent/connect-tokens/resolve</code>。</td><td>获取 <code>tenantId</code>、<code>storeId</code>、<code>platformId</code>、<code>platformCode</code> 和 <code>storeName</code>。</td></tr>
         <tr><td>6</td><td>MuleRun</td><td>创建或加载该店铺专属 browser profile，并打开电商平台登录页。</td><td>用户进入隔离浏览器沙箱。</td></tr>
         <tr><td>7</td><td>用户</td><td>在沙箱中输入电商平台账号密码，并完成短信、扫码、滑块等校验。</td><td>平台登录成功或失败。</td></tr>
         <tr><td>8</td><td>Agent</td><td>判断登录结果，截图留证，回调 <code>/api/agent/session-bindings</code>。</td><td>AllMall 保存 session 引用，店铺状态变为 <code>connected</code>。</td></tr>
@@ -321,7 +392,7 @@ Content-Type: application/json</code></pre>
         <tr>
           <td>解析绑定码</td>
           <td>接收 <code>connectToken</code>，调用 AllMall 解析接口，确认 token 未过期、未消费、用途为 <code>login_bootstrap</code>。</td>
-          <td>返回 <code>CONNECT_TOKEN_EXPIRED</code> 或 <code>CONNECT_TOKEN_CONSUMED</code> 时停止流程。</td>
+          <td>返回 <code>1001</code> 或 <code>1002</code> 时停止流程。</td>
         </tr>
         <tr>
           <td>准备浏览器沙箱</td>
@@ -330,13 +401,13 @@ Content-Type: application/json</code></pre>
         </tr>
         <tr>
           <td>打开平台登录页</td>
-          <td>根据 <code>platform</code> 打开对应电商平台登录入口。</td>
+          <td>根据 <code>platformId</code> / <code>platformCode</code> 打开对应电商平台登录入口。</td>
           <td>页面无法打开时截图并回传失败原因。</td>
         </tr>
         <tr>
           <td>人工登录</td>
           <td>等待用户输入账号密码，并完成短信、扫码、滑块等平台校验。</td>
-          <td>超时或校验失败时回传 <code>login_required</code> 或 <code>HUMAN_VERIFICATION_REQUIRED</code>。</td>
+          <td>超时或校验失败时回传 <code>login_required</code> 或原因码 <code>2003</code>。</td>
         </tr>
         <tr>
           <td>登录成功确认</td>
@@ -360,18 +431,19 @@ Content-Type: application/json</code></pre>
 
       <h3>Request Body</h3>
       <pre><code>{
-  "platform": "pinduoduo",
+  "platformId": 1,
   "purpose": "login_bootstrap",
   "runtimeProvider": "mulerun",
   "preferredLaunchMode": "auto_sandbox_url"
 }</code></pre>
       <table>
         <tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr>
-        <tr><td><code>platform</code></td><td>string</td><td>是</td><td>电商平台，第一阶段为 <code>pinduoduo</code>。</td></tr>
+        <tr><td><code>platformId</code></td><td>long</td><td>是</td><td>电商平台 ID，例如拼多多为 <code>1</code>。数据库关联使用该字段。</td></tr>
         <tr><td><code>purpose</code></td><td>string</td><td>是</td><td>固定为 <code>login_bootstrap</code>。</td></tr>
         <tr><td><code>runtimeProvider</code></td><td>string</td><td>是</td><td>第一阶段为 <code>mulerun</code>。</td></tr>
         <tr><td><code>preferredLaunchMode</code></td><td>string</td><td>否</td><td><code>auto_sandbox_url</code> 或 <code>manual_mulerun_agent</code>。</td></tr>
       </table>
+      <div class="note"><code>platformCode</code> 如 <code>pinduoduo</code>、<code>taobao</code>、<code>douyin_shop</code> 主要用于展示、日志和 Agent 可读上下文，不作为数据库主关联字段。</div>
 
       <h3>Response: auto_sandbox_url</h3>
       <pre><code>{
@@ -380,11 +452,14 @@ Content-Type: application/json</code></pre>
   "data": {
     "storeId": 20001,
     "authorizationId": 30001,
+    "platformId": 1,
+    "platformCode": "pinduoduo",
+    "platformName": "拼多多",
     "connectToken": "amct_7F6p9xQ2",
     "launchMode": "auto_sandbox_url",
     "sandboxUrl": "https://mulerun.example.com/sandbox/mrs_pdd_abc",
     "expiresAt": "2026-06-13T11:00:00+08:00",
-    "status": "pending_login"
+    "authStatusCode": 10
   },
   "error": null
 }</code></pre>
@@ -396,12 +471,15 @@ Content-Type: application/json</code></pre>
   "data": {
     "storeId": 20001,
     "authorizationId": 30001,
+    "platformId": 1,
+    "platformCode": "pinduoduo",
+    "platformName": "拼多多",
     "connectToken": "amct_7F6p9xQ2",
     "launchMode": "manual_mulerun_agent",
     "agentEntryUrl": "https://mulerun.example.com/agents/login-bootstrap",
     "manualInstruction": "请打开 MuleRun Login Bootstrap Agent，并输入绑定码。",
     "expiresAt": "2026-06-13T11:00:00+08:00",
-    "status": "pending_login"
+    "authStatusCode": 10
   },
   "error": null
 }</code></pre>
@@ -427,7 +505,9 @@ Content-Type: application/json</code></pre>
     "authorizationId": 30001,
     "tenantId": 10001,
     "storeId": 20001,
-    "platform": "pinduoduo",
+    "platformId": 1,
+    "platformCode": "pinduoduo",
+    "platformName": "拼多多",
     "storeName": "拼多多旗舰店A",
     "purpose": "login_bootstrap",
     "expiresAt": "2026-06-13T11:00:00+08:00",
@@ -447,11 +527,13 @@ Content-Type: application/json</code></pre>
   "connectToken": "amct_7F6p9xQ2",
   "authorizationId": 30001,
   "storeId": 20001,
-  "platform": "pinduoduo",
+  "platformId": 1,
+  "platformCode": "pinduoduo",
+  "platformName": "拼多多",
   "runtimeProvider": "mulerun",
   "runtimeSessionRef": "mrs_pdd_store_001_20260613",
   "runtimeProfileRef": "profile_pdd_001",
-  "status": "connected",
+  "authStatusCode": 20,
   "establishedAt": "2026-06-13T10:48:21+08:00",
   "evidence": {
     "artifacts": [
@@ -472,7 +554,7 @@ Content-Type: application/json</code></pre>
   "data": {
     "storeId": 20001,
     "authorizationId": 30001,
-    "authStatus": "connected",
+    "authStatusCode": 20,
     "runtimeSessionId": 40001,
     "runtimeSessionRef": "mrs_pdd_store_001_20260613"
   },
@@ -492,7 +574,9 @@ Content-Type: application/json</code></pre>
   "runtimeProvider": "mulerun",
   "priority": "normal",
   "input": {
-    "platform": "pinduoduo",
+    "platformId": 1,
+    "platformCode": "pinduoduo",
+    "platformName": "拼多多",
     "targetProduct": {
       "externalProductRef": "pdd_goods_123",
       "productUrl": "https://mobile.yangkeduo.com/goods.html?goods_id=123",
@@ -530,7 +614,8 @@ Content-Type: application/json</code></pre>
   "data": {
     "taskId": 50001,
     "runId": 60001,
-    "status": "queued",
+    "taskStatusCode": 10,
+    "runStatusCode": 10,
     "agentType": "competitor_research",
     "runtimeProvider": "mulerun"
   },
@@ -540,6 +625,9 @@ Content-Type: application/json</code></pre>
       <h3>字段说明</h3>
       <table>
         <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+        <tr><td><code>input.platformId</code></td><td>long</td><td>电商平台 ID，数据库关联使用该字段。</td></tr>
+        <tr><td><code>input.platformCode</code></td><td>string</td><td>平台编码，用于展示、日志和 Agent 可读上下文。</td></tr>
+        <tr><td><code>input.platformName</code></td><td>string</td><td>平台展示名称。</td></tr>
         <tr><td><code>targetProduct.externalProductRef</code></td><td>string</td><td>电商平台商品引用，非 AllMall 内部 ID。</td></tr>
         <tr><td><code>researchScope.keywords</code></td><td>string[]</td><td>调研关键词。</td></tr>
         <tr><td><code>researchScope.maxCompetitors</code></td><td>number</td><td>最多采集竞品数量。</td></tr>
@@ -556,7 +644,9 @@ Content-Type: application/json</code></pre>
   "runId": 60001,
   "tenantId": 10001,
   "storeId": 20001,
-  "platform": "pinduoduo",
+  "platformId": 1,
+  "platformCode": "pinduoduo",
+  "platformName": "拼多多",
   "agentType": "competitor_research",
   "runtime": {
     "provider": "mulerun",
@@ -619,7 +709,7 @@ Content-Type: application/json</code></pre>
   "step": {
     "stepKey": "collect_competitor_candidates",
     "stepName": "采集候选竞品",
-    "status": "succeeded",
+    "stepStatusCode": 40,
     "startedAt": "2026-06-13T14:05:00+08:00",
     "endedAt": "2026-06-13T14:12:30+08:00"
   },
@@ -680,8 +770,8 @@ Content-Type: application/json</code></pre>
   "requestId": "req_20260613_005",
   "data": {
     "approvalId": 70001,
-    "status": "pending",
-    "runStatus": "waiting_approval"
+    "approvalStatusCode": 10,
+    "runStatusCode": 30
   },
   "error": null
 }</code></pre>
@@ -694,7 +784,7 @@ Content-Type: application/json</code></pre>
   "storeId": 20001,
   "runtimeSessionId": 40001,
   "runtimeSessionRef": "mrs_pdd_store_001_20260613",
-  "reasonCode": "HUMAN_VERIFICATION_REQUIRED",
+  "reasonCode": 2003,
   "reason": "拼多多要求重新扫码或短信验证。",
   "occurredAt": "2026-06-13T12:20:00+08:00",
   "artifacts": [
@@ -713,7 +803,7 @@ Content-Type: application/json</code></pre>
   "source": "mulerun",
   "taskId": 50001,
   "runId": 60001,
-  "status": "succeeded",
+  "runStatusCode": 40,
   "result": {
     "reportType": "competitor_research_report",
     "summary": "本次共分析 12 个有效竞品。",
@@ -753,7 +843,7 @@ Content-Type: application/json</code></pre>
   "requestId": "req_20260613_006",
   "data": {
     "approvalId": 70001,
-    "status": "approved",
+    "approvalStatusCode": 20,
     "decidedBy": 11001,
     "decidedAt": "2026-06-13T14:30:00+08:00",
     "decision": {
@@ -781,16 +871,17 @@ Content-Type: application/json</code></pre>
     <section id="errors">
       <h2>12. 错误码</h2>
       <table>
-        <tr><th>错误码</th><th>场景</th><th>建议处理</th></tr>
-        <tr><td><code>CONNECT_TOKEN_EXPIRED</code></td><td>绑定码过期。</td><td>重新生成登录绑定会话。</td></tr>
-        <tr><td><code>CONNECT_TOKEN_CONSUMED</code></td><td>绑定码已使用。</td><td>拒绝重复绑定，写入审计日志。</td></tr>
-        <tr><td><code>SESSION_NOT_FOUND</code></td><td>runtime session 不存在。</td><td>标记 <code>login_required</code>。</td></tr>
-        <tr><td><code>SESSION_EXPIRED</code></td><td>电商平台要求重新登录。</td><td>触发重新登录流程。</td></tr>
-        <tr><td><code>HUMAN_VERIFICATION_REQUIRED</code></td><td>出现扫码、短信、滑块等校验。</td><td>暂停执行，提示用户人工处理。</td></tr>
-        <tr><td><code>PAGE_STRUCTURE_CHANGED</code></td><td>页面结构变化导致采集失败。</td><td>回传截图和失败步骤。</td></tr>
-        <tr><td><code>DATA_UNCERTAIN</code></td><td>价格、销量、评价等口径不确定。</td><td>标记低置信度或触发人工确认。</td></tr>
-        <tr><td><code>APPROVAL_TIMEOUT</code></td><td>审批超时。</td><td>Run -> <code>failed</code> 或 <code>cancelled</code>。</td></tr>
+        <tr><th>errorCode</th><th>内部枚举名</th><th>场景</th><th>建议处理</th></tr>
+        <tr><td><code>1001</code></td><td><code>CONNECT_TOKEN_EXPIRED</code></td><td>绑定码过期。</td><td>重新生成登录绑定会话。</td></tr>
+        <tr><td><code>1002</code></td><td><code>CONNECT_TOKEN_CONSUMED</code></td><td>绑定码已使用。</td><td>拒绝重复绑定，写入审计日志。</td></tr>
+        <tr><td><code>2001</code></td><td><code>SESSION_NOT_FOUND</code></td><td>runtime session 不存在。</td><td>标记 <code>login_required</code>。</td></tr>
+        <tr><td><code>2002</code></td><td><code>SESSION_EXPIRED</code></td><td>电商平台要求重新登录。</td><td>触发重新登录流程。</td></tr>
+        <tr><td><code>2003</code></td><td><code>HUMAN_VERIFICATION_REQUIRED</code></td><td>出现扫码、短信、滑块等校验。</td><td>暂停执行，提示用户人工处理。</td></tr>
+        <tr><td><code>3001</code></td><td><code>PAGE_STRUCTURE_CHANGED</code></td><td>页面结构变化导致采集失败。</td><td>回传截图和失败步骤。</td></tr>
+        <tr><td><code>3002</code></td><td><code>DATA_UNCERTAIN</code></td><td>价格、销量、评价等口径不确定。</td><td>标记低置信度或触发人工确认。</td></tr>
+        <tr><td><code>4001</code></td><td><code>APPROVAL_TIMEOUT</code></td><td>审批超时。</td><td>Run -> <code>failed</code> 或 <code>cancelled</code>。</td></tr>
       </table>
+      <div class="note">生产接口 response 只返回 <code>errorCode</code>。服务端日志、开发环境调试工具和本文档可以显示内部枚举名与说明。</div>
     </section>
 
     <section id="security">
