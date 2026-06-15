@@ -1,14 +1,21 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { ApiOutlined, CustomerServiceOutlined, PlusOutlined, ShoppingCartOutlined, ThunderboltOutlined, WalletOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Card, Table } from 'antd';
+import { Button, Card, Table, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
 import { Link, useNavigate } from 'react-router-dom';
 import { storesApi } from '../api/stores';
 import { useI18n } from '../app/i18n';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
 import type { Store } from '../types/domain';
+
+const serviceIcons: Record<string, JSX.Element> = {
+  advertising: <ThunderboltOutlined />,
+  customer_service: <CustomerServiceOutlined />,
+  logistics: <ShoppingCartOutlined />,
+  finance: <WalletOutlined />,
+  other: <ApiOutlined />
+};
 
 export function StoreListPage() {
   const { t } = useI18n();
@@ -18,12 +25,26 @@ export function StoreListPage() {
   const columns: ColumnsType<Store> = [
     { title: t('stores.store'), dataIndex: 'name', render: (name, record) => <Link to={`/stores/${record.id}`}>{name}</Link> },
     { title: t('stores.platform'), dataIndex: 'platform' },
+    { title: t('stores.authMethod'), dataIndex: 'authMethod', render: (method: Store['authMethod']) => {
+      const map: Record<string, string> = { credentials: t('stores.authCredentials'), api_key: t('stores.authApiKey'), oauth: t('stores.authOauth') };
+      return <Tag>{map[method] ?? method}</Tag>;
+    }},
     { title: t('stores.status'), dataIndex: 'status', render: (status) => <StatusBadge value={status} /> },
-    { title: t('stores.runtime'), dataIndex: 'runtimeProvider' },
     {
-      title: t('stores.lastVerified'),
-      dataIndex: 'lastVerifiedAt',
-      render: (value) => (value ? dayjs(value).format('YYYY-MM-DD HH:mm') : t('stores.notConnected'))
+      title: t('stores.connections'),
+      dataIndex: 'connections',
+      render: (connections: Store['connections']) => {
+        if (!connections || connections.length === 0) return <Typography.Text type="secondary">-</Typography.Text>;
+        return (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+            {connections.map((c) => (
+              <Tag key={c.id} icon={serviceIcons[c.serviceType] ?? <ApiOutlined />}>
+                {c.serviceName}
+              </Tag>
+            ))}
+          </div>
+        );
+      }
     }
   ];
 

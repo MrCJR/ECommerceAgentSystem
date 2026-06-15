@@ -1,18 +1,20 @@
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { AppShell } from './layout/AppShell';
+import { AgentConfigPage } from '../pages/AgentConfigPage';
+import { AgentListPage } from '../pages/AgentListPage';
 import { ApprovalDetailPage } from '../pages/ApprovalDetailPage';
 import { ApprovalListPage } from '../pages/ApprovalListPage';
+import { ApprovalPolicyPage } from '../pages/ApprovalPolicyPage';
 import { AuditLogsPage } from '../pages/AuditLogsPage';
 import { BillingSettingsPage } from '../pages/BillingSettingsPage';
-import { CreateTaskPage } from '../pages/CreateTaskPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { LoginPage } from '../pages/LoginPage';
 import { MembersSettingsPage } from '../pages/MembersSettingsPage';
+import { ModelListPage } from '../pages/ModelListPage';
 import { NotificationsSettingsPage } from '../pages/NotificationsSettingsPage';
 import { StoreDetailPage } from '../pages/StoreDetailPage';
 import { StoreListPage } from '../pages/StoreListPage';
-import { TaskDetailPage } from '../pages/TaskDetailPage';
-import { TaskListPage } from '../pages/TaskListPage';
+import { SubscriptionPage } from '../pages/SubscriptionPage';
 
 const routerBase = import.meta.env.BASE_URL === '/' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -28,15 +30,17 @@ const router = createBrowserRouter(
         { path: 'stores', element: <StoreListPage /> },
         { path: 'stores/new', element: <StoreDetailPage mode="new" /> },
         { path: 'stores/:storeId', element: <StoreDetailPage /> },
-        { path: 'tasks', element: <TaskListPage /> },
-        { path: 'tasks/new', element: <CreateTaskPage /> },
-        { path: 'tasks/:taskId', element: <TaskDetailPage /> },
+        { path: 'agents', element: <AgentListPage /> },
+        { path: 'agents/:agentType', element: <AgentConfigPage /> },
+        { path: 'models', element: <ModelListPage /> },
         { path: 'approvals', element: <ApprovalListPage /> },
         { path: 'approvals/:approvalId', element: <ApprovalDetailPage /> },
         { path: 'audit-logs', element: <AuditLogsPage /> },
+        { path: 'billing', element: <BillingSettingsPage /> },
+        { path: 'subscription', element: <SubscriptionPage /> },
         { path: 'settings/members', element: <MembersSettingsPage /> },
         { path: 'settings/notifications', element: <NotificationsSettingsPage /> },
-        { path: 'settings/billing', element: <BillingSettingsPage /> }
+        { path: 'settings/approval-policy', element: <ApprovalPolicyPage /> }
       ]
     }
   ],

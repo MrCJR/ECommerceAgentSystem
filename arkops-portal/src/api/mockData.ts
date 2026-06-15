@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import type { Approval, AuditLog, Member, Store, Task } from '../types/domain';
+import type { Approval, AuditLog, Member, Store, StoreConnection, Task } from '../types/domain';
 
 const now = dayjs('2026-05-30T10:00:00+08:00');
 
@@ -9,31 +9,83 @@ export const stores: Store[] = [
     name: 'TikTok Shop 美国旗舰店',
     platform: 'tiktok_shop',
     status: 'connected',
+    authMethod: 'credentials',
     runtimeProvider: 'mulerun',
     runtimeSessionId: 'mr_session_tts_001',
+    region: 'US',
+    currency: 'USD',
     lastVerifiedAt: now.subtract(2, 'hour').toISOString(),
     createdAt: now.subtract(5, 'day').toISOString(),
-    recentTaskIds: ['task_001', 'task_002']
+    recentTaskIds: ['task_001', 'task_002'],
+    connections: [
+      {
+        id: 'conn_001',
+        serviceName: 'TikTok 广告管理平台',
+        serviceType: 'advertising',
+        authMethod: 'credentials',
+        status: 'connected',
+        account: 'seller@tiktokshop.com',
+        runtimeProvider: 'mulerun',
+        runtimeSessionId: 'mr_session_tts_001_ads',
+        lastVerifiedAt: now.subtract(3, 'hour').toISOString(),
+        createdAt: now.subtract(5, 'day').toISOString()
+      }
+    ]
   },
   {
     id: 'store_002',
     name: 'Amazon 户外用品店',
     platform: 'amazon',
     status: 'login_required',
+    authMethod: 'credentials',
     runtimeProvider: 'mulerun',
     runtimeSessionId: 'mr_session_amz_002',
+    account: 'seller@outdoor-gear.com',
+    region: 'US',
+    currency: 'USD',
     lastVerifiedAt: now.subtract(2, 'day').toISOString(),
     createdAt: now.subtract(9, 'day').toISOString(),
-    recentTaskIds: ['task_003']
+    recentTaskIds: ['task_003'],
+    connections: [
+      {
+        id: 'conn_003',
+        serviceName: 'Amazon 广告后台',
+        serviceType: 'advertising',
+        authMethod: 'credentials',
+        status: 'connected',
+        account: 'seller@outdoor-gear.com',
+        runtimeProvider: 'mulerun',
+        runtimeSessionId: 'mr_session_amz_002_ads',
+        lastVerifiedAt: now.subtract(1, 'day').toISOString(),
+        createdAt: now.subtract(9, 'day').toISOString()
+      },
+      {
+        id: 'conn_004',
+        serviceName: 'Amazon 客服消息',
+        serviceType: 'customer_service',
+        authMethod: 'credentials',
+        status: 'login_required',
+        account: 'seller@outdoor-gear.com',
+        runtimeProvider: 'mulerun',
+        runtimeSessionId: 'mr_session_amz_002_cs',
+        lastVerifiedAt: now.subtract(3, 'day').toISOString(),
+        createdAt: now.subtract(8, 'day').toISOString()
+      }
+    ]
   },
   {
     id: 'store_003',
     name: 'Shopify 独立站',
     platform: 'shopify',
     status: 'pending_login',
+    authMethod: 'api_key',
     runtimeProvider: 'mulerun',
+    apiKey: 'shpat_xxxxxxxxxxxx',
+    region: 'US',
+    currency: 'USD',
     createdAt: now.subtract(1, 'day').toISOString(),
-    recentTaskIds: []
+    recentTaskIds: [],
+    connections: []
   }
 ];
 
