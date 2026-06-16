@@ -1,191 +1,321 @@
-# ArkOps Portal
+# AllMall Portal Frontend
 
-ArkOps Portal is the frontend SaaS control plane for the ArkOps AI commerce operations platform.
+This directory contains the React + TypeScript frontend for the AllMall SaaS management console.
 
-The MVP goal is to let an internal beta tenant complete the full control-loop workflow:
+The current implementation has been updated according to `product-design.md`. It focuses on the frontend page structure, mock data, navigation, and user-facing management workflows. Backend APIs and database implementation have not started yet.
+
+> Note: the package and directory are still named `arkops-portal` for legacy reasons. Product-facing documentation should use `AllMall`.
+
+## Current Status
+
+Frontend status:
+
+- The main SaaS console pages have been implemented with mock data.
+- The navigation has been updated to match the latest product design.
+- Agent tasks are now managed inside Agent detail pages rather than through standalone task list/detail pages.
+- Billing and subscription are split into separate navigation entries.
+- Model Center has been redesigned around Agent-to-model assignment.
+- The approval badge in the sidebar reflects pending approvals from mock summary data.
+- Light, dark, and system theme switching are available.
+- Chinese and English language switching is available.
+
+Not started yet:
+
+- Real backend API integration
+- Database schema and migrations
+- Authentication / session backend
+- Real MuleRun runtime calls
+- Real billing, payment, invoice, and subscription APIs
+- Real model provider API key validation
+
+## Product Design Source
+
+The source product design document is:
 
 ```text
-log in
--> add a store
--> bind the store through MuleRun connectToken
--> create an Agent task
--> review execution timeline, screenshots, logs, and events
--> approve or reject high-risk actions
--> audit the final result
+arkops-portal/product-design.md
 ```
+
+This document defines:
+
+- SaaS and private deployment product modes
+- User roles and permissions
+- Current P0/P1/P2 roadmap
+- Navigation structure
+- Implemented frontend module scope
+- Dashboard, stores, agents, models, approvals, billing, subscription, and settings behavior
+
+When changing page scope or navigation, update `product-design.md` first, then update this README and frontend routes.
 
 ## Fixed Frontend Stack
 
-The frontend technology stack is fixed for the MVP:
-
-- React
+- React 18
 - TypeScript
 - Vite
 - Ant Design
 - React Router
 - TanStack Query
+- Day.js
 
-The frontend should be implemented as a single-page application. It should call the ArkOps SaaS backend through typed API clients and should not call MuleRun APIs directly.
+Scripts:
 
-## MVP Page Scope
-
-The first version should focus on the SaaS control-plane workflow rather than marketing pages or analytics-heavy dashboards.
-
-### Core Pages
-
-| Route | Page | MVP purpose |
-| --- | --- | --- |
-| `/login` | Login | User authentication entry point |
-| `/dashboard` | Dashboard | Operational system overview |
-| `/stores` | Store List | Store authorization status overview |
-| `/stores/new` | Add Store | Create a store and generate a connectToken |
-| `/stores/:storeId` | Store Detail | View binding status, re-auth, revoke, recent tasks |
-| `/tasks` | Task List | Browse Agent tasks by status, store, agent type |
-| `/tasks/new` | Create Task | Create a task for a selected store and Agent type |
-| `/tasks/:taskId` | Task Detail | Run timeline, step events, screenshots, logs, artifacts |
-| `/approvals` | Approval List | Review pending high-risk actions |
-| `/approvals/:approvalId` | Approval Detail | Approve or reject proposed Agent actions |
-| `/audit-logs` | Audit Logs | Search execution, approval, and system events |
-| `/settings/members` | Members | Tenant users, roles, invitations |
-| `/settings/notifications` | Notifications | Webhook, Feishu, DingTalk, WeCom notification settings |
-| `/settings/billing` | Billing & Quota | Plan, resource usage, quota limits |
-
-### Highest Priority Screens
-
-Build these first:
-
-1. Dashboard
-2. Store List and Store Detail
-3. Create Task
-4. Task Detail Timeline
-5. Approval List and Approval Detail
-
-These screens prove the ArkOps MVP control loop.
-
-## Store Authorization States
-
-The Portal must clearly display store authorization status:
-
-```text
-pending_login
-connected
-login_required
-expired
-revoked
+```bash
+npm install
+npm run dev
+npm run build
+npm run preview
 ```
 
-MVP store binding should use the MuleRun beta flow:
+The dev server runs with:
 
-```text
-ArkOps generates connectToken
--> user manually opens MuleRun Login Bootstrap Agent
--> user enters connectToken in MuleRun
--> user logs in to the marketplace inside MuleRun browser sandbox
--> MuleRun calls ArkOps session binding API
--> ArkOps marks store as connected
+```bash
+vite --host 0.0.0.0
 ```
 
-## Task and Run States
-
-The Portal should treat Agent execution as a timeline.
-
-Recommended MVP states:
+Default local URL:
 
 ```text
-draft
-queued
-running
-waiting_approval
-succeeded
-failed
-canceled
+http://localhost:5173/
 ```
 
-Timeline event types:
+## Implemented Navigation
+
+| Route | Page | Status | Purpose |
+| --- | --- | --- | --- |
+| `/login` | Login | Implemented | User authentication entry page with mock flow. |
+| `/dashboard` | Dashboard | Implemented | Business overview and Agent monitoring tabs. |
+| `/stores` | Store List | Implemented | Store list, authorization status, service tags, add-store entry. |
+| `/stores/new` | Add Store | Implemented | Store creation / onboarding flow. |
+| `/stores/:storeId` | Store Detail | Implemented | Store business overview and settings tabs. |
+| `/agents` | Agent Center | Implemented | My Agents and available Agents panels. |
+| `/agents/:agentType` | Agent Detail | Implemented | Agent stats, run instructions, task history, task creation modal. |
+| `/models` | Model Center | Implemented | Agent model assignment, custom models, monthly usage. |
+| `/approvals` | Approval List | Implemented | Pending approval list. |
+| `/approvals/:approvalId` | Approval Detail | Implemented | Approve or reject high-risk actions. |
+| `/audit-logs` | Audit Logs | Implemented | System and execution audit records. |
+| `/billing` | Billing Ledger | Implemented | Usage, monthly cost, bills, invoices. |
+| `/subscription` | Subscription | Implemented | Plan selection, payment methods, invoice info, enterprise solutions. |
+| `/settings/members` | Members | Implemented | Member list and invitations. |
+| `/settings/approval-policy` | Approval Policy | Implemented | Agent-level approval policy display. |
+| `/settings/notifications` | Notifications | Implemented | Notification channels and preferences. |
+
+Removed from the latest navigation:
+
+- `/tasks`
+- `/tasks/new`
+- `/tasks/:taskId`
+
+Task creation and task history now belong to each Agent detail page.
+
+## Implemented Modules
+
+### Dashboard
+
+Two tabs are implemented:
+
+- Business Overview
+- Agent Monitoring
+
+The dashboard includes:
+
+- GMV, orders, average order value, and store count
+- GMV and order trend chart
+- Advertising ROI panel
+- After-sales metrics
+- Inventory and product health
+- Top product ranking
+- Store GMV ranking
+- Task status distribution
+- Agent run overview
+- Quota usage
+- Runtime health signals
+- Live event feed
+
+### Store Management
+
+Implemented:
+
+- Store list
+- Store creation
+- Store detail
+- Store business overview tab
+- Store settings tab
+- Service connection display
+- Authorization status display
+
+The latest design removed technical columns such as execution environment and last validation from the store list. Store rows now emphasize business-facing service tags such as Qianchuan and Feige.
+
+### Agent Center
+
+Implemented:
+
+- My Agents panel
+- Available Agents panel
+- Agent activation entry
+- Agent detail page
+- Run statistics
+- Run instructions
+- Task history
+- New task modal
+- Product launch image upload support
+
+Implemented Agent types:
+
+- Advertising Optimization Agent
+- Product Launch Agent
+- CRM Repurchase Agent
+- Login Guide Agent
+- Finance Reconciliation Agent
+
+Future P2 scope:
+
+- Agent template marketplace
+- Agent workflow orchestration
+
+### Model Center
+
+Implemented:
+
+- Agent-to-model assignment
+- Automatic model selection
+- Ark commerce vertical model option
+- Custom model creation and deletion
+- Monthly usage chart
+
+The current frontend uses mock data. Real provider validation and billing integration are not implemented.
+
+### Approval Center
+
+Implemented:
+
+- Approval list
+- Approval detail
+- Approve / reject actions
+- Sidebar pending approval badge
+- Agent-level approval policy page
+
+### Billing and Subscription
+
+Billing ledger includes:
+
+- Current plan summary
+- Monthly cost
+- Usage percentage
+- Estimated labor savings
+- Next payment date
+- Monthly usage chart
+- Current bill details
+- Historical invoice list
+
+Subscription page includes:
+
+- Current subscription
+- Free / Starter / Professional / Enterprise plans
+- Payment methods
+- Invoice information
+- Bank transfer details
+- Enterprise solution cards
+
+### Settings
+
+Implemented:
+
+- Member management
+- Approval policy
+- Notification settings
+
+## Data Layer
+
+The current frontend uses local mock APIs under:
 
 ```text
-run_started
-step_started
-step_completed
-approval_required
-login_required
-run_succeeded
-run_failed
+src/api/
+```
+
+Important mock API groups:
+
+- `businessDashboard.ts`
+- `storeBusiness.ts`
+- `agents.ts`
+- `agentMockData.ts`
+- `models.ts`
+- `approvalPolicies.ts`
+- `finance.ts`
+- `settings.ts`
+- `stores.ts`
+- `approvals.ts`
+- `auditLogs.ts`
+
+Backend integration has not started. When backend work begins, replace mock implementations with typed API clients while preserving the UI-facing response shapes where practical.
+
+## Backend Boundary
+
+The frontend must call only AllMall backend APIs:
+
+```text
+Portal -> AllMall Backend -> MuleRun / Agent Runtime
+```
+
+The frontend must not call MuleRun directly.
+
+MuleRun session binding, runtime events, approvals, artifacts, and audit logs should be represented through AllMall backend APIs.
+
+## API and Database Contract Notes
+
+Future API and database work must follow the repository-level conventions in the root `README.md`:
+
+- All AllMall-owned IDs use `int64` / `long`.
+- `platformId` is the database relationship field.
+- `platformCode` and `platformName` are display and Agent-context fields.
+- External runtime values use `*Ref`, for example `runtimeSessionRef`.
+- Public responses should return numeric status and error codes.
+- Error explanations should stay in documentation, SDK enums, internal logs, or frontend-localized copy.
+
+Relevant interface document:
+
+```text
+../docs/architecture/AllMall_SaaS_Agent_Interface_Specification_V0.1.html
 ```
 
 ## Suggested Directory Structure
 
+Current structure:
+
 ```text
 arkops-portal/
+  product-design.md
   README.md
-  public/
+  index.html
+  package.json
   src/
-    app/
-      router.tsx
-      providers.tsx
-      layout/
     api/
-      client.ts
-      stores.ts
-      tasks.ts
-      approvals.ts
-      auditLogs.ts
+    app/
+      i18n.tsx
+      layout/
+      providers.tsx
+      router.tsx
+      theme.tsx
     components/
-      AppShell/
-      StatusBadge/
-      EmptyState/
-      Timeline/
-    features/
-      auth/
-      dashboard/
-      stores/
-      tasks/
-      approvals/
-      auditLogs/
-      settings/
     pages/
-      LoginPage.tsx
-      DashboardPage.tsx
-      StoreListPage.tsx
-      StoreDetailPage.tsx
-      TaskListPage.tsx
-      TaskDetailPage.tsx
-      ApprovalListPage.tsx
-      ApprovalDetailPage.tsx
     styles/
-      tokens.css
-      global.css
     types/
-      domain.ts
-      api.ts
 ```
+
+The implementation currently uses page-level modules under `src/pages/` and mock API modules under `src/api/`.
 
 ## UX Principles
 
 - Build an operational SaaS console, not a marketing landing page.
-- Prioritize dense but readable information.
-- Use Ant Design tables, forms, tags, drawers, modals, tabs, timelines, and descriptions.
-- Make status, risk level, and required user action visually obvious.
-- Keep Agent execution explainable through timeline events, screenshots, logs, and approval records.
-- Do not expose MuleRun API keys or raw secrets in frontend code.
+- Keep information dense but readable.
+- Prefer tables, tabs, descriptions, progress indicators, badges, modals, and segmented controls for management workflows.
+- Make status, risk level, pending approval, runtime health, quota usage, and next user action easy to scan.
+- Keep Agent execution explainable through run history, evidence, approval records, and audit logs.
+- Do not expose MuleRun API keys, raw secrets, or platform credentials in frontend code.
 
-## Initial Development Order
+## Development Notes
 
-1. Scaffold Vite + React + TypeScript + Ant Design.
-2. Build AppShell, navigation, route layout, and mock API layer.
-3. Build Dashboard with mock data.
-4. Build Store List, Store Detail, and connectToken display flow.
-5. Build Task List and Task Detail Timeline.
-6. Build Approval List and Approval Detail.
-7. Replace mock API layer with real backend endpoints.
-
-## Backend Boundary
-
-The Portal should call only ArkOps backend APIs:
-
-```text
-Portal -> ArkOps Backend -> MuleRun / Agent Runtime
-```
-
-The frontend must not call MuleRun directly. MuleRun session binding, runtime events, approvals, artifacts, and audit logs should all be represented through ArkOps backend APIs.
-
+- Current implementation is frontend-only with mock data.
+- Backend API, database, auth service, and MuleRun runtime integration are still pending.
+- Before adding new pages, confirm the navigation and module scope in `product-design.md`.
+- Before adding API contracts, follow the root README API/data conventions.
+- Before replacing mock APIs, align with the SaaS-to-Agent interface specification and future database design.
