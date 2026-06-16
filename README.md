@@ -1,8 +1,8 @@
-# ArkOps AI Commerce Platform
+# AllMall AI Commerce Platform
 
-ArkOps is a cloud-based, multi-tenant AI commerce operations platform. It turns business goals into governed, auditable agent workflows for multi-store and multi-platform e-commerce teams.
+AllMall is a cloud-based, multi-tenant AI commerce operations platform. It turns business goals into governed, auditable agent workflows for multi-store and multi-platform e-commerce teams.
 
-ArkOps is designed to help teams manage operations with autonomous AI agents, controlled execution, tenant isolation, and human approval for high-risk actions.
+AllMall is designed to help teams manage operations with autonomous AI agents, controlled execution, tenant isolation, and human approval for high-risk actions.
 
 The platform targets scenarios where official platform APIs are limited, traditional RPA scripts are brittle, and manual operations cannot keep up with real-time changes in traffic, ROI, compliance rules, and customer behavior.
 
@@ -16,11 +16,11 @@ Modern e-commerce operations are increasingly complex:
 - Many high-value actions are not fully covered by official APIs.
 - Manual workflows are slow, expensive, and difficult to audit at scale.
 
-ArkOps addresses these problems with a four-layer multi-agent architecture that combines LLM reasoning, visual browser automation, compliance controls, isolated execution environments, and Human-in-the-Loop approval.
+AllMall addresses these problems with a four-layer multi-agent architecture that combines LLM reasoning, visual browser automation, compliance controls, isolated execution environments, and Human-in-the-Loop approval.
 
 ## Core Architecture
 
-ArkOps is organized into four vertical layers:
+AllMall is organized into four vertical layers:
 
 ```text
 Portal Layer
@@ -104,7 +104,7 @@ Key modules:
 
 ## Automation Workflows
 
-ArkOps is designed around reusable workflows that can be executed by agents and controlled by risk policies.
+AllMall is designed around reusable workflows that can be executed by agents and controlled by risk policies.
 
 ### Advertising Agent
 
@@ -165,7 +165,7 @@ Risk controls:
 
 ## Human-in-the-Loop Control
 
-ArkOps does not assume that every AI-generated action should be executed automatically.
+AllMall does not assume that every AI-generated action should be executed automatically.
 
 Human approval is required for high-risk operations such as:
 
@@ -338,7 +338,7 @@ Detailed messages may be shown in internal logs, developer tools, SDK enum descr
 
 ## Multi-Tenant Isolation
 
-ArkOps is designed for enterprise-grade multi-tenant operations.
+AllMall is designed for enterprise-grade multi-tenant operations.
 
 ### Data Isolation
 
@@ -369,7 +369,7 @@ Abnormal tenants can be rate-limited, paused, or moved into manual review mode.
 
 ## Observability and Replay
 
-ArkOps emphasizes traceability for both AI decisions and browser execution.
+AllMall emphasizes traceability for both AI decisions and browser execution.
 
 Evidence collected during execution may include:
 
@@ -387,114 +387,130 @@ This allows incidents to be reviewed by tenant, store, task, agent, and timeline
 
 ## Internal Beta MuleRun Integration
 
-During the internal beta stage, ArkOps can integrate with MuleRun through a lightweight `connectToken` flow. This allows the SaaS platform team and the agent team to work independently while still enabling realistic integration tests.
+During the internal beta stage, AllMall can integrate with MuleRun through a lightweight `connectToken` flow. This allows the SaaS platform team and the agent team to work independently while still enabling realistic integration tests.
 
 The recommended beta split is:
 
-- ArkOps owns tenants, users, stores, permissions, task records, approvals, audit logs, quotas, and billing.
+- AllMall owns tenants, users, stores, permissions, task records, approvals, audit logs, quotas, and billing.
 - MuleRun owns early high-value agent experiments, browser sandbox execution, and persisted browser sessions during beta testing.
-- ArkOps stores a runtime session reference instead of directly storing MuleRun browser cookies or platform tokens.
+- AllMall stores a runtime session reference instead of directly storing MuleRun browser cookies or platform tokens.
 
 ### Store Login Bootstrap
 
-For platforms such as TikTok Shop, login may require captcha, 2FA, or other human verification. ArkOps should model this as a Human Session Bootstrap or Re-authentication flow.
+For platforms such as Pinduoduo, Taobao, Douyin Shop, TikTok Shop, and other marketplaces, login may require captcha, 2FA, or other human verification. AllMall should model this as a Human Session Bootstrap or Re-authentication flow.
 
 In this flow, the user or operator completes the login manually inside the MuleRun browser sandbox. The agent then reuses the legally established browser session for later operations.
 
 The beta flow is:
 
 ```text
-1. A user adds a TikTok Shop store in ArkOps.
-2. ArkOps creates a pending Store Authorization record.
-3. ArkOps generates a short-lived connectToken.
-4. The user manually opens the TikTok Shop Login Bootstrap Agent in MuleRun.
+1. A user adds a Pinduoduo store in AllMall.
+2. AllMall creates a pending Store Authorization record.
+3. AllMall generates a short-lived connectToken.
+4. The user manually opens the Pinduoduo Login Bootstrap Agent in MuleRun.
 5. The user enters the connectToken into the MuleRun Agent.
 6. MuleRun opens its browser sandbox/profile.
-7. The user manually logs in to TikTok Shop and completes captcha, 2FA, or other checks.
+7. The user manually logs in to Pinduoduo and completes captcha, 2FA, or other checks.
 8. MuleRun persists the browser profile/session.
-9. MuleRun Agent calls ArkOps to bind the session back to the store.
-10. ArkOps marks the store as connected and stores the MuleRun session reference.
+9. MuleRun Agent calls AllMall to bind the session back to the store.
+10. AllMall marks the store as connected and stores the MuleRun session reference.
 ```
 
 The binding callback can use a payload like:
 
 ```json
 {
-  "connectToken": "arkops_connect_xxx",
-  "storeId": "store_001",
-  "platform": "tiktok_shop",
+  "connectToken": "amct_7F6p9xQ2",
+  "authorizationId": 30001,
+  "storeId": 20001,
+  "platformId": 1,
+  "platformCode": "pinduoduo",
+  "platformName": "拼多多",
   "runtimeProvider": "mulerun",
-  "runtimeSessionId": "mr_session_xxx",
-  "status": "connected"
+  "runtimeSessionRef": "mrs_pdd_store_001_20260613",
+  "runtimeProfileRef": "profile_pdd_001",
+  "authStatusCode": 20
 }
 ```
 
-ArkOps should store the result as a store authorization record:
+AllMall should store the result as a store authorization record:
 
 ```json
 {
-  "storeId": "store_001",
-  "platform": "tiktok_shop",
+  "storeId": 20001,
+  "platformId": 1,
+  "platformCode": "pinduoduo",
+  "platformName": "拼多多",
   "authMode": "mulerun_browser_profile",
   "runtimeProvider": "mulerun",
-  "runtimeSessionId": "mr_session_xxx",
-  "status": "connected"
+  "runtimeSessionId": 40001,
+  "runtimeSessionRef": "mrs_pdd_store_001_20260613",
+  "authStatusCode": 20
 }
 ```
 
 ### Agent Task Execution
 
-After the store session is bound, ArkOps can create agent tasks without sending the original store password or long-lived cookies to MuleRun.
+After the store session is bound, AllMall can create agent tasks without sending the original store password or long-lived cookies to MuleRun.
 
 Example task payload:
 
 ```json
 {
-  "taskId": "task_123",
-  "runId": "run_456",
-  "tenantId": "tenant_a",
-  "storeId": "store_001",
-  "platform": "tiktok_shop",
-  "agentType": "ads_optimizer",
+  "taskId": 50001,
+  "runId": 60001,
+  "tenantId": 10001,
+  "storeId": 20001,
+  "platformId": 1,
+  "platformCode": "pinduoduo",
+  "platformName": "拼多多",
+  "agentType": "competitor_research",
   "runtimeProvider": "mulerun",
-  "runtimeSessionId": "mr_session_xxx",
-  "goal": "Analyze low-ROI campaigns and propose budget changes",
-  "constraints": {
-    "maxBudgetChangePercent": 15,
-    "requiresApprovalAboveAmount": 500
+  "runtimeSessionId": 40001,
+  "runtimeSessionRef": "mrs_pdd_store_001_20260613",
+  "input": {
+    "targetProduct": {
+      "externalProductRef": "pdd_goods_123",
+      "title": "夏季女装短袖T恤"
+    },
+    "researchScope": {
+      "keywords": ["夏季女装短袖", "纯棉T恤女"],
+      "maxCompetitors": 20
+    }
   },
-  "callbackUrl": "https://api.arkops.example.com/agent-events"
+  "callbackUrl": "https://api.allmall.example.com/agent-events"
 }
 ```
 
-MuleRun loads the referenced browser profile, verifies that the session is still valid, runs the agent workflow, and sends status updates, screenshots, logs, approval requests, and final results back to ArkOps.
+MuleRun loads the referenced browser profile, verifies that the session is still valid, runs the agent workflow, and sends status updates, screenshots, logs, approval requests, and final results back to AllMall.
 
-If the session expires or a new human verification step appears, MuleRun should stop automation and send a `login_required` event to ArkOps:
+If the session expires or a new human verification step appears, MuleRun should stop automation and send a `login_required` event to AllMall:
 
 ```json
 {
   "eventType": "login_required",
-  "tenantId": "tenant_a",
-  "storeId": "store_001",
-  "runId": "run_456",
-  "reason": "TikTok Shop session expired or requires human verification"
+  "tenantId": 10001,
+  "storeId": 20001,
+  "runId": 60001,
+  "runtimeSessionId": 40001,
+  "reasonCode": 2003
 }
 ```
 
-ArkOps can then notify the user and start another bootstrap or re-authentication flow.
+AllMall can then notify the user and start another bootstrap or re-authentication flow.
 
 ### Future Upgrade Path
 
-The `connectToken` flow is intentionally simple for beta testing. If MuleRun later provides an API that can create a user-facing browser session URL, ArkOps can upgrade to this flow:
+The `connectToken` flow is intentionally simple for beta testing. If MuleRun later provides an API that can create a user-facing browser session URL, AllMall can upgrade to this flow:
 
 ```text
-ArkOps Backend -> MuleRun API -> create session -> return login URL
-ArkOps Frontend -> opens login URL for the user
+AllMall Backend -> MuleRun API -> create session -> return login URL
+AllMall Frontend -> opens login URL for the user
 MuleRun -> persists browser profile
-MuleRun -> callbacks ArkOps with session_established
+MuleRun -> callbacks AllMall with session_established
 ```
 
-Because ArkOps stores only a runtime session reference, MuleRun can later be replaced or complemented by a self-hosted Claw Runner without redesigning the tenant, store, task, approval, and audit models.
+Because AllMall stores only a runtime session reference, MuleRun can later be replaced or complemented by a self-hosted Claw Runner without redesigning the tenant, store, task, approval, and audit models.
 
 ## MVP Roadmap
 
@@ -508,9 +524,10 @@ Because ArkOps stores only a runtime session reference, MuleRun can later be rep
 
 ### Phase 2: First High-Value Agent
 
-- Start with an advertising monitoring agent or product launch agent
-- Add strategy thresholds, compliance checks, circuit breakers, and human approval
-- Convert successful flows into reusable SOP templates
+- Start with the Pinduoduo competitor research agent
+- Complete store login binding, browser session reuse, screenshot evidence, raw data capture, and final report callbacks
+- Add human approval for competitor selection, price definition, and low-confidence conclusions
+- Convert the successful flow into reusable SOP and Agent interface templates
 
 ### Phase 3: Scaled Operations
 
@@ -536,16 +553,17 @@ Because ArkOps stores only a runtime session reference, MuleRun can later be rep
 
 ## Repository Contents
 
-This repository currently contains design artifacts, business planning materials, and the ArkOps Portal MVP frontend:
+This repository currently contains design artifacts, business planning materials, and the AllMall Portal MVP frontend:
 
-- `docs/architecture/ArkOps_V0.1.html`: the latest high-level visual architecture document
-- `docs/architecture/ArkOps_Internal_Technical_Route_V0.1.html`: combined platform architecture, internal technical route, and MuleRun beta integration plan
-- `docs/architecture/ArkOps_SaaS_Technical_Architecture_V0.1.html`: SaaS platform technical architecture
-- `docs/architecture/ArkOps_SaaS_Database_Design_V0.1.html`: SaaS platform database design
-- `docs/architecture/ArkOps_SaaS_API_Specification_V0.1.html`: SaaS platform API specification
-- `docs/architecture/ArkOps_AI_Vertical_Model_Technical_Route_V0.1.html`: AI vertical model technical architecture and roadmap
+- `docs/architecture/AllMall_V0.1.html`: the latest high-level visual architecture document
+- `docs/architecture/AllMall_Internal_Technical_Route_V0.3.html`: combined platform architecture, internal technical route, team collaboration plan, and MuleRun beta integration plan
+- `docs/architecture/AllMall_SaaS_Technical_Architecture_V0.1.html`: SaaS platform technical architecture
+- `docs/architecture/AllMall_SaaS_Database_Design_V0.1.html`: SaaS platform database design
+- `docs/architecture/AllMall_SaaS_API_Specification_V0.1.html`: SaaS platform API specification
+- `docs/architecture/AllMall_SaaS_Agent_Interface_Specification_V0.1.html`: SaaS-to-Agent interface specification for login binding and competitor research
+- `docs/architecture/AllMall_AI_Vertical_Model_Technical_Route_V0.1.html`: AI vertical model technical architecture and roadmap
 - `docs/architecture/system design.html`: an earlier system design document
-- `arkops-portal/`: React + TypeScript + Vite + Ant Design frontend MVP
+- `arkops-portal/`: React + TypeScript + Vite + Ant Design frontend MVP; the directory name is legacy, while the product name is AllMall
 - `Business Plan/`: business plan markdown, PDF, and architecture diagrams
 - `docs/document requirement.docx`: requirement notes
 
