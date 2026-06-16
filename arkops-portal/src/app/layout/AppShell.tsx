@@ -3,10 +3,14 @@ import {
   BellOutlined,
   CheckSquareOutlined,
   CreditCardOutlined,
+  CrownOutlined,
   DashboardOutlined,
   DesktopOutlined,
+  DollarOutlined,
+  ExperimentOutlined,
   MoonOutlined,
-  RobotOutlined,
+  SafetyCertificateOutlined,
+  SettingOutlined,
   ShopOutlined,
   SunOutlined,
   TeamOutlined
@@ -15,6 +19,8 @@ import { Avatar, Badge, Button, Layout, Menu, Segmented, Space, Typography } fro
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n';
 import { useTheme } from '../theme';
+import { dashboardApi } from '../../api/dashboard';
+import { useQuery } from '@tanstack/react-query';
 
 const { Header, Sider, Content } = Layout;
 
@@ -23,20 +29,46 @@ export function AppShell() {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useI18n();
   const { mode, setMode } = useTheme();
+  const { data: dashboard } = useQuery({
+    queryKey: ['dashboard'],
+    queryFn: dashboardApi.getSummary,
+    refetchInterval: 30_000
+  });
+  const pendingCount = dashboard?.pendingApprovals ?? 0;
+
   const menuItems = [
     { key: '/dashboard', icon: <DashboardOutlined />, label: t('nav.dashboard') },
     { key: '/stores', icon: <ShopOutlined />, label: t('nav.stores') },
-    { key: '/tasks', icon: <RobotOutlined />, label: t('nav.tasks') },
-    { key: '/approvals', icon: <CheckSquareOutlined />, label: t('nav.approvals') },
+    { key: '/agents', icon: <SettingOutlined />, label: t('nav.agents') },
+    { key: '/models', icon: <ExperimentOutlined />, label: t('nav.models') },
+    {
+      key: '/approvals',
+      icon: <CheckSquareOutlined />,
+      label: (
+        <span>
+          {t('nav.approvals')}
+          {pendingCount > 0 && (
+            <Badge
+              count={pendingCount}
+              size="small"
+              offset={[8, -2]}
+              style={{ marginLeft: 8 }}
+            />
+          )}
+        </span>
+      )
+    },
     { key: '/audit-logs', icon: <AuditOutlined />, label: t('nav.auditLogs') },
+    { key: '/billing', icon: <DollarOutlined />, label: t('nav.billing') },
+    { key: '/subscription', icon: <CrownOutlined />, label: t('nav.subscription') },
     {
       key: 'settings',
       icon: <TeamOutlined />,
       label: t('nav.settings'),
       children: [
         { key: '/settings/members', label: t('nav.members') },
-        { key: '/settings/notifications', label: t('nav.notifications') },
-        { key: '/settings/billing', label: t('nav.billing') }
+        { key: '/settings/approval-policy', label: t('nav.approvalPolicy') },
+        { key: '/settings/notifications', label: t('nav.notifications') }
       ]
     }
   ];

@@ -225,7 +225,7 @@ export function DashboardLiveFeed({ tasks, approvals }: { tasks: Task[]; approva
               <Typography.Text strong>{event.title}</Typography.Text>
               <Typography.Text>{event.summary}</Typography.Text>
               <Space size={10} wrap>
-                {event.taskId ? <Link to={`/tasks/${event.taskId}`}>{t('dashboard.openTask')}</Link> : null}
+                {event.taskId ? <Link to="/agents">{t('dashboard.openTask')}</Link> : null}
                 {event.approvalId ? <Link to={`/approvals/${event.approvalId}`}>{t('dashboard.openApproval')}</Link> : null}
               </Space>
             </span>

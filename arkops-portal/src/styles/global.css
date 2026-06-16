@@ -195,6 +195,102 @@ body {
   background: #dc2626;
 }
 
+/* Store business trend overrides */
+.trend-bar-gmv {
+  background: #2563eb;
+}
+
+/* Usage chart - compact */
+.usage-chart {
+  min-height: 120px !important;
+  gap: 10px;
+}
+
+.usage-chart .trend-bars {
+  height: 100px;
+}
+
+.trend-bar-orders {
+  background: #f59e0b;
+}
+
+.legend-gmv {
+  background: #2563eb;
+}
+
+.legend-orders {
+  background: #f59e0b;
+}
+
+/* Stat cards */
+.stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-primary {
+  border-left: 3px solid #2563eb;
+}
+
+.stat-card-success {
+  border-left: 3px solid #0f766e;
+}
+
+.stat-card-purple {
+  border-left: 3px solid #7c3aed;
+}
+
+.stat-card-warning {
+  border-left: 3px solid #ea580c;
+}
+
+.stat-card .stat-card-icon {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 28px;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+/* Ad section */
+.ad-card .ad-stat {
+  padding: 4px 0;
+}
+
+/* Section cards */
+.section-card {
+  height: 100%;
+}
+
+/* Products card */
+.products-card {
+  margin-top: 0;
+}
+
+/* Campaign row */
+.campaign-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ark-border);
+}
+
+.campaign-row:last-child {
+  border-bottom: none;
+}
+
+/* Low stock row */
+.low-stock-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: var(--ark-panel-soft);
+  border-radius: 6px;
+}
+
 .chart-legend {
   display: flex;
   flex-wrap: wrap;
@@ -310,22 +406,32 @@ body {
 
 .agent-mix-row {
   display: grid;
-  grid-template-columns: minmax(128px, 1fr) minmax(88px, 1.1fr) 28px;
-  gap: 10px;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.agent-mix-row:last-child {
+  margin-bottom: 0;
+}
+
+.agent-mix-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
-.agent-mix-row > div {
-  height: 9px;
-  overflow: hidden;
+.agent-mix-bar-track {
+  height: 14px;
   border-radius: 999px;
   background: var(--ark-border-soft);
+  overflow: hidden;
 }
 
-.agent-mix-row > div span {
-  display: block;
+.agent-mix-bar {
   height: 100%;
-  border-radius: inherit;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+  min-width: 8px;
 }
 
 .health-row {
@@ -718,7 +824,7 @@ body {
   }
 
   .agent-mix-row {
-    grid-template-columns: 1fr;
+    gap: 6px;
   }
 
   .agent-live-line {

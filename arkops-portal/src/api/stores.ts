@@ -1,6 +1,7 @@
 import { makeConnectToken, mockDelay } from './client';
+import { storeConfigs } from './storeMockData';
 import { stores, tasks } from './mockData';
-import type { Store } from '../types/domain';
+import type { Store, StoreConfig, StoreConnection } from '../types/domain';
 
 export const storesApi = {
   list: () => mockDelay([...stores]),
@@ -12,22 +13,85 @@ export const storesApi = {
       connectToken: makeConnectToken(storeId),
       expiresInMinutes: 30
     }),
-  create: (input: Pick<Store, 'name' | 'platform'>) => {
+  create: (input: { name: string; platform: string; authMethod?: Store['authMethod']; apiKey?: string; apiSecret?: string; account?: string; password?: string; region?: string; currency?: string; maxBudgetAdjust?: number; operationWindowStart?: string; operationWindowEnd?: string; autoReconnectRetry?: number; maxRetries?: number }) => {
     const store: Store = {
       id: `store_${String(stores.length + 1).padStart(3, '0')}`,
       name: input.name,
       platform: input.platform,
       status: 'pending_login',
+      authMethod: input.authMethod ?? 'credentials',
       runtimeProvider: 'mulerun',
+      apiKey: input.apiKey,
+      apiSecret: input.apiSecret ? `••••${input.apiSecret.slice(-4)}` : undefined,
+      account: input.account,
+      region: input.region,
+      currency: input.currency,
       createdAt: new Date().toISOString(),
-      recentTaskIds: []
+      recentTaskIds: [],
+      connections: []
     };
     stores.unshift(store);
+    // Auto-create store config
+    storeConfigs.push({
+      storeId: store.id,
+      riskThresholds: { maxBudgetAdjustment: input.maxBudgetAdjust ?? 200, highRiskActions: ['adjust_budget', 'pause_campaign'] },
+      operationWindow: { enabled: true, startTime: input.operationWindowStart ?? '09:00', endTime: input.operationWindowEnd ?? '22:00', timezone: 'Asia/Shanghai' },
+      autoReconnect: { enabled: true, retryAfterMinutes: input.autoReconnectRetry ?? 5, maxRetries: input.maxRetries ?? 3 },
+      approvalRules: { useIndependentApprover: false, enableSecondApproval: false }
+    });
     return mockDelay(store);
   },
   updateStatus: (storeId: string, status: Store['status']) => {
     const store = stores.find((item) => item.id === storeId);
     if (store) store.status = status;
     return mockDelay(store);
+  },
+  getConfig: (storeId: string): Promise<StoreConfig> => {
+    const existing = storeConfigs.find((c) => c.storeId === storeId);
+    if (existing) return mockDelay(existing);
+    const defaults: StoreConfig = {
+      storeId,
+      riskThresholds: { maxBudgetAdjustment: 200, highRiskActions: ['adjust_budget', 'pause_campaign'] },
+      operationWindow: { enabled: true, startTime: '09:00', endTime: '22:00', timezone: 'Asia/Shanghai' },
+      autoReconnect: { enabled: true, retryAfterMinutes: 5, maxRetries: 3 },
+      approvalRules: { useIndependentApprover: false, enableSecondApproval: false }
+    };
+    storeConfigs.push(defaults);
+    return mockDelay(defaults);
+  },
+  saveConfig: (storeId: string, input: Partial<StoreConfig>): Promise<StoreConfig> => {
+    const idx = storeConfigs.findIndex((c) => c.storeId === storeId);
+    if (idx !== -1) {
+      storeConfigs[idx] = { ...storeConfigs[idx], ...input, storeId };
+      return mockDelay(storeConfigs[idx]);
+    }
+    const defaults: StoreConfig = {
+      storeId,
+      riskThresholds: { maxBudgetAdjustment: 200, highRiskActions: [] },
+      operationWindow: { enabled: true, startTime: '09:00', endTime: '22:00', timezone: 'Asia/Shanghai' },
+      autoReconnect: { enabled: true, retryAfterMinutes: 5, maxRetries: 3 },
+      approvalRules: { useIndependentApprover: false, enableSecondApproval: false },
+      ...input
+    };
+    storeConfigs.push(defaults);
+    return mockDelay(defaults);
+  },
+  addConnection: (storeId: string, input: { serviceName: string; serviceType: StoreConnection['serviceType']; authMethod: Store['authMethod']; apiKey?: string; account?: string }): Promise<StoreConnection> => {
+    const store = stores.find((s) => s.id === storeId);
+    const conn: StoreConnection = {
+      id: `conn_${String(storeId)}_${Date.now()}`,
+      serviceName: input.serviceName,
+      serviceType: input.serviceType,
+      authMethod: input.authMethod,
+      status: 'pending_login',
+      apiKey: input.apiKey,
+      account: input.account,
+      runtimeProvider: input.authMethod === 'api_key' ? 'direct' : 'mulerun',
+      createdAt: new Date().toISOString()
+    };
+    if (store) {
+      store.connections.push(conn);
+    }
+    return mockDelay(conn);
   }
 };
