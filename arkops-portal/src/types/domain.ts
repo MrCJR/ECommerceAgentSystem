@@ -80,6 +80,8 @@ export interface Approval {
   id: string;
   taskId: string;
   storeId: string;
+  storeName: string;
+  agentType: string;
   title: string;
   reason: string;
   proposedAction: string;

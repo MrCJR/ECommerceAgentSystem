@@ -13,10 +13,16 @@ export function ApprovalListPage() {
   const { t } = useI18n();
   const { data = [] } = useQuery({ queryKey: ['approvals'], queryFn: approvalsApi.list });
   const columns: ColumnsType<Approval> = [
-    { title: t('approvals.approval'), dataIndex: 'title', render: (title, record) => <Link to={`/approvals/${record.id}`}>{title}</Link> },
-    { title: t('stores.status'), dataIndex: 'status', render: (status) => <StatusBadge value={status} /> },
-    { title: t('tasks.risk'), dataIndex: 'riskLevel', render: (risk) => <StatusBadge value={risk} /> },
-    { title: t('approvals.requested'), dataIndex: 'requestedAt', render: (value) => dayjs(value).format('YYYY-MM-DD HH:mm') }
+    {
+      title: t('approvals.agentHeader'),
+      dataIndex: 'agentType',
+      render: (agentType: string) => t(`agent.${agentType}`)
+    },
+    { title: t('approvals.storeHeader'), dataIndex: 'storeName' },
+    { title: t('approvals.item'), dataIndex: 'title', render: (title, record) => <Link to={`/approvals/${record.id}`}>{title}</Link> },
+    { title: t('approvals.riskHeader'), dataIndex: 'riskLevel', render: (risk) => <StatusBadge value={risk} />, width: 100 },
+    { title: t('approvals.statusHeader'), dataIndex: 'status', render: (status) => <StatusBadge value={status} />, width: 100 },
+    { title: t('approvals.requested'), dataIndex: 'requestedAt', render: (value) => dayjs(value).format('YYYY-MM-DD HH:mm'), width: 160 }
   ];
   return (
     <div className="page-stack">

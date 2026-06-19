@@ -48,15 +48,17 @@ export function ApprovalDetailPage() {
       />
       <Card>
         <Descriptions column={2}>
-          <Descriptions.Item label={t('stores.status')}>
-            <StatusBadge value={approval.status} />
-          </Descriptions.Item>
-          <Descriptions.Item label={t('tasks.risk')}>
+          <Descriptions.Item label={t('approvals.agentHeader')}>{t(`agent.${approval.agentType}`)}</Descriptions.Item>
+          <Descriptions.Item label={t('approvals.storeHeader')}>{approval.storeName}</Descriptions.Item>
+          <Descriptions.Item label={t('approvals.item')}>{approval.title}</Descriptions.Item>
+          <Descriptions.Item label={t('approvals.riskHeader')}>
             <StatusBadge value={approval.riskLevel} />
           </Descriptions.Item>
-          <Descriptions.Item label={t('entity.task')}>{approval.taskId}</Descriptions.Item>
-          <Descriptions.Item label={t('stores.store')}>{approval.storeId}</Descriptions.Item>
+          <Descriptions.Item label={t('approvals.statusHeader')}>
+            <StatusBadge value={approval.status} />
+          </Descriptions.Item>
           <Descriptions.Item label={t('approvals.requested')}>{dayjs(approval.requestedAt).format('YYYY-MM-DD HH:mm')}</Descriptions.Item>
+          <Descriptions.Item label={t('entity.task')}>{approval.taskId}</Descriptions.Item>
           <Descriptions.Item label={t('approvals.decided')}>
             {approval.decidedAt ? dayjs(approval.decidedAt).format('YYYY-MM-DD HH:mm') : t('approvals.waiting')}
           </Descriptions.Item>
