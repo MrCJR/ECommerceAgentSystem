@@ -178,6 +178,33 @@ export const tasks: Task[] = [
         at: now.subtract(5, 'hour').toISOString()
       }
     ]
+  },
+  {
+    id: 'task_004',
+    title: 'TikTok Shop 店铺会话检测',
+    storeId: 'store_001',
+    agentType: 'login_bootstrap',
+    goal: '定时检测店铺登录态，如果掉线则自动拉起登录流程。',
+    status: 'running',
+    riskLevel: 'low',
+    createdAt: now.subtract(1, 'hour').toISOString(),
+    updatedAt: now.subtract(30, 'minute').toISOString(),
+    timeline: [
+      {
+        id: 'evt_c01',
+        type: 'run_started',
+        title: '开始会话检测',
+        summary: '对 TikTok Shop 美国旗舰店发起登录态检测。',
+        at: now.subtract(1, 'hour').toISOString()
+      },
+      {
+        id: 'evt_c02',
+        type: 'step_completed',
+        title: '会话状态正常',
+        summary: 'TikTok Shop 店铺登录态有效，无需重新登录。',
+        at: now.subtract(30, 'minute').toISOString()
+      }
+    ]
   }
 ];
 

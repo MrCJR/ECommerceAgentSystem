@@ -8,7 +8,7 @@ export type TaskStatus =
   | 'waiting_approval'
   | 'succeeded'
   | 'failed'
-  | 'canceled';
+  | 'cancelled';
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected' | 'expired';
 export type RiskLevel = 'low' | 'medium' | 'high';
 
@@ -115,16 +115,39 @@ export interface Member {
 
 export type AgentTriggerMode = 'manual' | 'scheduled' | 'event';
 
+export type AgentType =
+  | 'login_bootstrap'
+  | 'product_launch'
+  | 'ads_optimizer'
+  | 'pricing_strategy'
+  | 'crm_retention'
+  | 'review_manager'
+  | 'customer_service'
+  | 'after_sales'
+  | 'competitor_intel'
+  | 'creative_factory'
+  | 'inventory_alert'
+  | 'risk_control'
+  | 'finance_audit';
+
+export type AgentLayer = 'foundation' | 'traffic' | 'growth' | 'support' | 'standalone';
+
 export interface AgentConfig {
   agentType: AgentType;
   displayName: string;
   description: string;
   icon: string;
+  layer: AgentLayer;
   riskLevel: RiskLevel;
   triggerMode: AgentTriggerMode;
+  needsConfig: boolean;
+  needsApproval: boolean;
+  dependsOn: AgentType[];
+  servesFor: AgentType[];
+  required: boolean;           // 必须启用，不可关闭
   cronExpression?: string;
   eventTrigger?: string;
-  executionParams: { key: string; label: string; defaultValue: string }[];
+  executionParams: { key: string; label: string; defaultValue: string; type?: 'number' | 'text' | 'select'; options?: string[] }[];
   riskGuard: {
     maxBudgetPerAction: number;
     actionWhitelist: string[];
@@ -145,6 +168,54 @@ export interface AgentConfig {
   };
   timeoutMinutes: number;
   enabled: boolean;
+  strategyConfig?: AgentStrategyConfig;
+}
+
+export type PricingMode = 'market' | 'cost' | 'manual';
+
+export interface AgentStrategyConfig {
+  pricingRule?: {
+    mode: PricingMode;
+    // 市场驱动
+    targetMargin?: number;
+    competitorStrategy?: 'undercut' | 'match' | 'premium';
+    // 成本驱动
+    costMultiplier?: number;
+    roundUp?: boolean;
+    costFile?: string;
+    // 自主定价
+    floorPrice?: number;
+    ceilingPrice?: number;
+    // 通用
+    currency: string;
+  };
+  adSpendBudget?: { dailyCap: number; monthlyCap: number };
+  seoKeywords?: { keywords: string[]; lastGenerated: string; source: string };
+  targetAudience?: { tags: string[]; lastGenerated: string; source: string };
+  crmConfig?: { discountCap: number; segmentCount: number };
+  afterSalesConfig?: { autoRefundCap: number; returnAddress: string };
+  creativeConfig?: { outputSizes: string; copyTone: string };
+  riskControlConfig?: RiskControlConfig;
+}
+
+export interface RiskControlConfig {
+  compliance: {
+    adLawFilter: boolean;          // 广告法禁用词过滤
+    platformRuleCheck: boolean;    // 平台规则合规检测
+    falseClaimDetection: boolean;  // 虚假宣传检测
+  };
+  behavior: {
+    roiFloorThreshold: number;     // ROI 红线
+    actionFrequencyLimit: number;  // 操作频率限制（次/分钟）
+    priceDeviationPercent: number; // 价格异常偏差阈值（%）
+  };
+  business: {
+    minPriceRatio: number;         // 最低售价（成本×）
+    categoryMatchCheck: boolean;   // 类目错放检测
+    imageComplianceCheck: boolean; // 图片合规检测（水印/Logo/版权）
+    inventorySafetyCheck: boolean; // 库存透支保护
+    negativeReviewSurgeCheck: boolean; // 差评激增预警
+  };
 }
 
 export interface AgentRunStats {
@@ -156,8 +227,6 @@ export interface AgentRunStats {
   trend: { date: string; runs: number; successRate: number }[];
   failureReasons: { reason: string; count: number }[];
 }
-
-export type AgentType = 'login_bootstrap' | 'ads_optimizer' | 'product_launch' | 'crm_retention' | 'finance_audit';
 
 // ===== Store Config =====
 

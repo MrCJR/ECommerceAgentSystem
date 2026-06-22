@@ -836,3 +836,178 @@ body {
     min-height: 320px;
   }
 }
+
+/* ===== Agent Center ===== */
+
+.agent-section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.agent-layer-bar {
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.agent-card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.agent-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.agent-card-desc {
+  font-size: 12px;
+  color: var(--ark-muted);
+  margin-bottom: 8px;
+  flex: 1;
+}
+
+.agent-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.agent-card-dep-warning {
+  margin-top: 4px;
+}
+
+.agent-card-action {
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+/* ===== Agent 运行逻辑流程图 ===== */
+
+.agent-flow-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 16px;
+  position: relative;
+}
+
+.agent-flow-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.agent-flow-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  padding: 0 8px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.agent-flow-node--foundation {
+  background: #dc2626;
+}
+
+.agent-flow-node--traffic {
+  background: #2563eb;
+}
+
+.agent-flow-node--growth {
+  background: #16a34a;
+}
+
+.agent-flow-node--support {
+  background: #7c3aed;
+}
+
+.agent-flow-node--standalone {
+  background: #ea580c;
+}
+
+.agent-flow-arrow {
+  font-size: 18px;
+  color: var(--ark-muted);
+  flex-shrink: 0;
+}
+
+.agent-flow-split {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.agent-flow-split-vbar {
+  width: 2px;
+  min-height: 70px;
+  border-radius: 1px;
+}
+
+.agent-flow-side {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  padding: 8px 0;
+  border-top: 1px dashed var(--ark-border);
+  border-bottom: 1px dashed var(--ark-border);
+  width: 100%;
+  max-width: 800px;
+}
+
+.agent-flow-sublist {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 140px;
+}
+
+.agent-flow-guard {
+  padding: 10px 24px;
+  border: 2px dashed #ea580c;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(234, 88, 12, 0.04);
+}
+
+@media (max-width: 768px) {
+  .agent-flow-row {
+    gap: 2px;
+  }
+
+  .agent-flow-node {
+    font-size: 10px;
+    height: 28px;
+    padding: 0 6px;
+    border-radius: 6px;
+  }
+
+  .agent-flow-arrow {
+    font-size: 14px;
+  }
+
+  .agent-flow-side {
+    gap: 16px;
+    flex-direction: column;
+    align-items: center;
+  }
+}
