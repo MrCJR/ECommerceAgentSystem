@@ -19,17 +19,17 @@ import {
   WarningOutlined
 } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Col, Descriptions, Form, Input, Modal, Progress, Row, Select, Space, Statistic, Switch, Table, Tabs, Tag, TimePicker, Typography, message } from 'antd';
+import { Button, Card, Col, Descriptions, Form, Input, Modal, Progress, Row, Select, Space, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { storeBusinessApi } from '../api/storeBusiness';
 import { storesApi } from '../api/stores';
 import { useI18n } from '../app/i18n';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
-import type { Store, StoreBusinessDetail, StoreConfig, StoreConnection, StoreServiceType, TaskStatus } from '../types/domain';
+import type { Store, StoreBusinessDetail, StoreConnection, StoreServiceType } from '../types/domain';
 
 export function StoreDetailPage({ mode }: { mode?: 'new' }) {
   const { t } = useI18n();
@@ -37,22 +37,10 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
-  const [configForm] = Form.useForm();
-  const [configEditing, setConfigEditing] = useState(false);
 
   const { data: store } = useQuery({
     queryKey: ['store', storeId],
     queryFn: () => storesApi.get(storeId!),
-    enabled: Boolean(storeId) && mode !== 'new'
-  });
-  const { data: tasks = [] } = useQuery({
-    queryKey: ['store-tasks', storeId],
-    queryFn: () => storesApi.recentTasks(storeId!),
-    enabled: Boolean(storeId) && mode !== 'new'
-  });
-  const { data: storeConfig } = useQuery({
-    queryKey: ['store-config', storeId],
-    queryFn: () => storesApi.getConfig(storeId!),
     enabled: Boolean(storeId) && mode !== 'new'
   });
   const { data: storeBiz } = useQuery({
@@ -63,14 +51,6 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
   const createStore = useMutation({
     mutationFn: storesApi.create,
     onSuccess: (created) => navigate(`/stores/${created.id}`)
-  });
-  const configMutation = useMutation({
-    mutationFn: (input: Partial<StoreConfig>) => storesApi.saveConfig(storeId!, input),
-    onSuccess: () => {
-      message.success(t('stores.configSaved'));
-      queryClient.invalidateQueries({ queryKey: ['store-config', storeId] });
-      setConfigEditing(false);
-    }
   });
   const revokeMutation = useMutation({
     mutationFn: () => storesApi.updateStatus(storeId!, 'revoked'),
@@ -88,22 +68,6 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
       connectionForm.resetFields();
     }
   });
-
-  useEffect(() => {
-    if (storeConfig && configEditing) {
-      configForm.setFieldsValue({
-        maxBudgetAdjustment: storeConfig.riskThresholds.maxBudgetAdjustment,
-        operationWindowEnabled: storeConfig.operationWindow.enabled,
-        startTime: storeConfig.operationWindow.enabled ? dayjs(storeConfig.operationWindow.startTime, 'HH:mm') : undefined,
-        endTime: storeConfig.operationWindow.enabled ? dayjs(storeConfig.operationWindow.endTime, 'HH:mm') : undefined,
-        autoReconnectEnabled: storeConfig.autoReconnect.enabled,
-        retryAfterMinutes: storeConfig.autoReconnect.retryAfterMinutes,
-        maxRetries: storeConfig.autoReconnect.maxRetries,
-        useIndependentApprover: storeConfig.approvalRules.useIndependentApprover,
-        enableSecondApproval: storeConfig.approvalRules.enableSecondApproval
-      });
-    }
-  }, [storeConfig, configEditing, configForm]);
 
   const [authMethod, setAuthMethod] = useState<Store['authMethod'] | undefined>();
   const [platform, setPlatform] = useState<string>('tiktok_shop');
@@ -153,7 +117,7 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
           </Row>
         </Card>
 
-        {/* 步骤3：授权配置 + 运营配置 */}
+        {/* 步骤3：授权配置 */}
         {authMethod && (
           <Card title={<><SettingOutlined /> {t('stores.stepConfig')}</>}>
             <Form
@@ -162,10 +126,7 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
               onFinish={(values) => createStore.mutate({
                 name: values.name, platform, authMethod,
                 apiKey: values.apiKey, apiSecret: values.apiSecret, account: values.account,
-                region: values.region, currency: values.currency,
-                maxBudgetAdjust: values.maxBudgetAdjust, operationWindowStart: values.operationWindowStart ? values.operationWindowStart.format('HH:mm') : undefined,
-                operationWindowEnd: values.operationWindowEnd ? values.operationWindowEnd.format('HH:mm') : undefined,
-                autoReconnectRetry: values.autoReconnectRetry, maxRetries: values.maxRetries
+                region: values.region, currency: values.currency
               })}
             >
               <Form.Item name="name" hidden><Input /></Form.Item>
@@ -216,23 +177,8 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
                 </div>
               )}
 
-              {/* --- 运营配置区 --- */}
-               <Typography.Title level={5} style={{ marginTop: 32, marginBottom: 16, paddingBottom: 8, borderBottom: '1px solid #f0f0f0' }}>
-                 <SettingOutlined style={{ marginRight: 8 }} />{t('stores.configTitle')}
-               </Typography.Title>
-
-               <Form.Item label={t('stores.maxBudgetAdjust')} name="maxBudgetAdjust" initialValue={200}>
-                 <Select options={[
-                   { value: 100, label: t('stores.budgetConservative') },
-                   { value: 200, label: t('stores.budgetStandard') },
-                   { value: 500, label: t('stores.budgetAggressive') }
-                 ]} />
-               </Form.Item>
-               <Form.Item label={t('stores.operationWindow')} name="operationWindowEnabled" initialValue={true} valuePropName="checked"><Switch /></Form.Item>
-               <Form.Item label={t('stores.windowTime')}><Space><Form.Item name="operationWindowStart" noStyle initialValue={dayjs('09:00', 'HH:mm')}><TimePicker format="HH:mm" size="small" /></Form.Item><span>-</span><Form.Item name="operationWindowEnd" noStyle initialValue={dayjs('22:00', 'HH:mm')}><TimePicker format="HH:mm" size="small" /></Form.Item></Space></Form.Item>
-               <Form.Item label={t('stores.autoReconnect')} name="autoReconnectEnabled" initialValue={true} valuePropName="checked"><Switch /></Form.Item>
-
-               <Button type="primary" htmlType="submit" loading={createStore.isPending} block size="large" style={{ marginTop: 24 }}>
+              {/* 提交按钮 */}
+              <Button type="primary" htmlType="submit" loading={createStore.isPending} block size="large" style={{ marginTop: 24 }}>
                 {t('stores.create')}
               </Button>
             </Form>
@@ -301,7 +247,7 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label={t('stores.status')}>{store ? <StatusBadge value={store.status} /> : null}</Descriptions.Item>
-          <Descriptions.Item label={t('stores.runtimeSession')}>{store?.runtimeSessionId ?? t('stores.notBound')}</Descriptions.Item>
+
           {store?.apiKey && <Descriptions.Item label="API Key"><Typography.Text code>{store.apiKey}</Typography.Text></Descriptions.Item>}
           {store?.account && <Descriptions.Item label={t('stores.account')}>{store.account}</Descriptions.Item>}
           {store?.region && <Descriptions.Item label={t('stores.region')}>{store.region}</Descriptions.Item>}
@@ -309,53 +255,10 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
         </Descriptions>
       </Card>
 
-      {/* 运营配置 */}
+      {/* 服务授权 */}
       <Card
-        title={<><SettingOutlined /> {t('stores.configTitle')}</>}
-        extra={!configEditing ? <Button icon={<SettingOutlined />} onClick={() => setConfigEditing(true)}>{t('common.edit')}</Button> : <Space><Button onClick={() => setConfigEditing(false)}>{t('common.cancel')}</Button><Button type="primary" onClick={() => configForm.submit()}>{t('common.save')}</Button></Space>}
-        style={{ marginBottom: 16 }}
-      >
-        {!configEditing && storeConfig ? (
-          <Descriptions column={{ xs: 1, sm: 2 }} size="small">
-            <Descriptions.Item label={t('stores.maxBudgetAdjust')}>
-              <Tag color={storeConfig.riskThresholds.maxBudgetAdjustment <= 200 ? 'green' : storeConfig.riskThresholds.maxBudgetAdjustment <= 500 ? 'blue' : 'orange'}>
-                ${storeConfig.riskThresholds.maxBudgetAdjustment}
-              </Tag>
-            </Descriptions.Item>
-            <Descriptions.Item label={t('stores.operationWindow')}>{storeConfig.operationWindow.enabled ? `${storeConfig.operationWindow.startTime} - ${storeConfig.operationWindow.endTime}` : t('common.disabled')}</Descriptions.Item>
-            <Descriptions.Item label={t('stores.autoReconnect')}>
-              {storeConfig.autoReconnect.enabled ? <Tag color="green">{t('common.yes')}</Tag> : <Tag>{t('common.no')}</Tag>}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('stores.independentApprover')}>{storeConfig.approvalRules.useIndependentApprover ? t('common.yes') : t('common.no')}</Descriptions.Item>
-            <Descriptions.Item label={t('stores.secondApproval')}>{storeConfig.approvalRules.enableSecondApproval ? t('common.yes') : t('common.no')}</Descriptions.Item>
-          </Descriptions>
-        ) : (
-          <Form form={configForm} layout="vertical" onFinish={(values: Record<string, unknown>) => configMutation.mutate({
-            riskThresholds: { maxBudgetAdjustment: Number(values.maxBudgetAdjustment) || 200, highRiskActions: ['adjust_budget', 'pause_campaign'] },
-            operationWindow: { enabled: Boolean(values.operationWindowEnabled), startTime: values.startTime ? (values.startTime as dayjs.Dayjs).format('HH:mm') : '09:00', endTime: values.endTime ? (values.endTime as dayjs.Dayjs).format('HH:mm') : '22:00', timezone: 'Asia/Shanghai' },
-            autoReconnect: { enabled: Boolean(values.autoReconnectEnabled), retryAfterMinutes: 5, maxRetries: 3 },
-            approvalRules: { useIndependentApprover: Boolean(values.useIndependentApprover), enableSecondApproval: Boolean(values.enableSecondApproval) }
-          })}>
-            <Form.Item label={t('stores.maxBudgetAdjust')} name="maxBudgetAdjustment">
-              <Select options={[
-                { value: 100, label: t('stores.budgetConservative') },
-                { value: 200, label: t('stores.budgetStandard') },
-                { value: 500, label: t('stores.budgetAggressive') }
-              ]} />
-            </Form.Item>
-            <Form.Item label={t('stores.operationWindow')} name="operationWindowEnabled" valuePropName="checked"><Switch /></Form.Item>
-            <Form.Item label={t('stores.windowTime')}><Space><Form.Item name="startTime" noStyle><TimePicker format="HH:mm" size="small" /></Form.Item><span>-</span><Form.Item name="endTime" noStyle><TimePicker format="HH:mm" size="small" /></Form.Item></Space></Form.Item>
-            <Form.Item label={t('stores.autoReconnect')} name="autoReconnectEnabled" valuePropName="checked"><Switch /></Form.Item>
-            <Form.Item label={t('stores.independentApprover')} name="useIndependentApprover" valuePropName="checked"><Switch /></Form.Item>
-            <Form.Item label={t('stores.secondApproval')} name="enableSecondApproval" valuePropName="checked"><Switch /></Form.Item>
-          </Form>
-        )}
-      </Card>
-
-      {/* 服务连接 */}
-      <Card
-        title={<><ApiOutlined /> {t('stores.serviceConnections')} ({store?.connections?.length ?? 0})</>}
-        extra={<Button icon={<PlusOutlined />} onClick={() => setConnectionModalOpen(true)}>{t('stores.addConnection')}</Button>}
+        title={<><ApiOutlined /> {t('stores.serviceAuth')} ({store?.connections?.length ?? 0})</>}
+        extra={<Button icon={<PlusOutlined />} onClick={() => setConnectionModalOpen(true)}>{t('stores.addService')}</Button>}
         style={{ marginBottom: 16 }}
       >
         {(!store?.connections || store.connections.length === 0) ? (
@@ -368,18 +271,9 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
         )}
       </Card>
 
-      {/* 最近任务 */}
-      <Card title={t('stores.recentTasks')}>
-        <Table rowKey="id" dataSource={tasks} pagination={false} columns={[
-          { title: t('entity.task'), dataIndex: 'title', render: (title: string, record) => <Link to={`/agents/${record.agentType}`}>{title}</Link> },
-          { title: t('tasks.agent'), dataIndex: 'agentType', render: (agentType: string) => t(`agent.${agentType}`) },
-          { title: t('stores.status'), dataIndex: 'status', render: (status: string) => <StatusBadge value={status as TaskStatus} /> }
-        ]} />
-      </Card>
-
-      {/* 添加服务连接弹窗 */}
+      {/* 添加服务弹窗 */}
       <Modal
-        title={t('stores.addConnection')}
+        title={t('stores.addService')}
         open={connectionModalOpen}
         onOk={() => connectionForm.submit()}
         onCancel={() => { setConnectionModalOpen(false); connectionForm.resetFields(); }}

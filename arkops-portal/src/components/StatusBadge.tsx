@@ -15,6 +15,7 @@ const colors: Record<string, string> = {
   succeeded: 'green',
   failed: 'red',
   canceled: 'default',
+  cancelled: 'default',
   pending: 'orange',
   approved: 'green',
   rejected: 'red',

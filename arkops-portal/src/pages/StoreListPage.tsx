@@ -31,7 +31,7 @@ export function StoreListPage() {
     }},
     { title: t('stores.status'), dataIndex: 'status', render: (status) => <StatusBadge value={status} /> },
     {
-      title: t('stores.connections'),
+      title: t('stores.enabledServices'),
       dataIndex: 'connections',
       render: (connections: Store['connections']) => {
         if (!connections || connections.length === 0) return <Typography.Text type="secondary">-</Typography.Text>;

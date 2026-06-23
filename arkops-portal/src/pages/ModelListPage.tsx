@@ -1,6 +1,6 @@
 import { DeleteOutlined, KeyOutlined, LineChartOutlined, PlusOutlined, RobotOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Col, Form, Input, Modal, Progress, Row, Select, Statistic, Table, Tag, Typography, message } from 'antd';
+import { Button, Card, Col, Form, Input, Modal, Row, Select, Space, Statistic, Table, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
 import { modelsApi } from '../api/models';
@@ -144,29 +144,48 @@ export function ModelListPage() {
       </Card>
 
       {/* 使用统计 */}
-      <Typography.Title level={5} style={{ marginBottom: 16 }}><LineChartOutlined /> {t('model.usageStats')}</Typography.Title>
-      {usageStats.length === 0 ? (
-        <Card><Typography.Text type="secondary">{t('model.noStats')}</Typography.Text></Card>
-      ) : (
-        usageStats.map((stat) => {
-          const maxCalls = Math.max(...usageStats.map((s) => s.totalCalls), 1);
-          return (
-            <Card key={stat.modelId} size="small" style={{ marginBottom: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <Typography.Text strong>{stat.modelName}</Typography.Text>
-                  <br />
-                  <Typography.Text type="secondary">
-                    {t('model.calls')}: {stat.totalCalls.toLocaleString()} | Tokens: {stat.totalTokens.toLocaleString()}
-                  </Typography.Text>
+      <Card title={<><LineChartOutlined /> {t('model.usageStats')}</>} style={{ marginBottom: 24 }}>
+        {usageStats.length === 0 ? (
+          <Typography.Text type="secondary">{t('model.noStats')}</Typography.Text>
+        ) : (
+          <>
+            <div className="trend-chart usage-chart" style={{ minHeight: 140 }}>
+              {usageStats.map((stat) => {
+                const maxCalls = Math.max(...usageStats.map((s) => s.totalCalls), 1);
+                return (
+                  <div className="trend-column" key={stat.modelId}>
+                    <div className="trend-bars" style={{ height: 110 }}>
+                      <span
+                        className="trend-bar"
+                        style={{
+                          height: `${Math.max(12, (stat.totalCalls / maxCalls) * 100)}px`,
+                          width: 22,
+                          background: '#2563eb'
+                        }}
+                        title={`${stat.modelName}: ${stat.totalCalls.toLocaleString()} 次`}
+                      />
+                    </div>
+                    <Typography.Text type="secondary" style={{ fontSize: 11, textAlign: 'center', maxWidth: 60, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {stat.modelName}
+                    </Typography.Text>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ marginTop: 12 }}>
+              {usageStats.map((stat) => (
+                <div key={stat.modelId} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--ark-border-soft)' }}>
+                  <Typography.Text type="secondary" style={{ fontSize: 13 }}>{stat.modelName}</Typography.Text>
+                  <Space size="large">
+                    <Typography.Text style={{ fontSize: 13, color: '#2563eb' }}>{stat.totalCalls.toLocaleString()} 次</Typography.Text>
+                    <Typography.Text style={{ fontSize: 13, color: '#7c3aed' }}>{stat.totalTokens.toLocaleString()} Tokens</Typography.Text>
+                  </Space>
                 </div>
-                <Tag color="blue">{stat.totalCalls} 次</Tag>
-              </div>
-              <Progress percent={Math.round((stat.totalCalls / maxCalls) * 100)} size="small" strokeColor="#2563eb" />
-            </Card>
-          );
-        })
-      )}
+              ))}
+            </div>
+          </>
+        )}
+      </Card>
 
       {/* 添加模型弹窗 */}
       <Modal

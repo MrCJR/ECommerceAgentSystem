@@ -1,272 +1,470 @@
 import type { AgentConfig, AgentRunStats } from '../types/domain';
 
+/* ===== 13 Agent 完整配置 ===== */
+
+const nowStr = () => new Date().toISOString();
+const hoursAgo = (h: number) => new Date(Date.now() - h * 3600 * 1000).toISOString();
+
 export const agentConfigs: AgentConfig[] = [
+  // ===== 基础管道 =====
   {
-    agentType: 'ads_optimizer',
-    displayName: '广告优化 Agent',
-    description: '分析广告 ROI，自动调整预算、暂停低效广告计划。',
-    icon: 'ads',
-    riskLevel: 'high',
-    triggerMode: 'scheduled',
-    cronExpression: '0 */6 * * *',
+    agentType: 'login_bootstrap',
+    displayName: '店铺保活 Agent',
+    description: '维持店铺登录态，掉线自动拉起，通知运营处理复杂验证。',
+    icon: 'login',
+    layer: 'foundation',
+    riskLevel: 'low',
+    triggerMode: 'event',
+    needsConfig: false,
+    needsApproval: false,
+    dependsOn: [],
+    servesFor: ['product_launch', 'ads_optimizer', 'crm_retention', 'review_manager', 'customer_service', 'after_sales'],
+    required: true,
+    eventTrigger: 'store_session_expired',
     executionParams: [
-      { key: 'targetROI', label: '目标 ROI', defaultValue: '2.0' },
-      { key: 'lookbackDays', label: '分析天数', defaultValue: '7' },
-      { key: 'maxBudgetPerPlan', label: '单计划日预算上限（美元）', defaultValue: '500' }
+      { key: 'notifyChannels', label: '通知渠道', defaultValue: '飞书,邮件' }
     ],
-    riskGuard: {
-      maxBudgetPerAction: 200,
-      actionWhitelist: ['adjust_budget', 'pause_campaign'],
-      actionBlacklist: ['delete_campaign', 'create_campaign']
-    },
-    approvalStrategy: {
-      requireApproval: true,
-      approverRole: 'Approver',
-      requireSecondApproval: false
-    },
-    modelBinding: {
-      provider: 'OpenAI',
-      model: 'gpt-4o'
-    },
-    retryPolicy: {
-      maxRetries: 2,
-      retryIntervalMinutes: 5
-    },
-    timeoutMinutes: 30,
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['notify_operator', 'create_session'], actionBlacklist: [] },
+    approvalStrategy: { requireApproval: false, approverRole: '', requireSecondApproval: false },
+    modelBinding: { provider: 'DeepSeek', model: 'deepseek-chat' },
+    retryPolicy: { maxRetries: 3, retryIntervalMinutes: 2 },
+    timeoutMinutes: 10,
     enabled: true
   },
   {
     agentType: 'product_launch',
-    displayName: '新品上架 Agent',
-    description: '生成 SEO 标题、卖点文案、详情页草稿并完成上架。',
+    displayName: '商品上架 Agent',
+    description: '上传商品图片，AI 自动解析商品信息，生成 SEO 标题、卖点文案、详情页并上架。',
     icon: 'product',
+    layer: 'foundation',
     riskLevel: 'medium',
     triggerMode: 'manual',
+    needsConfig: true,
+    needsApproval: true,
+    dependsOn: ['competitor_intel'],
+      required: false,
+    servesFor: ['ads_optimizer', 'creative_factory'],
     executionParams: [
-      { key: 'category', label: '商品类目', defaultValue: '' },
-      { key: 'keywords', label: 'SEO 关键词（逗号分隔）', defaultValue: '' },
+      { key: 'category', label: '默认商品类目', defaultValue: '' },
       { key: 'targetMarket', label: '目标市场', defaultValue: 'US' }
     ],
-    riskGuard: {
-      maxBudgetPerAction: 0,
-      actionWhitelist: ['create_draft', 'publish_product'],
-      actionBlacklist: []
-    },
-    approvalStrategy: {
-      requireApproval: true,
-      approverRole: 'Operator',
-      requireSecondApproval: false
-    },
-    modelBinding: {
-      provider: 'Anthropic',
-      model: 'claude-sonnet-4-20250514'
-    },
-    retryPolicy: {
-      maxRetries: 1,
-      retryIntervalMinutes: 3
-    },
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['create_draft', 'publish_product'], actionBlacklist: [] },
+    approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false },
+    modelBinding: { provider: 'Anthropic', model: 'claude-sonnet-4-20250514' },
+    retryPolicy: { maxRetries: 1, retryIntervalMinutes: 3 },
     timeoutMinutes: 20,
-    enabled: true
+    enabled: false,
+    strategyConfig: {
+      pricingRule: {
+        mode: 'market',
+        targetMargin: 30,
+        competitorStrategy: 'match',
+        currency: 'USD'
+      }
+    }
   },
+
+  // ===== 流量引擎 =====
+  {
+    agentType: 'ads_optimizer',
+    displayName: '广告投放 Agent',
+    description: '根据目标 ROI 自动创建、调整、暂停广告计划。结合竞品数据优化投放策略。',
+    icon: 'ads',
+    layer: 'traffic',
+    riskLevel: 'high',
+    triggerMode: 'scheduled',
+    needsConfig: true,
+    needsApproval: true,
+    dependsOn: ['product_launch', 'competitor_intel', 'creative_factory'],
+      required: false,
+    servesFor: [],
+    cronExpression: '0 */6 * * *',
+    executionParams: [
+      { key: 'targetROI', label: '目标 ROI', defaultValue: '2.0', type: 'number' },
+      { key: 'lookbackDays', label: '分析天数', defaultValue: '7', type: 'number' }
+    ],
+    riskGuard: { maxBudgetPerAction: 200, actionWhitelist: ['adjust_budget', 'pause_campaign', 'create_campaign'], actionBlacklist: ['delete_campaign'] },
+    approvalStrategy: { requireApproval: true, approverRole: 'Approver', requireSecondApproval: false },
+    modelBinding: { provider: 'OpenAI', model: 'gpt-4o' },
+    retryPolicy: { maxRetries: 2, retryIntervalMinutes: 5 },
+    timeoutMinutes: 30,
+    enabled: false,
+    strategyConfig: {
+      adSpendBudget: { dailyCap: 500, monthlyCap: 10000 }
+    }
+  },
+  {
+    agentType: 'pricing_strategy',
+    displayName: '定价策略 Agent',
+    description: '根据竞品价格、成本和目标利润率动态调整商品售价，保持竞争力。',
+    icon: 'ads',
+    layer: 'traffic',
+    riskLevel: 'medium',
+    triggerMode: 'scheduled',
+    needsConfig: true,
+    needsApproval: true,
+    dependsOn: ['competitor_intel'],
+      required: false,
+    servesFor: [],
+    cronExpression: '0 */4 * * *',
+    executionParams: [],
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['adjust_price', 'set_sale_price'], actionBlacklist: ['set_below_floor'] },
+    approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false },
+    modelBinding: { provider: 'OpenAI', model: 'gpt-4o-mini' },
+    retryPolicy: { maxRetries: 1, retryIntervalMinutes: 5 },
+    timeoutMinutes: 15,
+    enabled: false,
+    strategyConfig: {
+      pricingRule: {
+        mode: 'market',
+        targetMargin: 30,
+        competitorStrategy: 'undercut',
+        currency: 'USD'
+      }
+    }
+  },
+
+  // ===== 增值运营 =====
   {
     agentType: 'crm_retention',
     displayName: 'CRM 复购 Agent',
-    description: '分析客户数据，生成复购营销策略和触达方案。',
+    description: '分析客户购买行为，自动发放优惠券和触达消息，提升复购率。',
     icon: 'crm',
+    layer: 'growth',
     riskLevel: 'medium',
     triggerMode: 'scheduled',
+    needsConfig: true,
+    needsApproval: false,
+    dependsOn: [],
+    required: false,
+    servesFor: [],
     cronExpression: '0 0 * * 1',
-    executionParams: [
-      { key: 'segmentSize', label: '客户分群粒度', defaultValue: '3' },
-      { key: 'discountCap', label: '最高折扣比例（%）', defaultValue: '20' }
-    ],
-    riskGuard: {
-      maxBudgetPerAction: 100,
-      actionWhitelist: ['send_coupon', 'send_email'],
-      actionBlacklist: []
-    },
-    approvalStrategy: {
-      requireApproval: false,
-      approverRole: '',
-      requireSecondApproval: false
-    },
-    modelBinding: {
-      provider: 'DeepSeek',
-      model: 'deepseek-chat'
-    },
-    retryPolicy: {
-      maxRetries: 2,
-      retryIntervalMinutes: 10
-    },
+    executionParams: [],
+    riskGuard: { maxBudgetPerAction: 100, actionWhitelist: ['send_coupon', 'send_email'], actionBlacklist: [] },
+    approvalStrategy: { requireApproval: false, approverRole: '', requireSecondApproval: false },
+    modelBinding: { provider: 'DeepSeek', model: 'deepseek-chat' },
+    retryPolicy: { maxRetries: 2, retryIntervalMinutes: 10 },
     timeoutMinutes: 25,
+    enabled: false,
+    strategyConfig: {
+      crmConfig: { discountCap: 20, segmentCount: 3 }
+    }
+  },
+  {
+    agentType: 'review_manager',
+    displayName: '评价管理 Agent',
+    description: '监控差评，自动生成回复模板，标记需人工处理的敏感评价。',
+    icon: 'crm',
+    layer: 'growth',
+    riskLevel: 'low',
+    triggerMode: 'scheduled',
+    needsConfig: false,
+    needsApproval: false,
+    dependsOn: [],
+      required: false,
+    servesFor: [],
+    cronExpression: '0 */2 * * *',
+    executionParams: [
+      { key: 'autoReplyThreshold', label: '自动回复星级（≤ X星）', defaultValue: '3', type: 'number' },
+      { key: 'replyTone', label: '回复语气', defaultValue: '专业友好', type: 'select', options: ['专业友好', '热情活泼', '简洁正式'] }
+    ],
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['generate_reply', 'post_reply'], actionBlacklist: [] },
+    approvalStrategy: { requireApproval: false, approverRole: '', requireSecondApproval: false },
+    modelBinding: { provider: 'DeepSeek', model: 'deepseek-chat' },
+    retryPolicy: { maxRetries: 1, retryIntervalMinutes: 3 },
+    timeoutMinutes: 10,
     enabled: false
   },
   {
-    agentType: 'login_bootstrap',
-    displayName: '登录引导 Agent',
-    description: '检测店铺掉线，引导运营重新完成登录。',
-    icon: 'login',
+    agentType: 'customer_service',
+    displayName: '客服消息 Agent',
+    description: '自动回复买家售前咨询，常见问题智能应答，复杂问题转人工。',
+    icon: 'crm',
+    layer: 'growth',
     riskLevel: 'low',
     triggerMode: 'event',
-    eventTrigger: 'store_session_expired',
+    needsConfig: false,
+    needsApproval: false,
+    dependsOn: [],
+      required: false,
+    servesFor: [],
+    eventTrigger: 'new_buyer_message',
     executionParams: [
-      { key: 'notifyChannels', label: '通知渠道', defaultValue: 'feishu,email' }
+      { key: 'autoReplyEnabled', label: '自动回复', defaultValue: '是', type: 'select', options: ['是', '否'] },
+      { key: 'escalateKeywords', label: '转人工关键词', defaultValue: '退款,投诉,差评,质量问题' }
     ],
-    riskGuard: {
-      maxBudgetPerAction: 0,
-      actionWhitelist: ['notify_operator', 'create_session'],
-      actionBlacklist: []
-    },
-    approvalStrategy: {
-      requireApproval: false,
-      approverRole: '',
-      requireSecondApproval: false
-    },
-    modelBinding: {
-      provider: 'DeepSeek',
-      model: 'deepseek-chat'
-    },
-    retryPolicy: {
-      maxRetries: 3,
-      retryIntervalMinutes: 2
-    },
-    timeoutMinutes: 10,
-    enabled: true
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['auto_reply', 'escalate_to_human'], actionBlacklist: ['promise_refund'] },
+    approvalStrategy: { requireApproval: false, approverRole: '', requireSecondApproval: false },
+    modelBinding: { provider: 'OpenAI', model: 'gpt-4o-mini' },
+    retryPolicy: { maxRetries: 1, retryIntervalMinutes: 1 },
+    timeoutMinutes: 5,
+    enabled: false
   },
+  {
+    agentType: 'after_sales',
+    displayName: '售后处理 Agent',
+    description: '自动审核退货退款请求，物流追踪，低于阈值的订单自动通过。',
+    icon: 'crm',
+    layer: 'growth',
+    riskLevel: 'medium',
+    triggerMode: 'event',
+    needsConfig: true,
+    needsApproval: true,
+    dependsOn: [],
+      required: false,
+    servesFor: [],
+    eventTrigger: 'return_request_created',
+    executionParams: [],
+    riskGuard: { maxBudgetPerAction: 50, actionWhitelist: ['approve_return', 'issue_refund', 'track_logistics'], actionBlacklist: ['bulk_refund'] },
+    approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false },
+    modelBinding: { provider: 'OpenAI', model: 'gpt-4o-mini' },
+    retryPolicy: { maxRetries: 1, retryIntervalMinutes: 5 },
+    timeoutMinutes: 15,
+    enabled: false,
+    strategyConfig: {
+      afterSalesConfig: { autoRefundCap: 20, returnAddress: '请填写退货地址' }
+    }
+  },
+
+  // ===== 支撑 Agent =====
+  {
+    agentType: 'competitor_intel',
+    displayName: '市场情报 Agent',
+    description: '采集竞品数据（价格/促销/SEO/人群）和市场趋势（热词/类目/消费者画像），为其他 Agent 提供数据燃料。',
+    icon: 'ads',
+    layer: 'support',
+    riskLevel: 'low',
+    triggerMode: 'scheduled',
+    needsConfig: false,
+    needsApproval: false,
+    dependsOn: [],
+    required: false,
+    servesFor: ['product_launch', 'ads_optimizer', 'pricing_strategy', 'creative_factory'],
+    cronExpression: '0 0 */2 * *',
+    executionParams: [
+      { key: 'competitorUrls', label: '竞品店铺 URL（换行分隔）', defaultValue: '' },
+      { key: 'monitoredCategories', label: '监控类目', defaultValue: '消费电子,服装,家居' },
+      { key: 'updateFrequencyH', label: '更新频率（小时）', defaultValue: '2', type: 'number' }
+    ],
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['scrape_data', 'analyze_market', 'analyze_trends'], actionBlacklist: [] },
+    approvalStrategy: { requireApproval: false, approverRole: '', requireSecondApproval: false },
+    modelBinding: { provider: 'DeepSeek', model: 'deepseek-chat' },
+    retryPolicy: { maxRetries: 2, retryIntervalMinutes: 30 },
+    timeoutMinutes: 25,
+    enabled: false,
+    strategyConfig: {
+      seoKeywords: {
+        keywords: ['wireless earbuds', 'bluetooth 5.3', 'noise cancelling', 'long battery life', 'IPX5 waterproof', 'ergonomic design'],
+        lastGenerated: hoursAgo(2), source: 'market_intel'
+      },
+      targetAudience: {
+        tags: ['18-35岁', '科技爱好者', '运动健身人群', '通勤白领', '学生群体', '音乐发烧友'],
+        lastGenerated: hoursAgo(2), source: 'market_intel'
+      }
+    }
+  },
+  {
+    agentType: 'creative_factory',
+    displayName: '素材工厂 Agent',
+    description: '从商品图片自动生成广告素材：主图裁剪、短视频、多尺寸投放图、广告文案。',
+    icon: 'product',
+    layer: 'support',
+    riskLevel: 'medium',
+    triggerMode: 'event',
+    needsConfig: true,
+    needsApproval: true,
+    dependsOn: ['product_launch', 'competitor_intel'],
+      required: false,
+    servesFor: ['ads_optimizer'],
+    eventTrigger: 'product_published',
+    executionParams: [],
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['generate_image', 'generate_video', 'generate_copy'], actionBlacklist: ['use_competitor_logo'] },
+    approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false },
+    modelBinding: { provider: 'Anthropic', model: 'claude-sonnet-4-20250514' },
+    retryPolicy: { maxRetries: 2, retryIntervalMinutes: 5 },
+    timeoutMinutes: 30,
+    enabled: false,
+    strategyConfig: {
+      creativeConfig: { outputSizes: '1:1,16:9,9:16', copyTone: '简洁卖点' }
+    }
+  },
+  {
+    agentType: 'inventory_alert',
+    displayName: '库存预警 Agent',
+    description: '监控库存水位，低库存/滞销/断货自动告警并建议补货。',
+    icon: 'product',
+    layer: 'support',
+    riskLevel: 'low',
+    triggerMode: 'scheduled',
+    needsConfig: false,
+    needsApproval: false,
+    dependsOn: [],
+      required: false,
+    servesFor: ['product_launch'],
+    cronExpression: '0 */4 * * *',
+    executionParams: [
+      { key: 'safetyStockDays', label: '安全库存天数', defaultValue: '7', type: 'number' },
+      { key: 'slowMovingDays', label: '滞销判定天数', defaultValue: '30', type: 'number' }
+    ],
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['check_inventory', 'notify_operator'], actionBlacklist: ['auto_order'] },
+    approvalStrategy: { requireApproval: false, approverRole: '', requireSecondApproval: false },
+    modelBinding: { provider: 'DeepSeek', model: 'deepseek-chat' },
+    retryPolicy: { maxRetries: 1, retryIntervalMinutes: 10 },
+    timeoutMinutes: 10,
+    enabled: false
+  },
+
+  // ===== 独立 =====
   {
     agentType: 'finance_audit',
     displayName: '财务对账 Agent',
     description: '自动拉取平台账单，标记差异，生成对账报告。',
     icon: 'finance',
+    layer: 'standalone',
     riskLevel: 'medium',
     triggerMode: 'scheduled',
+    needsConfig: false,
+    needsApproval: true,
+    dependsOn: [],
+      required: false,
+    servesFor: [],
     cronExpression: '0 0 1 * *',
     executionParams: [
-      { key: 'reconciliationPeriod', label: '对账周期（天）', defaultValue: '30' }
+      { key: 'reconciliationPeriod', label: '对账周期（天）', defaultValue: '30', type: 'number' }
     ],
-    riskGuard: {
-      maxBudgetPerAction: 0,
-      actionWhitelist: ['fetch_billing', 'generate_report'],
-      actionBlacklist: ['adjust_settlement']
-    },
-    approvalStrategy: {
-      requireApproval: true,
-      approverRole: 'Owner',
-      requireSecondApproval: false
-    },
-    modelBinding: {
-      provider: 'OpenAI',
-      model: 'gpt-4o'
-    },
-    retryPolicy: {
-      maxRetries: 1,
-      retryIntervalMinutes: 5
-    },
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['fetch_billing', 'generate_report'], actionBlacklist: ['adjust_settlement'] },
+    approvalStrategy: { requireApproval: true, approverRole: 'Owner', requireSecondApproval: false },
+    modelBinding: { provider: 'OpenAI', model: 'gpt-4o' },
+    retryPolicy: { maxRetries: 1, retryIntervalMinutes: 5 },
     timeoutMinutes: 45,
     enabled: false
+  },
+
+  // ===== 风控 =====
+  {
+    agentType: 'risk_control',
+    displayName: '风险控制 Agent',
+    description: '全链路风控护栏：法规合规（广告法/平台规则）、行为监控（ROI/频率/价格）、业务保护（售价门槛/类目/图片/库存/差评）。开启后为所有 Agent 提供安全护栏。',
+    icon: 'login',
+    layer: 'standalone',
+    riskLevel: 'high',
+    triggerMode: 'scheduled',
+    needsConfig: true,
+    needsApproval: true,
+    dependsOn: [],
+    required: false,
+    servesFor: ['login_bootstrap', 'product_launch', 'ads_optimizer', 'pricing_strategy', 'crm_retention', 'review_manager', 'customer_service', 'after_sales', 'competitor_intel', 'creative_factory', 'inventory_alert'],
+    cronExpression: '0 */1 * * *',
+    executionParams: [],
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['detect_anomaly', 'trigger_circuit_breaker', 'notify_operator', 'block_violation'], actionBlacklist: [] },
+    approvalStrategy: { requireApproval: true, approverRole: 'Owner', requireSecondApproval: false },
+    modelBinding: { provider: 'OpenAI', model: 'gpt-4o' },
+    retryPolicy: { maxRetries: 2, retryIntervalMinutes: 2 },
+    timeoutMinutes: 10,
+    enabled: false,
+    strategyConfig: {
+      riskControlConfig: {
+        compliance: {
+          adLawFilter: true,
+          platformRuleCheck: true,
+          falseClaimDetection: true
+        },
+        behavior: {
+          roiFloorThreshold: 1.2,
+          actionFrequencyLimit: 10,
+          priceDeviationPercent: 30
+        },
+        business: {
+          minPriceRatio: 0.8,
+          categoryMatchCheck: true,
+          imageComplianceCheck: true,
+          inventorySafetyCheck: true,
+          negativeReviewSurgeCheck: true
+        }
+      }
+    }
   }
 ];
 
+/* ===== Agent 运行统计 ===== */
+
+const makeTrend = (days: number, avgRuns: number, baseRate: number) => {
+  const trend = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400000);
+    trend.push({
+      date: d.toLocaleDateString('en', { weekday: 'short' }),
+      runs: Math.round(avgRuns + (Math.random() - 0.5) * avgRuns * 0.4),
+      successRate: Math.round(Math.min(100, Math.max(60, baseRate + (Math.random() - 0.5) * 10)))
+    });
+  }
+  return trend;
+};
+
 export const agentRunStatsMap: Record<string, AgentRunStats> = {
-  ads_optimizer: {
-    totalRuns: 142,
-    successRate: 88.7,
-    avgDurationMinutes: 18,
-    avgTokenUsage: 12400,
-    avgCost: 0.42,
-    trend: [
-      { date: 'Mon', runs: 22, successRate: 91 },
-      { date: 'Tue', runs: 28, successRate: 89 },
-      { date: 'Wed', runs: 25, successRate: 88 },
-      { date: 'Thu', runs: 30, successRate: 90 },
-      { date: 'Fri', runs: 24, successRate: 85 },
-      { date: 'Sat', runs: 10, successRate: 88 },
-      { date: 'Sun', runs: 3, successRate: 86 }
-    ],
-    failureReasons: [
-      { reason: '审批超时', count: 5 },
-      { reason: '店铺掉线', count: 4 },
-      { reason: '广告 API 限制', count: 3 }
-    ]
+  login_bootstrap: {
+    totalRuns: 203, successRate: 76.8, avgDurationMinutes: 5, avgTokenUsage: 1800, avgCost: 0.02,
+    trend: makeTrend(7, 29, 77),
+    failureReasons: [{ reason: '人机校验超时', count: 28 }, { reason: '运营未响应', count: 15 }, { reason: 'Profile 失效', count: 4 }]
   },
   product_launch: {
-    totalRuns: 87,
-    successRate: 94.3,
-    avgDurationMinutes: 12,
-    avgTokenUsage: 8600,
-    avgCost: 0.18,
-    trend: [
-      { date: 'Mon', runs: 14, successRate: 93 },
-      { date: 'Tue', runs: 18, successRate: 95 },
-      { date: 'Wed', runs: 15, successRate: 94 },
-      { date: 'Thu', runs: 20, successRate: 96 },
-      { date: 'Fri', runs: 12, successRate: 92 },
-      { date: 'Sat', runs: 6, successRate: 95 },
-      { date: 'Sun', runs: 2, successRate: 90 }
-    ],
-    failureReasons: [
-      { reason: '内容审核不通过', count: 3 },
-      { reason: '图片处理失败', count: 2 }
-    ]
+    totalRuns: 87, successRate: 94.3, avgDurationMinutes: 12, avgTokenUsage: 8600, avgCost: 0.18,
+    trend: makeTrend(7, 12, 94),
+    failureReasons: [{ reason: '内容审核不通过', count: 3 }, { reason: '图片处理失败', count: 2 }]
+  },
+  ads_optimizer: {
+    totalRuns: 142, successRate: 88.7, avgDurationMinutes: 18, avgTokenUsage: 12400, avgCost: 0.42,
+    trend: makeTrend(7, 20, 89),
+    failureReasons: [{ reason: '审批超时', count: 5 }, { reason: '店铺掉线', count: 4 }, { reason: 'API 限制', count: 3 }]
+  },
+  pricing_strategy: {
+    totalRuns: 64, successRate: 92.2, avgDurationMinutes: 8, avgTokenUsage: 4500, avgCost: 0.06,
+    trend: makeTrend(7, 9, 92),
+    failureReasons: [{ reason: '竞品数据未更新', count: 3 }, { reason: '价格低于限价', count: 2 }]
   },
   crm_retention: {
-    totalRuns: 56,
-    successRate: 91.1,
-    avgDurationMinutes: 15,
-    avgTokenUsage: 7200,
-    avgCost: 0.08,
-    trend: [
-      { date: 'Mon', runs: 12, successRate: 92 },
-      { date: 'Tue', runs: 14, successRate: 90 },
-      { date: 'Wed', runs: 10, successRate: 91 },
-      { date: 'Thu', runs: 8, successRate: 93 },
-      { date: 'Fri', runs: 7, successRate: 89 },
-      { date: 'Sat', runs: 3, successRate: 91 },
-      { date: 'Sun', runs: 2, successRate: 88 }
-    ],
-    failureReasons: [
-      { reason: '客户数据不完整', count: 3 },
-      { reason: '邮件发送失败', count: 2 }
-    ]
+    totalRuns: 56, successRate: 91.1, avgDurationMinutes: 15, avgTokenUsage: 7200, avgCost: 0.08,
+    trend: makeTrend(7, 8, 91),
+    failureReasons: [{ reason: '客户数据不完整', count: 3 }, { reason: '邮件发送失败', count: 2 }]
   },
-  login_bootstrap: {
-    totalRuns: 203,
-    successRate: 76.8,
-    avgDurationMinutes: 5,
-    avgTokenUsage: 1800,
-    avgCost: 0.02,
-    trend: [
-      { date: 'Mon', runs: 32, successRate: 78 },
-      { date: 'Tue', runs: 45, successRate: 75 },
-      { date: 'Wed', runs: 38, successRate: 77 },
-      { date: 'Thu', runs: 41, successRate: 79 },
-      { date: 'Fri', runs: 28, successRate: 74 },
-      { date: 'Sat', runs: 12, successRate: 76 },
-      { date: 'Sun', runs: 7, successRate: 73 }
-    ],
-    failureReasons: [
-      { reason: '人机校验超时', count: 28 },
-      { reason: '运营未响应', count: 15 },
-      { reason: '浏览器 Profile 失效', count: 4 }
-    ]
+  review_manager: {
+    totalRuns: 330, successRate: 97.6, avgDurationMinutes: 3, avgTokenUsage: 2100, avgCost: 0.03,
+    trend: makeTrend(7, 47, 98),
+    failureReasons: [{ reason: '平台 API 限频', count: 5 }, { reason: '敏感词过滤', count: 3 }]
+  },
+  customer_service: {
+    totalRuns: 512, successRate: 85.4, avgDurationMinutes: 2, avgTokenUsage: 1500, avgCost: 0.01,
+    trend: makeTrend(7, 73, 85),
+    failureReasons: [{ reason: '意图识别错误', count: 42 }, { reason: '转人工超时', count: 33 }]
+  },
+  after_sales: {
+    totalRuns: 38, successRate: 89.5, avgDurationMinutes: 10, avgTokenUsage: 3200, avgCost: 0.05,
+    trend: makeTrend(7, 5, 90),
+    failureReasons: [{ reason: '物流信息缺失', count: 2 }, { reason: '超过自动退款上限', count: 2 }]
+  },
+  competitor_intel: {
+    totalRuns: 180, successRate: 93.9, avgDurationMinutes: 15, avgTokenUsage: 9800, avgCost: 0.12,
+    trend: makeTrend(7, 26, 94),
+    failureReasons: [{ reason: '目标网站屏蔽', count: 6 }, { reason: '数据解析异常', count: 5 }]
+  },
+  creative_factory: {
+    totalRuns: 45, successRate: 88.9, avgDurationMinutes: 22, avgTokenUsage: 18500, avgCost: 0.55,
+    trend: makeTrend(7, 6, 89),
+    failureReasons: [{ reason: '图片质量不足', count: 3 }, { reason: '生成超时', count: 2 }]
+  },
+  inventory_alert: {
+    totalRuns: 720, successRate: 99.7, avgDurationMinutes: 2, avgTokenUsage: 800, avgCost: 0.01,
+    trend: makeTrend(7, 103, 100),
+    failureReasons: [{ reason: '数据同步延迟', count: 2 }]
   },
   finance_audit: {
-    totalRuns: 24,
-    successRate: 95.8,
-    avgDurationMinutes: 22,
-    avgTokenUsage: 15600,
-    avgCost: 0.35,
-    trend: [
-      { date: 'Mon', runs: 5, successRate: 96 },
-      { date: 'Tue', runs: 6, successRate: 95 },
-      { date: 'Wed', runs: 4, successRate: 96 },
-      { date: 'Thu', runs: 3, successRate: 97 },
-      { date: 'Fri', runs: 3, successRate: 95 },
-      { date: 'Sat', runs: 2, successRate: 94 },
-      { date: 'Sun', runs: 1, successRate: 93 }
-    ],
-    failureReasons: [
-      { reason: '平台账单 API 超时', count: 1 }
-    ]
+    totalRuns: 24, successRate: 95.8, avgDurationMinutes: 22, avgTokenUsage: 15600, avgCost: 0.35,
+    trend: makeTrend(7, 3, 96),
+    failureReasons: [{ reason: '平台账单 API 超时', count: 1 }]
+  },
+  risk_control: {
+    totalRuns: 1440, successRate: 99.2, avgDurationMinutes: 1, avgTokenUsage: 600, avgCost: 0.01,
+    trend: makeTrend(7, 206, 99),
+    failureReasons: [{ reason: '误报调整', count: 8 }, { reason: '数据延迟', count: 3 }]
   }
 };

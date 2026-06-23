@@ -178,6 +178,33 @@ export const tasks: Task[] = [
         at: now.subtract(5, 'hour').toISOString()
       }
     ]
+  },
+  {
+    id: 'task_004',
+    title: 'TikTok Shop 店铺会话检测',
+    storeId: 'store_001',
+    agentType: 'login_bootstrap',
+    goal: '定时检测店铺登录态，如果掉线则自动拉起登录流程。',
+    status: 'running',
+    riskLevel: 'low',
+    createdAt: now.subtract(1, 'hour').toISOString(),
+    updatedAt: now.subtract(30, 'minute').toISOString(),
+    timeline: [
+      {
+        id: 'evt_c01',
+        type: 'run_started',
+        title: '开始会话检测',
+        summary: '对 TikTok Shop 美国旗舰店发起登录态检测。',
+        at: now.subtract(1, 'hour').toISOString()
+      },
+      {
+        id: 'evt_c02',
+        type: 'step_completed',
+        title: '会话状态正常',
+        summary: 'TikTok Shop 店铺登录态有效，无需重新登录。',
+        at: now.subtract(30, 'minute').toISOString()
+      }
+    ]
   }
 ];
 
@@ -186,6 +213,8 @@ export const approvals: Approval[] = [
     id: 'approval_001',
     taskId: 'task_001',
     storeId: 'store_001',
+    storeName: 'TikTok Shop 美国旗舰店',
+    agentType: 'ads_optimizer',
     title: '暂停低 ROI TikTok 广告计划',
     reason: '广告计划 C-102 已消耗 612 美元，ROI 低于目标值 42%。',
     proposedAction: '暂停广告计划 C-102，并将 15% 预算转移到广告计划 C-088。',
@@ -199,6 +228,8 @@ export const approvals: Approval[] = [
     id: 'approval_002',
     taskId: 'task_002',
     storeId: 'store_001',
+    storeName: 'TikTok Shop 美国旗舰店',
+    agentType: 'product_launch',
     title: '审核新品卖点文案',
     reason: 'Agent 为新品详情页生成了卖点描述。',
     proposedAction: '合规审核通过后，将商品草稿标记为可发布。',
