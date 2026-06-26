@@ -16,8 +16,9 @@ import {
   TrophyOutlined
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Card, Col, Progress, Row, Space, Statistic, Table, Tabs, Tag, Typography } from 'antd';
+import { Card, Col, Progress, Row, Segmented, Space, Statistic, Table, Tabs, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { businessDashboardApi } from '../api/businessDashboard';
 import { dashboardApi } from '../api/dashboard';
@@ -51,10 +52,34 @@ function changePercent(current: number, previous: number) {
 
 function BusinessOverview() {
   const { t } = useI18n();
-  const { data: biz } = useQuery({ queryKey: ['businessDashboard'], queryFn: businessDashboardApi.getMetrics });
+  const [timeRange, setTimeRange] = useState<'today' | '7d' | '30d'>('today');
+  const { data: biz } = useQuery({
+    queryKey: ['businessDashboard', timeRange],
+    queryFn: () => businessDashboardApi.getMetrics(timeRange)
+  });
+
+  const timeOptions: { label: string; value: 'today' | '7d' | '30d' }[] = [
+    { label: t('time.today'), value: 'today' },
+    { label: t('time.7d'), value: '7d' },
+    { label: t('time.30d'), value: '30d' },
+  ];
+
+  const vsLabel = timeRange === 'today' ? t('biz.vsYesterday') : timeRange === '7d' ? t('biz.vsLastWeek') : t('biz.vsLastMonth');
+  const gmvLabel = timeRange === 'today' ? t('biz.todayGmv') : timeRange === '7d' ? t('biz.7dGmv') : t('biz.30dGmv');
+  const ordersLabel = timeRange === 'today' ? t('biz.todayOrders') : timeRange === '7d' ? t('biz.7dOrders') : t('biz.30dOrders');
 
   return (
     <>
+      {/* 时间段选择 */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+        <Segmented
+          size="small"
+          value={timeRange}
+          onChange={(v) => setTimeRange(v as 'today' | '7d' | '30d')}
+          options={timeOptions}
+        />
+      </div>
+
       {/* GMV & 核心经营指标 */}
       {biz && (
         <>
@@ -65,7 +90,7 @@ function BusinessOverview() {
             <Col xs={12} sm={6}>
               <Card>
                 <Statistic
-                  title={t('biz.todayGmv')}
+                  title={gmvLabel}
                   value={biz.gmv.today}
                   prefix="$"
                   precision={0}
@@ -75,7 +100,7 @@ function BusinessOverview() {
                       {changePercent(biz.gmv.today, biz.gmv.yesterday).up
                         ? <span style={{ color: '#16a34a' }}><ArrowUpOutlined /> {changePercent(biz.gmv.today, biz.gmv.yesterday).value}%</span>
                         : <span style={{ color: '#dc2626' }}><ArrowDownOutlined /> {Math.abs(changePercent(biz.gmv.today, biz.gmv.yesterday).value)}%</span>}
-                      <Typography.Text type="secondary" style={{ fontSize: 11, marginLeft: 4 }}>{t('biz.vsYesterday')}</Typography.Text>
+                      <Typography.Text type="secondary" style={{ fontSize: 11, marginLeft: 4 }}>{vsLabel}</Typography.Text>
                     </span>
                   }
                 />
@@ -84,7 +109,7 @@ function BusinessOverview() {
             <Col xs={12} sm={6}>
               <Card>
                 <Statistic
-                  title={t('biz.todayOrders')}
+                  title={ordersLabel}
                   value={biz.orders.today}
                   prefix={<ShoppingCartOutlined />}
                   valueStyle={{ color: '#0f766e' }}

@@ -12,9 +12,11 @@ import { LoginPage } from '../pages/LoginPage';
 import { MembersSettingsPage } from '../pages/MembersSettingsPage';
 import { ModelListPage } from '../pages/ModelListPage';
 import { NotificationsSettingsPage } from '../pages/NotificationsSettingsPage';
+import { OperationsCenterPage } from '../pages/OperationsCenterPage';
 import { StoreDetailPage } from '../pages/StoreDetailPage';
 import { StoreListPage } from '../pages/StoreListPage';
 import { SubscriptionPage } from '../pages/SubscriptionPage';
+import { UsageGuideSettingsPage } from '../pages/UsageGuideSettingsPage';
 
 const routerBase = import.meta.env.BASE_URL === '/' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -33,6 +35,7 @@ const router = createBrowserRouter(
         { path: 'agents', element: <AgentListPage /> },
         { path: 'agents/:agentType', element: <AgentConfigPage /> },
         { path: 'models', element: <ModelListPage /> },
+        { path: 'operations', element: <OperationsCenterPage /> },
         { path: 'approvals', element: <ApprovalListPage /> },
         { path: 'approvals/:approvalId', element: <ApprovalDetailPage /> },
         { path: 'audit-logs', element: <AuditLogsPage /> },
@@ -40,7 +43,8 @@ const router = createBrowserRouter(
         { path: 'subscription', element: <SubscriptionPage /> },
         { path: 'settings/members', element: <MembersSettingsPage /> },
         { path: 'settings/notifications', element: <NotificationsSettingsPage /> },
-        { path: 'settings/approval-policy', element: <ApprovalPolicyPage /> }
+        { path: 'settings/approval-policy', element: <ApprovalPolicyPage /> },
+        { path: 'settings/guide', element: <UsageGuideSettingsPage /> }
       ]
     }
   ],

@@ -46,8 +46,8 @@ function buildLiveEvents(task: Task, language: 'en' | 'zh'): LiveEvent[] {
       source: 'Task Control Plane',
       title: zh ? '任务已进入执行队列' : 'Task entered execution queue',
       summary: zh
-        ? `ArkOps 已创建受控执行任务 ${task.id}，等待 runtime 接收。`
-        : `ArkOps created controlled task ${task.id} and is waiting for runtime pickup.`
+        ? `AllMall 已创建受控执行任务 ${task.id}，等待 runtime 接收。`
+        : `AllMall created controlled task ${task.id} and is waiting for runtime pickup.`
     },
     {
       id: `${task.id}-live-002`,
@@ -183,8 +183,8 @@ function buildLiveEvents(task: Task, language: 'en' | 'zh'): LiveEvent[] {
         source: 'Runtime Adapter',
         title: zh ? '自动化已安全暂停' : 'Automation safely paused',
         summary: zh
-          ? 'ArkOps 已发送 login_required 事件，并等待运营人员刷新登录会话。'
-          : 'ArkOps emitted a login_required event and is waiting for an operator to refresh the session.'
+          ? 'AllMall 已发送 login_required 事件，并等待运营人员刷新登录会话。'
+          : 'AllMall emitted a login_required event and is waiting for an operator to refresh the session.'
       }
     ];
   }

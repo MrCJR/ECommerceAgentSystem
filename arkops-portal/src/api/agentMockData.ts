@@ -251,17 +251,7 @@ export const agentConfigs: AgentConfig[] = [
     modelBinding: { provider: 'DeepSeek', model: 'deepseek-chat' },
     retryPolicy: { maxRetries: 2, retryIntervalMinutes: 30 },
     timeoutMinutes: 25,
-    enabled: false,
-    strategyConfig: {
-      seoKeywords: {
-        keywords: ['wireless earbuds', 'bluetooth 5.3', 'noise cancelling', 'long battery life', 'IPX5 waterproof', 'ergonomic design'],
-        lastGenerated: hoursAgo(2), source: 'market_intel'
-      },
-      targetAudience: {
-        tags: ['18-35岁', '科技爱好者', '运动健身人群', '通勤白领', '学生群体', '音乐发烧友'],
-        lastGenerated: hoursAgo(2), source: 'market_intel'
-      }
-    }
+    enabled: false
   },
   {
     agentType: 'creative_factory',

@@ -114,7 +114,7 @@ export const tasks: Task[] = [
         title: '广告 ROI 分析完成',
         summary: '近 7 天内发现 3 个广告计划低于目标 ROI。',
         at: now.subtract(40, 'minute').toISOString(),
-        artifactUrl: 's3://arkops-artifacts/task_001/roi-dashboard.png'
+        artifactUrl: 's3://allmall-artifacts/task_001/roi-dashboard.png'
       },
       {
         id: 'evt_003',
@@ -205,6 +205,121 @@ export const tasks: Task[] = [
         at: now.subtract(30, 'minute').toISOString()
       }
     ]
+  },
+  {
+    id: 'task_005',
+    title: '竞品被动监控',
+    storeId: 'store_001',
+    agentType: 'competitor_intel',
+    goal: '监控 TikTok Shop 同类蓝牙耳机竞品价格和 SEO 关键词变化。',
+    status: 'succeeded',
+    riskLevel: 'low',
+    createdAt: now.subtract(3, 'hour').toISOString(),
+    updatedAt: now.subtract(2, 'hour').toISOString(),
+    timeline: [
+      {
+        id: 'evt_c03',
+        type: 'run_started',
+        title: '竞品数据采集开始',
+        summary: '对 5 个竞品店铺发起价格和 SEO 关键词抓取。',
+        at: now.subtract(3, 'hour').toISOString()
+      },
+      {
+        id: 'evt_c04',
+        type: 'step_completed',
+        title: '竞品数据采集完成',
+        summary: '发现 2 个竞品降价，3 个竞品更新了 SEO 关键词。',
+        at: now.subtract(2.5, 'hour').toISOString()
+      },
+      {
+        id: 'evt_c05',
+        type: 'run_succeeded',
+        title: '监控完成',
+        summary: '部分数据已写入市场情报缓存，供其他 Agent 调度。',
+        at: now.subtract(2, 'hour').toISOString()
+      }
+    ]
+  },
+  {
+    id: 'task_006',
+    title: '行业趋势监控',
+    storeId: 'store_001',
+    agentType: 'competitor_intel',
+    goal: '扫描消费电子类目热词和季节性趋势。',
+    status: 'running',
+    riskLevel: 'low',
+    createdAt: now.subtract(30, 'minute').toISOString(),
+    updatedAt: now.subtract(10, 'minute').toISOString(),
+    timeline: [
+      {
+        id: 'evt_c06',
+        type: 'run_started',
+        title: '趋势分析开始',
+        summary: '对消费电子类目发起热词扫描和消费者画像更新。',
+        at: now.subtract(30, 'minute').toISOString()
+      },
+      {
+        id: 'evt_c07',
+        type: 'step_completed',
+        title: '类目热词分析完成',
+        summary: '提取 Top 20 热搜词，发现 3 个上升趋势词。',
+        at: now.subtract(10, 'minute').toISOString()
+      }
+    ]
+  },
+  {
+    id: 'task_007',
+    title: '商品调研 - 智能手表',
+    storeId: 'store_001',
+    agentType: 'competitor_intel',
+    goal: '调研智能手表类目市场容量、竞品定价区间、消费者画像。',
+    status: 'succeeded',
+    riskLevel: 'low',
+    createdAt: now.subtract(1, 'day').toISOString(),
+    updatedAt: now.subtract(23, 'hour').toISOString(),
+    timeline: [
+      {
+        id: 'evt_c08',
+        type: 'run_started',
+        title: '商品调研开始',
+        summary: '对智能手表类目发起市场容量和竞品定价调研。',
+        at: now.subtract(1, 'day').toISOString()
+      },
+      {
+        id: 'evt_c09',
+        type: 'run_succeeded',
+        title: '调研完成',
+        summary: '市场容量约 2.3 亿美元/年，竞品定价区间 $25-$80，推荐定价 $45-$55。',
+        at: now.subtract(23, 'hour').toISOString()
+      }
+    ]
+  },
+  {
+    id: 'task_008',
+    title: '竞品被动监控',
+    storeId: 'store_002',
+    agentType: 'competitor_intel',
+    goal: '监控 Amazon 户外用品竞品促销活动。',
+    status: 'failed',
+    riskLevel: 'low',
+    createdAt: now.subtract(4, 'hour').toISOString(),
+    updatedAt: now.subtract(3.5, 'hour').toISOString(),
+    timeline: [
+      {
+        id: 'evt_c10',
+        type: 'run_started',
+        title: '竞品促销监控开始',
+        summary: '对 Amazon 户外用品类目 Top 10 竞品发起促销监控。',
+        at: now.subtract(4, 'hour').toISOString()
+      },
+      {
+        id: 'evt_c11',
+        type: 'run_failed',
+        title: '部分数据抓取失败',
+        summary: '2 个竞品页面返回 403，疑似反爬限制。已自动重试仍失败。',
+        at: now.subtract(3.5, 'hour').toISOString()
+      }
+    ]
   }
 ];
 
@@ -263,7 +378,7 @@ export const auditLogs: AuditLog[] = [
   },
   {
     id: 'audit_003',
-    actor: 'ArkOps 系统',
+    actor: 'AllMall 系统',
     action: '需要重新登录',
     entity: '店铺',
     entityId: 'store_002',
