@@ -9,6 +9,8 @@ import {
   DollarOutlined,
   FireOutlined,
   LineChartOutlined,
+  PercentageOutlined,
+  RiseOutlined,
   RobotOutlined,
   ShopOutlined,
   ShoppingCartOutlined,
@@ -141,6 +143,45 @@ function BusinessOverview() {
                   value={`${biz.storeCount.online}/${biz.storeCount.total}`}
                   prefix={<ShopOutlined />}
                   valueStyle={{ color: '#ea580c' }}
+                />
+              </Card>
+            </Col>
+          </Row>
+
+          {/* 利润概览 */}
+          <Typography.Title level={5} style={{ marginBottom: 12 }}>
+            <RiseOutlined style={{ marginRight: 8 }} />{t('biz.grossProfit')}
+          </Typography.Title>
+          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+            <Col xs={12} sm={8}>
+              <Card>
+                <Statistic
+                  title={<><DollarOutlined /> {t('biz.grossProfit')}</>}
+                  value={Math.round(biz.gmv.today * 0.35)}
+                  prefix="$"
+                  precision={0}
+                  valueStyle={{ color: '#16a34a' }}
+                />
+              </Card>
+            </Col>
+            <Col xs={12} sm={8}>
+              <Card>
+                <Statistic
+                  title={<><RiseOutlined /> {t('biz.netProfit')}</>}
+                  value={Math.round((biz.gmv.today * 0.35) - (biz.adMetrics.todaySpend * 0.7) - 5000)}
+                  prefix="$"
+                  precision={0}
+                  valueStyle={{ color: '#2563eb' }}
+                />
+              </Card>
+            </Col>
+            <Col xs={12} sm={8}>
+              <Card>
+                <Statistic
+                  title={<><PercentageOutlined /> {t('biz.profitMargin')}</>}
+                  value={biz.gmv.today > 0 ? (((biz.gmv.today * 0.35) - (biz.adMetrics.todaySpend * 0.7) - 5000) / biz.gmv.today * 100).toFixed(1) : '0.0'}
+                  suffix="%"
+                  valueStyle={{ color: '#7c3aed' }}
                 />
               </Card>
             </Col>

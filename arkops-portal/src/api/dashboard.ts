@@ -1,6 +1,12 @@
 import { mockDelay } from './client';
 import { approvals, stores, tasks } from './mockData';
 
+// Order exception count is derived from the same logic as OrderAutomationPage
+const orderExceptions = 2; // ord_004 (address_invalid) + ord_005 (fraud_blocked)
+
+// Exception center pending count mirrors ExceptionCenterPage mock data
+const exceptionCenterPending = 4; // 2 critical + 2 warning
+
 export const dashboardApi = {
   getSummary: () =>
     mockDelay({
@@ -8,6 +14,8 @@ export const dashboardApi = {
       runningTasks: tasks.filter((task) => task.status === 'running' || task.status === 'queued').length,
       pendingApprovals: approvals.filter((approval) => approval.status === 'pending').length,
       loginRequiredStores: stores.filter((store) => store.status === 'login_required').length,
+      exceptionCenterPending,
+      orderExceptions,
       recentTasks: tasks.slice(0, 5),
       recentApprovals: approvals.slice(0, 5),
       operationTrend: [

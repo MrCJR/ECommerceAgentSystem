@@ -1,4 +1,6 @@
 import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
   DeleteOutlined,
   DollarOutlined,
   EditOutlined,
@@ -49,7 +51,9 @@ interface ProductSimple {
   cost: number;
   sellingPrice: number;
   stock: number;
-  status: 'active' | 'inactive' | 'out_of_stock';
+  status: 'active' | 'inactive' | 'out_of_stock' | 'draft' | 'pending_review';
+  draftBy?: string;
+  draftAt?: string;
 }
 
 const initialCosts: CostItem[] = [
@@ -71,6 +75,9 @@ const initialProducts: ProductSimple[] = [
   { id: 'prod_005', storeName: 'Amazon 户外用品店', sku: 'OG-L01', name: 'LED 露营灯', cost: 6.5, sellingPrice: 15.99, stock: 95, status: 'active' },
   { id: 'prod_006', storeName: 'Amazon 户外用品店', sku: 'OG-B01', name: '户外登山包 40L', cost: 18.0, sellingPrice: 45.99, stock: 0, status: 'inactive' },
   { id: 'prod_007', storeName: 'Shopify 独立站', sku: 'SF-C01', name: '定制手机壳', cost: 3.5, sellingPrice: 12.99, stock: 520, status: 'active' },
+  { id: 'prod_008', storeName: 'TikTok Shop 美国旗舰店', sku: 'BT-N01', name: '便携式野营炉', cost: 14.2, sellingPrice: 35.99, stock: 0, status: 'draft', draftBy: '商品上架 Agent', draftAt: '2026-06-21 07:45' },
+  { id: 'prod_009', storeName: 'Amazon 户外用品店', sku: 'OG-N01', name: '超轻登山杖一对', cost: 8.5, sellingPrice: 29.99, stock: 0, status: 'draft', draftBy: '商品上架 Agent', draftAt: '2026-06-21 06:30' },
+  { id: 'prod_010', storeName: 'TikTok Shop 美国旗舰店', sku: 'BT-N02', name: '骨传导运动耳机', cost: 22.0, sellingPrice: 49.99, stock: 0, status: 'pending_review', draftBy: '商品上架 Agent', draftAt: '2026-06-20 15:00' },
 ];
 
 const storeNames = ['TikTok Shop 美国旗舰店', 'Amazon 户外用品店', 'Shopify 独立站'];
@@ -78,11 +85,14 @@ const storeNames = ['TikTok Shop 美国旗舰店', 'Amazon 户外用品店', 'Sh
 export function OperationsCenterPage() {
   const { t } = useI18n();
   const [costs, setCosts] = useState<CostItem[]>(initialCosts);
-  const [products] = useState<ProductSimple[]>(initialProducts);
+  const [products, setProducts] = useState<ProductSimple[]>(initialProducts);
   const [costModalOpen, setCostModalOpen] = useState(false);
   const [editingCost, setEditingCost] = useState<CostItem | null>(null);
   const [costForm] = Form.useForm();
   const [selectedStore, setSelectedStore] = useState<string | null>(null);
+  const [productEditModalOpen, setProductEditModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductSimple | null>(null);
+  const [productEditForm] = Form.useForm();
 
   const categoryOptions = [
     { value: 'advertising', label: t('ops.costAd'), color: 'blue' },
@@ -159,6 +169,48 @@ export function OperationsCenterPage() {
       }
       setCostModalOpen(false);
       costForm.resetFields();
+    });
+  };
+
+  const approveDraft = (id: string) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, status: 'active', stock: 100 } : p))
+    );
+    message.success(t('ops.draftApproved'));
+  };
+
+  const rejectDraft = (id: string) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, status: 'inactive' } : p))
+    );
+    message.success(t('ops.draftRejected'));
+  };
+
+  const openEditProduct = (product: ProductSimple) => {
+    setEditingProduct(product);
+    productEditForm.setFieldsValue({
+      name: product.name,
+      cost: product.cost,
+      sellingPrice: product.sellingPrice,
+      stock: product.stock,
+    });
+    setProductEditModalOpen(true);
+  };
+
+  const handleProductEditSubmit = () => {
+    productEditForm.validateFields().then((values) => {
+      if (editingProduct) {
+        setProducts((prev) =>
+          prev.map((p) =>
+            p.id === editingProduct.id
+              ? { ...p, name: values.name, cost: values.cost, sellingPrice: values.sellingPrice, stock: values.stock }
+              : p
+          )
+        );
+        message.success(t('ops.productUpdated'));
+      }
+      setProductEditModalOpen(false);
+      productEditForm.resetFields();
     });
   };
 
@@ -259,12 +311,46 @@ export function OperationsCenterPage() {
     {
       title: t('ops.status'),
       dataIndex: 'status',
-      width: 100,
-      render: (s: string) => (
-        <Tag color={s === 'active' ? 'green' : s === 'out_of_stock' ? 'red' : 'default'}>
-          {t(`ops.${s}`)}
-        </Tag>
-      ),
+      width: 120,
+      render: (s: string, record: ProductSimple) => {
+        const colors: Record<string, string> = { active: 'green', inactive: 'default', out_of_stock: 'red', draft: 'blue', pending_review: 'orange' };
+        return (
+          <Space>
+            <Tag color={colors[s]}>{t(`ops.${s}`)}</Tag>
+            {(s === 'draft' || s === 'pending_review') && (
+              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>
+                {record.draftBy}
+              </Typography.Text>
+            )}
+          </Space>
+        );
+      },
+    },
+    {
+      title: t('common.actions'),
+      width: 140,
+      render: (_: unknown, record: ProductSimple) => {
+        if (record.status === 'draft' || record.status === 'pending_review') {
+          return (
+            <Space>
+              <Button size="small" type="primary" icon={<CheckCircleOutlined />} onClick={() => approveDraft(record.id)}>
+                {t('ops.approve')}
+              </Button>
+              <Button size="small" danger icon={<CloseCircleOutlined />} onClick={() => rejectDraft(record.id)}>
+                {t('ops.reject')}
+              </Button>
+            </Space>
+          );
+        }
+        if (record.status === 'active' || record.status === 'inactive') {
+          return (
+            <Button size="small" icon={<EditOutlined />} onClick={() => openEditProduct(record)}>
+              {t('ops.editProduct')}
+            </Button>
+          );
+        }
+        return null;
+      },
     },
   ];
 
@@ -405,6 +491,30 @@ export function OperationsCenterPage() {
           </Form.Item>
           <Form.Item label={t('ops.note')} name="note">
             <Input.TextArea rows={2} />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* 编辑产品弹窗 */}
+      <Modal
+        title={t('ops.editProductTitle')}
+        open={productEditModalOpen}
+        onOk={handleProductEditSubmit}
+        onCancel={() => { setProductEditModalOpen(false); productEditForm.resetFields(); }}
+        width={480}
+      >
+        <Form form={productEditForm} layout="vertical">
+          <Form.Item label={t('ops.productName')} name="name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label={t('ops.costPrice')} name="cost" rules={[{ required: true }]}>
+            <InputNumber min={0} step={0.01} style={{ width: '100%' }} prefix="$" />
+          </Form.Item>
+          <Form.Item label={t('ops.sellingPrice')} name="sellingPrice" rules={[{ required: true }]}>
+            <InputNumber min={0} step={0.01} style={{ width: '100%' }} prefix="$" />
+          </Form.Item>
+          <Form.Item label={t('ops.stock')} name="stock" rules={[{ required: true }]}>
+            <InputNumber min={0} step={1} style={{ width: '100%' }} />
           </Form.Item>
         </Form>
       </Modal>

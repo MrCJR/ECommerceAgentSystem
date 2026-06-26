@@ -1,4 +1,4 @@
-import { BankOutlined, BellOutlined, CameraOutlined, CheckCircleOutlined, CloseCircleOutlined, CustomerServiceOutlined, DollarOutlined, EditOutlined, EyeOutlined, FileSearchOutlined, FireOutlined, GiftOutlined, GlobalOutlined, KeyOutlined, LineChartOutlined, PictureOutlined, PlusOutlined, RadarChartOutlined, ReloadOutlined, SafetyOutlined, SearchOutlined, SettingOutlined, ShoppingCartOutlined, SkinOutlined, SmileOutlined, StarOutlined, StopOutlined, ThunderboltOutlined, ToolOutlined, UnorderedListOutlined, WalletOutlined, WarningOutlined } from '@ant-design/icons';
+import { BankOutlined, BellOutlined, CameraOutlined, CheckCircleOutlined, CloseCircleOutlined, CrownOutlined, CustomerServiceOutlined, DollarOutlined, EditOutlined, EyeOutlined, FileSearchOutlined, FireOutlined, GiftOutlined, GlobalOutlined, KeyOutlined, LineChartOutlined, PictureOutlined, PlusOutlined, PushpinOutlined, RadarChartOutlined, ReloadOutlined, SafetyOutlined, SearchOutlined, SettingOutlined, ShoppingCartOutlined, SkinOutlined, SmileOutlined, StarOutlined, StopOutlined, ThunderboltOutlined, ToolOutlined, UnorderedListOutlined, WalletOutlined, WarningOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Button,
@@ -79,6 +79,22 @@ export function AgentConfigPage() {
     }
   });
 
+  const enableAllDepsMutation = useMutation({
+    mutationFn: async () => {
+      for (const depType of depsMissing) {
+        await agentsApi.toggle(depType);
+      }
+    },
+    onSuccess: () => {
+      message.success(t('agent.depsEnabled') || 'All dependencies enabled');
+      queryClient.invalidateQueries({ queryKey: ['agent', agentType] });
+      queryClient.invalidateQueries({ queryKey: ['agents'] });
+    },
+    onError: (error: Error) => {
+      message.error(error.message);
+    }
+  });
+
   const createTaskMutation = useMutation({
     mutationFn: (values: { title?: string; goal?: string; storeId: string }) =>
       agentsApi.createTask(agentType!, {
@@ -118,6 +134,8 @@ export function AgentConfigPage() {
   const isInventoryAlert = agentType === 'inventory_alert';
   const isRiskControl = agentType === 'risk_control';
   const isFinanceAudit = agentType === 'finance_audit';
+  const isPromotionCampaign = agentType === 'promotion_campaign';
+  const isLiveStreamOps = agentType === 'live_stream_ops';
   const hasBuiltinTasks = isLoginBootstrap || isCompetitorIntel || isProductLaunch || isAdsOptimizer || isPricingStrategy || isCrmRetention || isReviewManager || isCustomerService || isAfterSales || isCreativeFactory || isInventoryAlert || isRiskControl || isFinanceAudit;
 
   const activeStatuses: TaskStatus[] = ['draft', 'queued', 'running', 'waiting_approval'];
@@ -150,6 +168,16 @@ export function AgentConfigPage() {
             {depsMissing.length > 0 && (
               <Typography.Text type="danger" style={{ fontSize: 11, display: 'block' }}>
                 {t('agent.dependsOn')}: {depsMissing.map((d) => t(`agent.${d}`)).join(', ')}
+                <Button
+                  size="small"
+                  type="link"
+                  danger
+                  loading={enableAllDepsMutation.isPending}
+                  onClick={() => enableAllDepsMutation.mutate()}
+                  style={{ padding: '0 4px', fontSize: 11, height: 'auto' }}
+                >
+                  ({t('agent.enableAll')})
+                </Button>
               </Typography.Text>
             )}
           </Space>
@@ -675,6 +703,234 @@ export function AgentConfigPage() {
               </Row>
             </div>
           )}
+
+          {/* 库存预警配置 */}
+          {agent.strategyConfig.inventoryConfig && (
+            <div style={{ marginBottom: 24 }}>
+              <Typography.Title level={5} style={{ marginBottom: 8 }}>{t('agent.inventoryConfig')}</Typography.Title>
+              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 12 }}>{t('agent.inventoryConfigDesc')}</Typography.Paragraph>
+              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                <Space size="large" wrap>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.lowStockThreshold')}:</Typography.Text>
+                    <InputNumber
+                      min={1} max={9999} step={10}
+                      style={{ width: 100 }}
+                      value={agent.strategyConfig.inventoryConfig.lowStockThreshold}
+                      onChange={(v) => { if (agent.strategyConfig?.inventoryConfig) agent.strategyConfig.inventoryConfig.lowStockThreshold = v ?? 50; }}
+                      suffix={t('common.items')}
+                    />
+                  </Space>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.deadStockDays')}:</Typography.Text>
+                    <InputNumber
+                      min={7} max={365} step={7}
+                      style={{ width: 100 }}
+                      value={agent.strategyConfig.inventoryConfig.deadStockDays}
+                      onChange={(v) => { if (agent.strategyConfig?.inventoryConfig) agent.strategyConfig.inventoryConfig.deadStockDays = v ?? 30; }}
+                      suffix={t('common.day')}
+                    />
+                  </Space>
+                </Space>
+                <Space size="large" wrap>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.autoReplenish')}:</Typography.Text>
+                    <Switch
+                      checked={agent.strategyConfig.inventoryConfig.autoReplenishEnabled}
+                      onChange={(v) => { if (agent.strategyConfig?.inventoryConfig) agent.strategyConfig.inventoryConfig.autoReplenishEnabled = v; }}
+                    />
+                    <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('agent.autoReplenishDesc')}</Typography.Text>
+                  </Space>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.replenishLeadTime')}:</Typography.Text>
+                    <InputNumber
+                      min={1} max={60} step={1}
+                      style={{ width: 80 }}
+                      value={agent.strategyConfig.inventoryConfig.replenishLeadTimeDays}
+                      onChange={(v) => { if (agent.strategyConfig?.inventoryConfig) agent.strategyConfig.inventoryConfig.replenishLeadTimeDays = v ?? 7; }}
+                      suffix={t('common.day')}
+                    />
+                  </Space>
+                </Space>
+              </Space>
+            </div>
+          )}
+
+          {/* 市场情报配置 */}
+          {agent.strategyConfig.intelConfig && (
+            <div style={{ marginBottom: 24 }}>
+              <Typography.Title level={5} style={{ marginBottom: 8 }}>{t('agent.intelConfig')}</Typography.Title>
+              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 12 }}>{t('agent.intelConfigDesc')}</Typography.Paragraph>
+              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                <Space>
+                  <Typography.Text type="secondary">{t('agent.monitorFrequency')}:</Typography.Text>
+                  <InputNumber
+                    min={1} max={168} step={1}
+                    style={{ width: 100 }}
+                    value={agent.strategyConfig.intelConfig.monitorFrequencyHours}
+                    onChange={(v) => { if (agent.strategyConfig?.intelConfig) agent.strategyConfig.intelConfig.monitorFrequencyHours = v ?? 2; }}
+                    suffix={t('agent.monitorFrequencyUnit')}
+                  />
+                </Space>
+                <div>
+                  <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4 }}>{t('agent.monitoredCategories')}:</Typography.Text>
+                  <Input
+                    style={{ maxWidth: 400 }}
+                    placeholder={t('agent.monitoredCategoriesDesc')}
+                    value={agent.strategyConfig.intelConfig.monitoredCategories.join('，')}
+                    onChange={(e) => { if (agent.strategyConfig?.intelConfig) agent.strategyConfig.intelConfig.monitoredCategories = e.target.value.split(/[,，]/).map((s) => s.trim()).filter(Boolean); }}
+                  />
+                </div>
+                <div>
+                  <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4 }}>{t('agent.competitorUrls')}:</Typography.Text>
+                  <Input.TextArea
+                    style={{ maxWidth: 400 }}
+                    rows={3}
+                    placeholder={t('agent.competitorUrlsDesc')}
+                    value={agent.strategyConfig.intelConfig.competitorUrls.join('\n')}
+                    onChange={(e) => { if (agent.strategyConfig?.intelConfig) agent.strategyConfig.intelConfig.competitorUrls = e.target.value.split('\n').filter(Boolean); }}
+                  />
+                </div>
+              </Space>
+            </div>
+          )}
+
+          {/* 财务对账配置 */}
+          {agent.strategyConfig.financeConfig && (
+            <div>
+              <Typography.Title level={5} style={{ marginBottom: 8 }}>{t('agent.financeConfig')}</Typography.Title>
+              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 12 }}>{t('agent.financeConfigDesc')}</Typography.Paragraph>
+              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                <Space size="large" wrap>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.autoReconcileDay')}:</Typography.Text>
+                    <InputNumber
+                      min={1} max={28} step={1}
+                      style={{ width: 80 }}
+                      value={agent.strategyConfig.financeConfig.autoReconcileDay}
+                      onChange={(v) => { if (agent.strategyConfig?.financeConfig) agent.strategyConfig.financeConfig.autoReconcileDay = v ?? 5; }}
+                      suffix={t('agent.autoReconcileDayUnit')}
+                    />
+                  </Space>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.discrepancyAlert')}:</Typography.Text>
+                    <InputNumber
+                      min={1} step={10}
+                      style={{ width: 120 }}
+                      prefix="$"
+                      value={agent.strategyConfig.financeConfig.discrepancyAlertThreshold}
+                      onChange={(v) => { if (agent.strategyConfig?.financeConfig) agent.strategyConfig.financeConfig.discrepancyAlertThreshold = v ?? 100; }}
+                    />
+                  </Space>
+                </Space>
+                <Space>
+                  <Typography.Text type="secondary">{t('agent.autoGenReport')}:</Typography.Text>
+                  <Switch
+                    checked={agent.strategyConfig.financeConfig.autoGenerateReport}
+                    onChange={(v) => { if (agent.strategyConfig?.financeConfig) agent.strategyConfig.financeConfig.autoGenerateReport = v; }}
+                  />
+                  <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('agent.autoGenReportDesc')}</Typography.Text>
+                </Space>
+              </Space>
+            </div>
+          )}
+
+          {/* 促销活动配置 */}
+          {agent.strategyConfig.promotionConfig && (
+            <div style={{ marginBottom: 24 }}>
+              <Typography.Title level={5} style={{ marginBottom: 8 }}>{t('agent.promotionConfig')}</Typography.Title>
+              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 12 }}>{t('agent.promotionConfigDesc')}</Typography.Paragraph>
+              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                <Space size="large" wrap>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.maxDiscount')}:</Typography.Text>
+                    <InputNumber
+                      min={1} max={90} step={5}
+                      style={{ width: 80 }}
+                      suffix="%"
+                      value={agent.strategyConfig.promotionConfig.maxDiscountPercent}
+                      onChange={(v) => { if (agent.strategyConfig?.promotionConfig) agent.strategyConfig.promotionConfig.maxDiscountPercent = v ?? 50; }}
+                    />
+                  </Space>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.campaignBudget')}:</Typography.Text>
+                    <InputNumber
+                      min={100} step={100}
+                      style={{ width: 120 }}
+                      prefix="$"
+                      value={agent.strategyConfig.promotionConfig.campaignBudget}
+                      onChange={(v) => { if (agent.strategyConfig?.promotionConfig) agent.strategyConfig.promotionConfig.campaignBudget = v ?? 2000; }}
+                    />
+                  </Space>
+                </Space>
+                <Space size="large" wrap>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.autoSchedule')}:</Typography.Text>
+                    <Switch
+                      checked={agent.strategyConfig.promotionConfig.autoSchedule}
+                      onChange={(v) => { if (agent.strategyConfig?.promotionConfig) agent.strategyConfig.promotionConfig.autoSchedule = v; }}
+                    />
+                    <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('agent.autoScheduleDesc')}</Typography.Text>
+                  </Space>
+                </Space>
+                <div>
+                  <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4 }}>{t('agent.targetPlatforms')}:</Typography.Text>
+                  <Input
+                    style={{ maxWidth: 400 }}
+                    value={agent.strategyConfig.promotionConfig.targetPlatforms.join('，')}
+                    onChange={(e) => { if (agent.strategyConfig?.promotionConfig) agent.strategyConfig.promotionConfig.targetPlatforms = e.target.value.split(/[,，]/).map((s) => s.trim()).filter(Boolean); }}
+                  />
+                </div>
+              </Space>
+            </div>
+          )}
+
+          {/* 直播运营配置 */}
+          {agent.strategyConfig.liveStreamConfig && (
+            <div>
+              <Typography.Title level={5} style={{ marginBottom: 8 }}>{t('agent.liveStreamConfig')}</Typography.Title>
+              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 12 }}>{t('agent.liveStreamConfigDesc')}</Typography.Paragraph>
+              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                <Space size="large" wrap>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.autoPinProducts')}:</Typography.Text>
+                    <Switch
+                      checked={agent.strategyConfig.liveStreamConfig.autoPinProducts}
+                      onChange={(v) => { if (agent.strategyConfig?.liveStreamConfig) agent.strategyConfig.liveStreamConfig.autoPinProducts = v; }}
+                    />
+                  </Space>
+                  <Space>
+                    <Typography.Text type="secondary">{t('agent.peakHourBoost')}:</Typography.Text>
+                    <Switch
+                      checked={agent.strategyConfig.liveStreamConfig.peakHourBoost}
+                      onChange={(v) => { if (agent.strategyConfig?.liveStreamConfig) agent.strategyConfig.liveStreamConfig.peakHourBoost = v; }}
+                    />
+                    <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('agent.peakHourBoostDesc')}</Typography.Text>
+                  </Space>
+                </Space>
+                <Space>
+                  <Typography.Text type="secondary">{t('agent.performanceAlert')}:</Typography.Text>
+                  <InputNumber
+                    min={50} max={10000} step={50}
+                    style={{ width: 120 }}
+                    suffix={t('agent.performanceAlertUnit')}
+                    value={agent.strategyConfig.liveStreamConfig.performanceAlertThreshold}
+                    onChange={(v) => { if (agent.strategyConfig?.liveStreamConfig) agent.strategyConfig.liveStreamConfig.performanceAlertThreshold = v ?? 500; }}
+                  />
+                </Space>
+                <div>
+                  <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4 }}>{t('agent.replyTemplate')}:</Typography.Text>
+                  <Input.TextArea
+                    style={{ maxWidth: 400 }}
+                    rows={2}
+                    placeholder={t('agent.replyTemplateDesc')}
+                    value={agent.strategyConfig.liveStreamConfig.replyTemplate}
+                    onChange={(e) => { if (agent.strategyConfig?.liveStreamConfig) agent.strategyConfig.liveStreamConfig.replyTemplate = e.target.value; }}
+                  />
+                </div>
+              </Space>
+            </div>
+          )}
         </Card>
       )}
 
@@ -685,7 +941,7 @@ export function AgentConfigPage() {
           style={{ marginBottom: 16 }}
         >
           <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12}>
+            <Col xs={24} sm={12} md={8}>
               <Card
                 size="small"
                 style={{ background: 'var(--ark-panel-soft)' }}
@@ -701,7 +957,7 @@ export function AgentConfigPage() {
                 </div>
               </Card>
             </Col>
-            <Col xs={24} sm={12}>
+            <Col xs={24} sm={12} md={8}>
               <Card
                 size="small"
                 style={{ background: 'var(--ark-panel-soft)' }}
@@ -715,6 +971,18 @@ export function AgentConfigPage() {
                     {t('agent.sessionFailedTaskDesc')}
                   </Typography.Paragraph>
                 </div>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <GlobalOutlined style={{ color: '#7c3aed', marginRight: 6 }} />
+                  {t('agent.bulkPatrol')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.bulkPatrolDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -749,7 +1017,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.productResearchDesc')}
                 </Typography.Paragraph>
-                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
               </Card>
             </Col>
             <Col xs={24} md={8}>
@@ -761,7 +1029,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.trendMonitorDesc')}
                 </Typography.Paragraph>
-                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -800,7 +1068,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.draftGenerationDesc')}
                 </Typography.Paragraph>
-                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
               </Card>
             </Col>
             <Col xs={24} md={8}>
@@ -812,7 +1080,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.complianceCheckDesc')}
                 </Typography.Paragraph>
-                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -856,7 +1124,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.abTestDesc')}
                 </Typography.Paragraph>
-                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -900,7 +1168,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.floorProtectDesc')}
                 </Typography.Paragraph>
-                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -911,7 +1179,7 @@ export function AgentConfigPage() {
       {isCrmRetention && (
         <Card title={<><GiftOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
           <Row gutter={[16, 16]}>
-            <Col xs={24} md={8}>
+            <Col xs={24} sm={12} md={6}>
               <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
                 <Typography.Text strong style={{ fontSize: 13 }}>
                   <SkinOutlined style={{ color: '#2563eb', marginRight: 6 }} />
@@ -923,7 +1191,7 @@ export function AgentConfigPage() {
                 <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
               </Card>
             </Col>
-            <Col xs={24} md={8}>
+            <Col xs={24} sm={12} md={6}>
               <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
                 <Typography.Text strong style={{ fontSize: 13 }}>
                   <GiftOutlined style={{ color: '#16a34a', marginRight: 6 }} />
@@ -935,7 +1203,7 @@ export function AgentConfigPage() {
                 <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
               </Card>
             </Col>
-            <Col xs={24} md={8}>
+            <Col xs={24} sm={12} md={6}>
               <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
                 <Typography.Text strong style={{ fontSize: 13 }}>
                   <WarningOutlined style={{ color: '#ea580c', marginRight: 6 }} />
@@ -944,7 +1212,19 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.churnPredictDesc')}
                 </Typography.Paragraph>
-                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <CrownOutlined style={{ color: '#f59e0b', marginRight: 6 }} />
+                  {t('agent.vipCare')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.vipCareDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -988,7 +1268,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.reviewInviteDesc')}
                 </Typography.Paragraph>
-                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -1020,7 +1300,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.escalateHumanDesc')}
                 </Typography.Paragraph>
-                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
               </Card>
             </Col>
             <Col xs={24} md={8}>
@@ -1032,7 +1312,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.faqLearnDesc')}
                 </Typography.Paragraph>
-                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -1076,7 +1356,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.logisticsTrackDesc')}
                 </Typography.Paragraph>
-                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -1120,7 +1400,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.copyGenDesc')}
                 </Typography.Paragraph>
-                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -1152,7 +1432,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.deadStockDesc')}
                 </Typography.Paragraph>
-                <Tag color="default" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
               </Card>
             </Col>
             <Col xs={24} md={8}>
@@ -1196,7 +1476,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.behaviorMonitorDesc')}
                 </Typography.Paragraph>
-                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
               </Card>
             </Col>
             <Col xs={24} md={8}>
@@ -1208,7 +1488,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.circuitBreakerDesc')}
                 </Typography.Paragraph>
-                <Tag color="red" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
               </Card>
             </Col>
           </Row>
@@ -1240,7 +1520,7 @@ export function AgentConfigPage() {
                 <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
                   {t('agent.discrepancyMarkDesc')}
                 </Typography.Paragraph>
-                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
               </Card>
             </Col>
             <Col xs={24} md={8}>
@@ -1253,6 +1533,94 @@ export function AgentConfigPage() {
                   {t('agent.reportGenDesc')}
                 </Typography.Paragraph>
                 <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 促销活动：内置任务卡片 */}
+      {isPromotionCampaign && (
+        <Card title={<><GiftOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <ThunderboltOutlined style={{ color: '#dc2626', marginRight: 6 }} />
+                  {t('agent.flashSaleSetup')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.flashSaleSetupDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.active')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <DollarOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.couponCampaign')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.couponCampaignDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <ShoppingCartOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.bundleDeal')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.bundleDealDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 直播运营：内置任务卡片 */}
+      {isLiveStreamOps && (
+        <Card title={<><CustomerServiceOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <UnorderedListOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.liveSchedule')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.liveScheduleDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <PushpinOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.productPinning')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.productPinningDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <LineChartOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.liveMetrics')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.liveMetricsDesc')}
+                </Typography.Paragraph>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
               </Card>
             </Col>
           </Row>
