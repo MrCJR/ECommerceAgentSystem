@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, CloseCircleOutlined, LineChartOutlined, PlusOutlined, ReloadOutlined, SafetyOutlined, SettingOutlined, StopOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { BankOutlined, BellOutlined, CameraOutlined, CheckCircleOutlined, CloseCircleOutlined, CustomerServiceOutlined, DollarOutlined, EditOutlined, EyeOutlined, FileSearchOutlined, FireOutlined, GiftOutlined, GlobalOutlined, KeyOutlined, LineChartOutlined, PictureOutlined, PlusOutlined, RadarChartOutlined, ReloadOutlined, SafetyOutlined, SearchOutlined, SettingOutlined, ShoppingCartOutlined, SkinOutlined, SmileOutlined, StarOutlined, StopOutlined, ThunderboltOutlined, ToolOutlined, UnorderedListOutlined, WalletOutlined, WarningOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Button,
@@ -23,7 +23,7 @@ import {
 } from 'antd';
 import type { UploadFile } from 'antd';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { agentsApi } from '../api/agents';
 import { storesApi } from '../api/stores';
 import { useI18n } from '../app/i18n';
@@ -34,6 +34,7 @@ import type { AgentConfig, AgentType, Task, TaskStatus } from '../types/domain';
 export function AgentConfigPage() {
   const { t } = useI18n();
   const { agentType } = useParams<{ agentType: AgentType }>();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [taskForm] = Form.useForm();
@@ -105,6 +106,19 @@ export function AgentConfigPage() {
 
   const needsImages = agentType === 'product_launch';
   const isLoginBootstrap = agentType === 'login_bootstrap';
+  const isCompetitorIntel = agentType === 'competitor_intel';
+  const isProductLaunch = agentType === 'product_launch';
+  const isAdsOptimizer = agentType === 'ads_optimizer';
+  const isPricingStrategy = agentType === 'pricing_strategy';
+  const isCrmRetention = agentType === 'crm_retention';
+  const isReviewManager = agentType === 'review_manager';
+  const isCustomerService = agentType === 'customer_service';
+  const isAfterSales = agentType === 'after_sales';
+  const isCreativeFactory = agentType === 'creative_factory';
+  const isInventoryAlert = agentType === 'inventory_alert';
+  const isRiskControl = agentType === 'risk_control';
+  const isFinanceAudit = agentType === 'finance_audit';
+  const hasBuiltinTasks = isLoginBootstrap || isCompetitorIntel || isProductLaunch || isAdsOptimizer || isPricingStrategy || isCrmRetention || isReviewManager || isCustomerService || isAfterSales || isCreativeFactory || isInventoryAlert || isRiskControl || isFinanceAudit;
 
   const activeStatuses: TaskStatus[] = ['draft', 'queued', 'running', 'waiting_approval'];
   const logStatuses: TaskStatus[] = ['succeeded', 'failed', 'cancelled'];
@@ -664,8 +678,589 @@ export function AgentConfigPage() {
         </Card>
       )}
 
+      {/* 店铺保活：内置任务卡片 */}
+      {isLoginBootstrap && (
+        <Card
+          title={<><UnorderedListOutlined /> {t('agent.builtinTasks')}</>}
+          style={{ marginBottom: 16 }}
+        >
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
+              <Card
+                size="small"
+                style={{ background: 'var(--ark-panel-soft)' }}
+              >
+                <div>
+                  <Typography.Text strong style={{ fontSize: 13 }}>
+                    <CheckCircleOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                    {t('agent.sessionCheckTask')}
+                  </Typography.Text>
+                  <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                    {t('agent.sessionCheckTaskDesc')}
+                  </Typography.Paragraph>
+                </div>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Card
+                size="small"
+                style={{ background: 'var(--ark-panel-soft)' }}
+              >
+                <div>
+                  <Typography.Text strong style={{ fontSize: 13 }}>
+                    <BellOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                    {t('agent.sessionFailedTask')}
+                  </Typography.Text>
+                  <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                    {t('agent.sessionFailedTaskDesc')}
+                  </Typography.Paragraph>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 市场情报：内置任务卡片 */}
+      {isCompetitorIntel && (
+        <Card
+          title={<><RadarChartOutlined /> {t('agent.builtinTasks')}</>}
+          style={{ marginBottom: 16 }}
+        >
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <EyeOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.passiveCompetitorMonitor')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.passiveCompetitorMonitorDesc')}
+                </Typography.Paragraph>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <SearchOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.productResearch')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.productResearchDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <GlobalOutlined style={{ color: '#7c3aed', marginRight: 6 }} />
+                  {t('agent.trendMonitor')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.trendMonitorDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 商品上架：内置任务卡片 */}
+      {isProductLaunch && (
+        <Card title={<><CameraOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div>
+                    <Typography.Text strong style={{ fontSize: 13 }}>
+                      <CameraOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                      {t('agent.imageRecognition')}
+                    </Typography.Text>
+                    <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                      {t('agent.imageRecognitionDesc')}
+                    </Typography.Paragraph>
+                  </div>
+                </div>
+                <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Tag color="orange">{t('agent.active')}</Tag>
+                  <Button type="primary" size="small" icon={<PlusOutlined />} onClick={() => setTaskModalOpen(true)} style={{ marginLeft: 'auto' }}>{t('agent.newTask')}</Button>
+                </div>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <EditOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.draftGeneration')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.draftGenerationDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <SafetyOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.complianceCheck')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.complianceCheckDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 广告投放：内置任务卡片 */}
+      {isAdsOptimizer && (
+        <Card title={<><ThunderboltOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <LineChartOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.roiPatrol')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.roiPatrolDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <ToolOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.budgetOptimize')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.budgetOptimizeDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <FireOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.abTest')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.abTestDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 定价策略：内置任务卡片 */}
+      {isPricingStrategy && (
+        <Card title={<><DollarOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <EyeOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.priceScan')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.priceScanDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <ToolOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.dynamicPrice')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.dynamicPriceDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <WarningOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.floorProtect')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.floorProtectDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* CRM 复购：内置任务卡片 */}
+      {isCrmRetention && (
+        <Card title={<><GiftOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <SkinOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.segmentRefresh')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.segmentRefreshDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <GiftOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.couponSend')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.couponSendDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <WarningOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.churnPredict')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.churnPredictDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 评价管理：内置任务卡片 */}
+      {isReviewManager && (
+        <Card title={<><StarOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <WarningOutlined style={{ color: '#dc2626', marginRight: 6 }} />
+                  {t('agent.negativeMonitor')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.negativeMonitorDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <EditOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.autoReply')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.autoReplyDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <SmileOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.reviewInvite')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.reviewInviteDesc')}
+                </Typography.Paragraph>
+                <Tag color="blue" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 客服消息：内置任务卡片 */}
+      {isCustomerService && (
+        <Card title={<><CustomerServiceOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <SmileOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.smartReply')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.smartReplyDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <WarningOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.escalateHuman')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.escalateHumanDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <SearchOutlined style={{ color: '#7c3aed', marginRight: 6 }} />
+                  {t('agent.faqLearn')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.faqLearnDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 售后处理：内置任务卡片 */}
+      {isAfterSales && (
+        <Card title={<><ToolOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <FileSearchOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.returnAudit')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.returnAuditDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <WalletOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.refundProcess')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.refundProcessDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <ShoppingCartOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.logisticsTrack')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.logisticsTrackDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 素材工厂：内置任务卡片 */}
+      {isCreativeFactory && (
+        <Card title={<><PictureOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <PictureOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.imageGen')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.imageGenDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <CameraOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.videoGen')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.videoGenDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <EditOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.copyGen')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.copyGenDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 库存预警：内置任务卡片 */}
+      {isInventoryAlert && (
+        <Card title={<><ShoppingCartOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <WarningOutlined style={{ color: '#dc2626', marginRight: 6 }} />
+                  {t('agent.lowStockAlert')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.lowStockAlertDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <StopOutlined style={{ color: '#64748b', marginRight: 6 }} />
+                  {t('agent.deadStock')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.deadStockDesc')}
+                </Typography.Paragraph>
+                <Tag color="default" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <ShoppingCartOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.replenish')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.replenishDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 风险控制：内置任务卡片 */}
+      {isRiskControl && (
+        <Card title={<><SafetyOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <FileSearchOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.complianceScan')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.complianceScanDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <EyeOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.behaviorMonitor')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.behaviorMonitorDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <StopOutlined style={{ color: '#dc2626', marginRight: 6 }} />
+                  {t('agent.circuitBreaker')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.circuitBreakerDesc')}
+                </Typography.Paragraph>
+                <Tag color="red" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.passive')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
+      {/* 财务对账：内置任务卡片 */}
+      {isFinanceAudit && (
+        <Card title={<><BankOutlined /> {t('agent.builtinTasks')}</>} style={{ marginBottom: 16 }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <FileSearchOutlined style={{ color: '#2563eb', marginRight: 6 }} />
+                  {t('agent.monthlyReconcile')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.monthlyReconcileDesc')}
+                </Typography.Paragraph>
+                <Tag color="purple" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.scheduled')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <WarningOutlined style={{ color: '#ea580c', marginRight: 6 }} />
+                  {t('agent.discrepancyMark')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.discrepancyMarkDesc')}
+                </Typography.Paragraph>
+                <Tag color="orange" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+                <Typography.Text strong style={{ fontSize: 13 }}>
+                  <EditOutlined style={{ color: '#16a34a', marginRight: 6 }} />
+                  {t('agent.reportGen')}
+                </Typography.Text>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '4px 0 0', paddingLeft: 22 }}>
+                  {t('agent.reportGenDesc')}
+                </Typography.Paragraph>
+                <Tag color="green" style={{ marginTop: 8, marginLeft: 22 }}>{t('agent.auto')}</Tag>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
+
       {/* 运行中任务 */}
-      {activeTasks.length > 0 && (
+      {!isLoginBootstrap && activeTasks.length > 0 && (
         <Card
           title={<><UnorderedListOutlined /> {t('agent.activeTasks')} ({activeTasks.length})</>}
           extra={
@@ -704,8 +1299,8 @@ export function AgentConfigPage() {
         </Card>
       )}
 
-      {/* 新建任务按钮（无运行中任务时单独显示） */}
-      {activeTasks.length === 0 && (
+      {/* 新建任务按钮（无运行中任务时单独显示，店铺保活除外） */}
+      {!isLoginBootstrap && activeTasks.length === 0 && (
         <Card style={{ marginBottom: 16 }}>
           <div style={{ textAlign: 'center', padding: 16 }}>
             <Typography.Paragraph type="secondary">{t('agent.noActiveTasks')}</Typography.Paragraph>
@@ -737,6 +1332,24 @@ export function AgentConfigPage() {
                     {timeline[timeline.length - 1].title} · {new Date(timeline[timeline.length - 1].at).toLocaleString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
                   </Typography.Text>
                 ) : '-'
+              },
+              {
+                title: t('common.actions'),
+                width: 100,
+                render: (_: unknown, record: Task) => {
+                  const needsAuth = record.timeline.some((e) => e.type === 'login_required');
+                  if (!needsAuth) return null;
+                  return (
+                    <Button
+                      size="small"
+                      type="primary"
+                      icon={<KeyOutlined />}
+                      onClick={() => navigate(`/stores/${record.storeId}`)}
+                    >
+                      {t('agent.manualAuth')}
+                    </Button>
+                  );
+                }
               }
             ]}
           />
@@ -745,7 +1358,7 @@ export function AgentConfigPage() {
 
       {/* 新建任务弹窗 */}
       <Modal
-        title={isLoginBootstrap ? t('agent.newSessionCheck') : t('agent.newTask')}
+        title={t('agent.newTask')}
         open={taskModalOpen}
         onOk={() => taskForm.submit()}
         onCancel={() => { setTaskModalOpen(false); taskForm.resetFields(); setFileList([]); }}
@@ -758,51 +1371,29 @@ export function AgentConfigPage() {
           onFinish={(values) => createTaskMutation.mutate(values)}
           initialValues={{ storeId: stores[0]?.id }}
         >
-          {isLoginBootstrap ? (
-            <>
-              <div style={{ padding: 12, background: '#f0f5ff', borderRadius: 8, marginBottom: 16 }}>
-                <Typography.Text>
-                  <CheckCircleOutlined style={{ color: '#2563eb', marginRight: 8 }} />
-                  {t('agent.sessionCheckHint')}
-                </Typography.Text>
-              </div>
-              <Form.Item label={t('entity.storeName')} name="storeId" rules={[{ required: true }]}>
-                <Select options={stores.map((s) => ({ value: s.id, label: s.name }))} />
-              </Form.Item>
-              <Form.Item label={t('agent.sessionReason')} name="goal" rules={[{ required: true }]}>
-                <Input.TextArea
-                  rows={2}
-                  placeholder={t('agent.sessionReasonPlaceholder')}
-                />
-              </Form.Item>
-            </>
-          ) : (
-            <>
-              <Form.Item label={t('entity.task')} name="title" rules={[{ required: true }]}>
-                <Input placeholder={t('agent.taskTitlePlaceholder')} />
-              </Form.Item>
-              <Form.Item label={t('agent.taskGoal')} name="goal" rules={[{ required: true }]}>
-                <Input.TextArea rows={2} placeholder={t('agent.taskGoalPlaceholder')} />
-              </Form.Item>
-              <Form.Item label={t('entity.storeName')} name="storeId" rules={[{ required: true }]}>
-                <Select options={stores.map((s) => ({ value: s.id, label: s.name }))} />
-              </Form.Item>
-              {needsImages && (
-                <Form.Item label={t('agent.uploadImages')}>
-                  <Upload
-                    multiple
-                    listType="picture-card"
-                    fileList={fileList}
-                    onChange={({ fileList: newList }) => setFileList(newList)}
-                    beforeUpload={() => false}
-                    maxCount={10}
-                  >
-                    {fileList.length < 10 && <div><PlusOutlined /><div style={{ marginTop: 8 }}>{t('agent.upload')}</div></div>}
-                  </Upload>
-                  <Typography.Text type="secondary">{t('agent.uploadHint')}</Typography.Text>
-                </Form.Item>
-              )}
-            </>
+          <Form.Item label={t('entity.task')} name="title" rules={[{ required: true }]}>
+            <Input placeholder={t('agent.taskTitlePlaceholder')} />
+          </Form.Item>
+          <Form.Item label={t('agent.taskGoal')} name="goal" rules={[{ required: true }]}>
+            <Input.TextArea rows={2} placeholder={t('agent.taskGoalPlaceholder')} />
+          </Form.Item>
+          <Form.Item label={t('entity.storeName')} name="storeId" rules={[{ required: true }]}>
+            <Select options={stores.map((s) => ({ value: s.id, label: s.name }))} />
+          </Form.Item>
+          {needsImages && (
+            <Form.Item label={t('agent.uploadImages')}>
+              <Upload
+                multiple
+                listType="picture-card"
+                fileList={fileList}
+                onChange={({ fileList: newList }) => setFileList(newList)}
+                beforeUpload={() => false}
+                maxCount={10}
+              >
+                {fileList.length < 10 && <div><PlusOutlined /><div style={{ marginTop: 8 }}>{t('agent.upload')}</div></div>}
+              </Upload>
+              <Typography.Text type="secondary">{t('agent.uploadHint')}</Typography.Text>
+            </Form.Item>
           )}
         </Form>
       </Modal>

@@ -6,5 +6,5 @@ export function mockDelay<T>(value: T, delay = 180): Promise<T> {
 
 export function makeConnectToken(storeId: string) {
   const suffix = Math.random().toString(36).slice(2, 8);
-  return `arkops_connect_${storeId}_${suffix}`;
+  return `allmall_connect_${storeId}_${suffix}`;
 }

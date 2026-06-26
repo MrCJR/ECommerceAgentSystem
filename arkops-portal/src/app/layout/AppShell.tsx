@@ -1,6 +1,7 @@
 import {
   AuditOutlined,
   BellOutlined,
+  BookOutlined,
   CheckSquareOutlined,
   CreditCardOutlined,
   CrownOutlined,
@@ -8,6 +9,7 @@ import {
   DesktopOutlined,
   DollarOutlined,
   ExperimentOutlined,
+  FundOutlined,
   MoonOutlined,
   SafetyCertificateOutlined,
   SettingOutlined,
@@ -41,8 +43,8 @@ export function AppShell() {
     { key: '/stores', icon: <ShopOutlined />, label: t('nav.stores') },
     { key: '/agents', icon: <SettingOutlined />, label: t('nav.agents') },
     { key: '/models', icon: <ExperimentOutlined />, label: t('nav.models') },
-    {
-      key: '/approvals',
+    { key: '/operations', icon: <FundOutlined />, label: t('nav.operations') },
+    { key: '/approvals',
       icon: <CheckSquareOutlined />,
       label: (
         <span>
@@ -68,7 +70,8 @@ export function AppShell() {
       children: [
         { key: '/settings/members', label: t('nav.members') },
         { key: '/settings/approval-policy', label: t('nav.approvalPolicy') },
-        { key: '/settings/notifications', label: t('nav.notifications') }
+        { key: '/settings/notifications', label: t('nav.notifications') },
+        { key: '/settings/guide', label: t('nav.guide') }
       ]
     }
   ];
@@ -79,7 +82,7 @@ export function AppShell() {
         <div className="brand">
           <div className="brand-mark">A</div>
           <div>
-            <Typography.Text strong>ArkOps</Typography.Text>
+            <Typography.Text strong>AllMall</Typography.Text>
             <Typography.Text type="secondary" className="brand-subtitle">
               {t('app.subtitle')}
             </Typography.Text>

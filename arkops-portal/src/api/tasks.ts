@@ -21,7 +21,7 @@ export const tasksApi = {
           id: `evt_${Date.now()}`,
           type: 'run_started',
           title: '任务已排队',
-          summary: 'ArkOps 已为 Runtime Adapter 创建任务载荷。',
+          summary: 'AllMall 已为 Runtime Adapter 创建任务载荷。',
           at: new Date().toISOString()
         }
       ]

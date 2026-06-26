@@ -19,7 +19,7 @@ import {
   WarningOutlined
 } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Col, Descriptions, Form, Input, Modal, Progress, Row, Select, Space, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
+import { Button, Card, Col, Descriptions, Form, Input, Modal, Progress, Row, Segmented, Select, Space, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -37,6 +37,7 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
+  const [bizTimeRange, setBizTimeRange] = useState<'today' | '7d' | '30d'>('today');
 
   const { data: store } = useQuery({
     queryKey: ['store', storeId],
@@ -44,7 +45,7 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
     enabled: Boolean(storeId) && mode !== 'new'
   });
   const { data: storeBiz } = useQuery({
-    queryKey: ['store-biz', storeId],
+    queryKey: ['store-biz', storeId, bizTimeRange],
     queryFn: () => storeBusinessApi.getDetail(storeId!),
     enabled: Boolean(storeId) && mode !== 'new'
   });
@@ -72,9 +73,25 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
   const [authMethod, setAuthMethod] = useState<Store['authMethod'] | undefined>();
   const [platform, setPlatform] = useState<string>('tiktok_shop');
 
+  // 平台 → 地区和币种映射
+  const platformDefaults: Record<string, { region: string; currency: string }> = {
+    tiktok_shop: { region: 'US', currency: 'USD' },
+    amazon: { region: 'US', currency: 'USD' },
+    shopify: { region: 'US', currency: 'USD' },
+    shopee: { region: 'SG', currency: 'SGD' },
+    lazada: { region: 'SG', currency: 'SGD' },
+    temu: { region: 'US', currency: 'USD' },
+    ebay: { region: 'US', currency: 'USD' },
+    pinduoduo: { region: 'CN', currency: 'CNY' },
+    douyin: { region: 'CN', currency: 'CNY' },
+    jd: { region: 'CN', currency: 'CNY' },
+    taobao: { region: 'CN', currency: 'CNY' },
+    kuaishou: { region: 'CN', currency: 'CNY' },
+  };
+
   if (mode === 'new') {
     const authMethods: { value: Store['authMethod']; label: string; desc: string; platforms: string[] }[] = [
-      { value: 'credentials', label: t('stores.authCredentials'), desc: t('stores.authCredentialsDesc'), platforms: ['tiktok_shop', 'amazon', 'shopee', 'lazada', 'temu', 'ebay'] },
+      { value: 'credentials', label: t('stores.authCredentials'), desc: t('stores.authCredentialsDesc'), platforms: ['tiktok_shop', 'amazon', 'shopee', 'lazada', 'temu', 'ebay', 'pinduoduo', 'douyin', 'jd', 'taobao', 'kuaishou'] },
       { value: 'api_key', label: t('stores.authApiKey'), desc: t('stores.authApiKeyDesc'), platforms: ['shopify', 'amazon', 'ebay'] },
       { value: 'oauth', label: t('stores.authOauth'), desc: t('stores.authOauthDesc'), platforms: ['shopify', 'amazon'] }
     ];
@@ -90,11 +107,19 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
           <Form.Item label={t('stores.platform')}>
             <Select
               value={platform}
-              onChange={(v) => { setPlatform(v); setAuthMethod(undefined); }}
+              onChange={(v) => {
+                setPlatform(v);
+                setAuthMethod(undefined);
+                const def = platformDefaults[v];
+                if (def) form.setFieldsValue({ region: def.region, currency: def.currency });
+              }}
               options={[
                 { value: 'tiktok_shop', label: 'TikTok Shop' }, { value: 'amazon', label: 'Amazon' },
                 { value: 'shopify', label: 'Shopify' }, { value: 'shopee', label: 'Shopee' },
-                { value: 'lazada', label: 'Lazada' }, { value: 'temu', label: 'Temu' }, { value: 'ebay', label: 'eBay' }
+                { value: 'lazada', label: 'Lazada' }, { value: 'temu', label: 'Temu' }, { value: 'ebay', label: 'eBay' },
+                { value: 'pinduoduo', label: '拼多多' }, { value: 'douyin', label: '抖音' },
+                { value: 'jd', label: '京东' }, { value: 'taobao', label: '淘宝' },
+                { value: 'kuaishou', label: '快手' }
               ]}
             />
           </Form.Item>
@@ -144,14 +169,18 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
                   <Row gutter={16}>
                     <Col xs={24} sm={12}><Form.Item label={t('stores.account')} name="account" rules={[{ required: true }]}><Input placeholder="seller@example.com" /></Form.Item></Col>
                     <Col xs={24} sm={12}><Form.Item label={t('stores.password')} name="password"><Input.Password placeholder={t('stores.passwordPlaceholder')} /></Form.Item></Col>
-                    <Col xs={24} sm={12}><Form.Item label={t('stores.region')} name="region"><Select allowClear placeholder="US" options={[
-                      { value: 'US', label: 'United States' }, { value: 'UK', label: 'United Kingdom' },
-                      { value: 'SG', label: 'Singapore' }, { value: 'ID', label: 'Indonesia' }
-                    ]} /></Form.Item></Col>
-                    <Col xs={24} sm={12}><Form.Item label={t('stores.currency')} name="currency" initialValue="USD"><Select options={[
-                      { value: 'USD', label: 'USD' }, { value: 'GBP', label: 'GBP' },
-                      { value: 'SGD', label: 'SGD' }, { value: 'CNY', label: 'CNY' }, { value: 'EUR', label: 'EUR' }
-                    ]} /></Form.Item></Col>
+                    <Col xs={24} sm={12}>
+                      <Form.Item label={t('stores.region')} name="region" initialValue={platformDefaults[platform]?.region}>
+                        <Input disabled />
+                      </Form.Item>
+                      <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('stores.regionAutoHint')}</Typography.Text>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                      <Form.Item label={t('stores.currency')} name="currency" initialValue={platformDefaults[platform]?.currency}>
+                        <Input disabled />
+                      </Form.Item>
+                      <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('stores.currencyAutoHint')}</Typography.Text>
+                    </Col>
                   </Row>
                 </>
               )}
@@ -160,9 +189,12 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
                 <Row gutter={16}>
                   <Col xs={24} sm={12}><Form.Item label={t('stores.apiKeyLabel')} name="apiKey" rules={[{ required: true }]}><Input placeholder="shpat_xxxxxxxxxxxx" /></Form.Item></Col>
                   <Col xs={24} sm={12}><Form.Item label={t('stores.apiSecretLabel')} name="apiSecret" rules={[{ required: true }]}><Input.Password placeholder={t('stores.apiSecretPlaceholder')} /></Form.Item></Col>
-                  <Col xs={24} sm={12}><Form.Item label={t('stores.region')} name="region"><Select allowClear placeholder="US" options={[
-                    { value: 'US', label: 'United States' }, { value: 'UK', label: 'United Kingdom' }, { value: 'SG', label: 'Singapore' }
-                  ]} /></Form.Item></Col>
+                  <Col xs={24} sm={12}>
+                    <Form.Item label={t('stores.region')} name="region" initialValue={platformDefaults[platform]?.region}>
+                      <Input disabled />
+                    </Form.Item>
+                    <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('stores.regionAutoHint')}</Typography.Text>
+                  </Col>
                 </Row>
               )}
 
@@ -303,15 +335,35 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
     </>
   );
 
+  const timeOptions: { label: string; value: 'today' | '7d' | '30d' }[] = [
+    { label: t('time.today'), value: 'today' },
+    { label: t('time.7d'), value: '7d' },
+    { label: t('time.30d'), value: '30d' },
+  ];
+
+  const vsLabel = bizTimeRange === 'today' ? t('biz.vsYesterday') : bizTimeRange === '7d' ? t('biz.vsLastWeek') : t('biz.vsLastMonth');
+  const gmvLabel = bizTimeRange === 'today' ? t('biz.todayGmv') : bizTimeRange === '7d' ? t('biz.7dGmv') : t('biz.30dGmv');
+  const ordersLabel = bizTimeRange === 'today' ? t('biz.todayOrders') : bizTimeRange === '7d' ? t('biz.7dOrders') : t('biz.30dOrders');
+
   const bizTab = !storeBiz ? null : (
     <>
+      {/* 时间段选择 */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <Segmented
+          size="small"
+          value={bizTimeRange}
+          onChange={(v) => setBizTimeRange(v as 'today' | '7d' | '30d')}
+          options={timeOptions}
+        />
+      </div>
+
       {/* 核心指标 */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
           <Card className="stat-card stat-card-primary">
             <div className="stat-card-icon"><DollarOutlined /></div>
             <Statistic
-              title={t('biz.todayGmv')}
+              title={gmvLabel}
               value={storeBiz.gmv.today}
               prefix="$"
               valueStyle={{ color: '#2563eb', fontWeight: 700, fontSize: 26 }}
@@ -322,14 +374,14 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
                 </span>
               }
             />
-            <Typography.Text type="secondary">{t('biz.vsYesterday')} ${storeBiz.gmv.yesterday.toLocaleString()}</Typography.Text>
+            <Typography.Text type="secondary">{vsLabel} ${storeBiz.gmv.yesterday.toLocaleString()}</Typography.Text>
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card className="stat-card stat-card-success">
             <div className="stat-card-icon"><ShoppingCartOutlined /></div>
             <Statistic
-              title={t('biz.todayOrders')}
+              title={ordersLabel}
               value={storeBiz.orders.today}
               valueStyle={{ color: '#0f766e', fontWeight: 700, fontSize: 26 }}
               suffix={
@@ -339,7 +391,7 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
                 </span>
               }
             />
-            <Typography.Text type="secondary">{t('biz.vsYesterday')} {storeBiz.orders.yesterday} {t('biz.orders')}</Typography.Text>
+            <Typography.Text type="secondary">{vsLabel} {storeBiz.orders.yesterday} {t('biz.orders')}</Typography.Text>
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>

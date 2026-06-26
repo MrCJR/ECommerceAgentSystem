@@ -4,7 +4,7 @@ import type { PropsWithChildren } from 'react';
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type ResolvedTheme = 'light' | 'dark';
 
-const THEME_STORAGE_KEY = 'arkops-portal-theme';
+const THEME_STORAGE_KEY = 'allmall-portal-theme';
 const THEME_MEDIA_QUERY = '(prefers-color-scheme: dark)';
 
 interface ThemeContextValue {

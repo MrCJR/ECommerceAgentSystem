@@ -2,7 +2,7 @@ import { mockDelay } from './client';
 import type { BusinessMetrics } from '../types/domain';
 
 export const businessDashboardApi = {
-  getMetrics: (): Promise<BusinessMetrics> =>
+  getMetrics: (_timeRange?: string): Promise<BusinessMetrics> =>
     mockDelay({
       gmv: { today: 28640, yesterday: 27350, lastWeekSameDay: 24900 },
       orders: { today: 412, yesterday: 388, lastWeekSameDay: 356 },

@@ -216,7 +216,7 @@ function BankTransferInfoSection() {
         <Col xs={24} lg={14}>
           <Descriptions column={1} size="small" bordered>
             <Descriptions.Item label={t('subscription.beneficiary')}>{t('subscription.beneficiaryName')}</Descriptions.Item>
-            <Descriptions.Item label={t('subscription.bankName')}>ArkOps Inc.</Descriptions.Item>
+            <Descriptions.Item label={t('subscription.bankName')}>AllMall Inc.</Descriptions.Item>
             <Descriptions.Item label={t('subscription.bankAddress')}>123 Tech Park Drive, Suite 400, San Francisco, CA 94105</Descriptions.Item>
             <Descriptions.Item label="SWIFT Code">ARKSUS6L</Descriptions.Item>
             <Descriptions.Item label={t('subscription.accountNumber')}>8844 1234 5678 9012</Descriptions.Item>
@@ -304,7 +304,7 @@ function PrivateDeploySection() {
             <div>
               <Typography.Text>{t('subscription.contactSales')}</Typography.Text>
               <br />
-              <Typography.Text strong style={{ fontSize: 16 }}>enterprise@arkops.com</Typography.Text>
+              <Typography.Text strong style={{ fontSize: 16 }}>enterprise@allmall.com</Typography.Text>
               <br />
               <Typography.Text type="secondary">{t('subscription.contactSalesPhone')}</Typography.Text>
             </div>
