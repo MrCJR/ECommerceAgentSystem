@@ -320,6 +320,80 @@ export const tasks: Task[] = [
         at: now.subtract(3.5, 'hour').toISOString()
       }
     ]
+  },
+  {
+    id: 'task_009',
+    title: '65W GaN 氮化镓快充充电器 — 待审核草稿',
+    storeId: 'store_001',
+    agentType: 'product_launch',
+    goal: '上架商品「65W GaN 氮化镓快充充电器」到 TikTok Shop 美国旗舰店',
+    status: 'waiting_approval',
+    riskLevel: 'medium',
+    createdAt: now.subtract(20, 'minute').toISOString(),
+    updatedAt: now.subtract(15, 'minute').toISOString(),
+    timeline: [
+      {
+        id: 'evt_p01',
+        type: 'run_started',
+        title: 'AI 图片识别完成',
+        summary: '已从 3 张商品图片中识别出：充电器、GaN、USB-C 接口等关键信息。生成 SEO 标题和详情草稿。',
+        at: now.subtract(20, 'minute').toISOString()
+      },
+      {
+        id: 'evt_p02',
+        type: 'approval_required',
+        title: '等待运营审核',
+        summary: '商品草稿已生成，需运营确认 SEO 标题和卖点文案后再发布。',
+        at: now.subtract(15, 'minute').toISOString()
+      }
+    ]
+  },
+  {
+    id: 'task_010',
+    title: '夏季运动T恤 — 图片识别中',
+    storeId: 'store_002',
+    agentType: 'product_launch',
+    goal: '上架商品「夏季速干运动T恤」到 Amazon 户外用品店',
+    status: 'running',
+    riskLevel: 'low',
+    createdAt: now.subtract(10, 'minute').toISOString(),
+    updatedAt: now.subtract(5, 'minute').toISOString(),
+    timeline: [
+      {
+        id: 'evt_p03',
+        type: 'run_started',
+        title: '开始图片分析',
+        summary: '正在分析上传的 5 张商品图片，识别材质、版型、颜色等属性。',
+        at: now.subtract(10, 'minute').toISOString()
+      },
+      {
+        id: 'evt_p04',
+        type: 'step_completed',
+        title: '属性识别完成',
+        summary: '已识别：材质=速干涤纶、版型=修身、颜色=黑/白/灰。正在生成 SEO 标题…',
+        at: now.subtract(5, 'minute').toISOString()
+      }
+    ]
+  },
+  {
+    id: 'task_011',
+    title: '蓝牙耳机 Pro 第二代 — 排队中',
+    storeId: 'store_001',
+    agentType: 'product_launch',
+    goal: '上架商品「蓝牙耳机 Pro 第二代」到 TikTok Shop 美国旗舰店',
+    status: 'queued',
+    riskLevel: 'low',
+    createdAt: now.subtract(5, 'minute').toISOString(),
+    updatedAt: now.subtract(5, 'minute').toISOString(),
+    timeline: [
+      {
+        id: 'evt_p05',
+        type: 'run_started',
+        title: '任务已排队',
+        summary: '商品上架任务已进入执行队列，等待前置任务完成。预计 3 分钟后开始处理。',
+        at: now.subtract(5, 'minute').toISOString()
+      }
+    ]
   }
 ];
 
