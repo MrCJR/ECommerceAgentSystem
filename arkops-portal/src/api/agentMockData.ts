@@ -251,7 +251,10 @@ export const agentConfigs: AgentConfig[] = [
     modelBinding: { provider: 'DeepSeek', model: 'deepseek-chat' },
     retryPolicy: { maxRetries: 2, retryIntervalMinutes: 30 },
     timeoutMinutes: 25,
-    enabled: false
+    enabled: false,
+    strategyConfig: {
+      intelConfig: { monitorFrequencyHours: 2, monitoredCategories: ['消费电子', '服装', '家居'], competitorUrls: [] }
+    }
   },
   {
     agentType: 'creative_factory',
@@ -301,7 +304,10 @@ export const agentConfigs: AgentConfig[] = [
     modelBinding: { provider: 'DeepSeek', model: 'deepseek-chat' },
     retryPolicy: { maxRetries: 1, retryIntervalMinutes: 10 },
     timeoutMinutes: 10,
-    enabled: false
+    enabled: false,
+    strategyConfig: {
+      inventoryConfig: { lowStockThreshold: 50, deadStockDays: 30, autoReplenishEnabled: true, replenishLeadTimeDays: 7 }
+    }
   },
 
   // ===== 独立 =====
@@ -327,7 +333,10 @@ export const agentConfigs: AgentConfig[] = [
     modelBinding: { provider: 'OpenAI', model: 'gpt-4o' },
     retryPolicy: { maxRetries: 1, retryIntervalMinutes: 5 },
     timeoutMinutes: 45,
-    enabled: false
+    enabled: false,
+    strategyConfig: {
+      financeConfig: { autoReconcileDay: 5, discrepancyAlertThreshold: 100, autoGenerateReport: true }
+    }
   },
 
   // ===== 风控 =====
@@ -372,6 +381,65 @@ export const agentConfigs: AgentConfig[] = [
           negativeReviewSurgeCheck: true
         }
       }
+    }
+  },
+
+  // ===== 促销活动 =====
+  {
+    agentType: 'promotion_campaign',
+    displayName: '促销活动 Agent',
+    description: '策划和管理闪购、大促、限时折扣等营销活动，自动创建活动计划、生成优惠策略、跨平台同步上线。',
+    icon: 'crm',
+    layer: 'growth',
+    riskLevel: 'medium',
+    triggerMode: 'manual',
+    needsConfig: true,
+    needsApproval: true,
+    dependsOn: ['competitor_intel'],
+    required: false,
+    servesFor: [],
+    executionParams: [
+      { key: 'defaultDurationDays', label: '默认活动周期（天）', defaultValue: '7', type: 'number' },
+      { key: 'targetPlatforms', label: '目标平台', defaultValue: 'TikTok Shop,Amazon' }
+    ],
+    riskGuard: { maxBudgetPerAction: 500, actionWhitelist: ['create_campaign', 'set_discount', 'schedule_flash_sale', 'create_coupon_batch'], actionBlacklist: ['set_below_floor'] },
+    approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false },
+    modelBinding: { provider: 'OpenAI', model: 'gpt-4o-mini' },
+    retryPolicy: { maxRetries: 1, retryIntervalMinutes: 5 },
+    timeoutMinutes: 20,
+    enabled: false,
+    strategyConfig: {
+      promotionConfig: { maxDiscountPercent: 50, campaignBudget: 2000, autoSchedule: true, targetPlatforms: ['TikTok Shop', 'Amazon'] }
+    }
+  },
+
+  // ===== 直播运营 =====
+  {
+    agentType: 'live_stream_ops',
+    displayName: '直播运营 Agent',
+    description: '自动化管理直播间的商品讲解排期、智能置顶热销品、自动回复评论区高频问题、实时监控直播数据（观看/成交/转化）。',
+    icon: 'crm',
+    layer: 'traffic',
+    riskLevel: 'medium',
+    triggerMode: 'event',
+    needsConfig: true,
+    needsApproval: false,
+    dependsOn: ['product_launch'],
+    required: false,
+    servesFor: [],
+    eventTrigger: 'live_stream_started',
+    executionParams: [
+      { key: 'productShowcaseDuration', label: '单品讲解时长（分钟）', defaultValue: '3', type: 'number' },
+      { key: 'replyKeywords', label: '自动回复关键词', defaultValue: '价格,尺寸,材质,发货,优惠' }
+    ],
+    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['pin_product', 'auto_reply', 'generate_script', 'monitor_metrics'], actionBlacklist: ['modify_price_live'] },
+    approvalStrategy: { requireApproval: false, approverRole: '', requireSecondApproval: false },
+    modelBinding: { provider: 'OpenAI', model: 'gpt-4o-mini' },
+    retryPolicy: { maxRetries: 2, retryIntervalMinutes: 1 },
+    timeoutMinutes: 240,
+    enabled: false,
+    strategyConfig: {
+      liveStreamConfig: { autoPinProducts: true, replyTemplate: '您好，{product} 正在直播优惠中，点击下方链接查看详情～', performanceAlertThreshold: 500, peakHourBoost: true }
     }
   }
 ];
@@ -456,5 +524,15 @@ export const agentRunStatsMap: Record<string, AgentRunStats> = {
     totalRuns: 1440, successRate: 99.2, avgDurationMinutes: 1, avgTokenUsage: 600, avgCost: 0.01,
     trend: makeTrend(7, 206, 99),
     failureReasons: [{ reason: '误报调整', count: 8 }, { reason: '数据延迟', count: 3 }]
+  },
+  promotion_campaign: {
+    totalRuns: 12, successRate: 83.3, avgDurationMinutes: 15, avgTokenUsage: 5200, avgCost: 0.08,
+    trend: makeTrend(7, 2, 83),
+    failureReasons: [{ reason: '折扣低于限价', count: 1 }, { reason: '活动时间冲突', count: 1 }]
+  },
+  live_stream_ops: {
+    totalRuns: 8, successRate: 100, avgDurationMinutes: 180, avgTokenUsage: 15000, avgCost: 0.25,
+    trend: makeTrend(7, 1, 100),
+    failureReasons: []
   }
 };

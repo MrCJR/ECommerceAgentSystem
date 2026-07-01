@@ -9,7 +9,7 @@ export const stores: Store[] = [
     name: 'TikTok Shop 美国旗舰店',
     platform: 'tiktok_shop',
     status: 'connected',
-    authMethod: 'credentials',
+    authMethod: 'oauth',
     runtimeProvider: 'mulerun',
     runtimeSessionId: 'mr_session_tts_001',
     region: 'US',
@@ -37,7 +37,7 @@ export const stores: Store[] = [
     name: 'Amazon 户外用品店',
     platform: 'amazon',
     status: 'login_required',
-    authMethod: 'credentials',
+    authMethod: 'oauth',
     runtimeProvider: 'mulerun',
     runtimeSessionId: 'mr_session_amz_002',
     account: 'seller@outdoor-gear.com',
@@ -320,6 +320,80 @@ export const tasks: Task[] = [
         at: now.subtract(3.5, 'hour').toISOString()
       }
     ]
+  },
+  {
+    id: 'task_009',
+    title: '65W GaN 氮化镓快充充电器 — 待审核草稿',
+    storeId: 'store_001',
+    agentType: 'product_launch',
+    goal: '上架商品「65W GaN 氮化镓快充充电器」到 TikTok Shop 美国旗舰店',
+    status: 'waiting_approval',
+    riskLevel: 'medium',
+    createdAt: now.subtract(20, 'minute').toISOString(),
+    updatedAt: now.subtract(15, 'minute').toISOString(),
+    timeline: [
+      {
+        id: 'evt_p01',
+        type: 'run_started',
+        title: 'AI 图片识别完成',
+        summary: '已从 3 张商品图片中识别出：充电器、GaN、USB-C 接口等关键信息。生成 SEO 标题和详情草稿。',
+        at: now.subtract(20, 'minute').toISOString()
+      },
+      {
+        id: 'evt_p02',
+        type: 'approval_required',
+        title: '等待运营审核',
+        summary: '商品草稿已生成，需运营确认 SEO 标题和卖点文案后再发布。',
+        at: now.subtract(15, 'minute').toISOString()
+      }
+    ]
+  },
+  {
+    id: 'task_010',
+    title: '夏季运动T恤 — 图片识别中',
+    storeId: 'store_002',
+    agentType: 'product_launch',
+    goal: '上架商品「夏季速干运动T恤」到 Amazon 户外用品店',
+    status: 'running',
+    riskLevel: 'low',
+    createdAt: now.subtract(10, 'minute').toISOString(),
+    updatedAt: now.subtract(5, 'minute').toISOString(),
+    timeline: [
+      {
+        id: 'evt_p03',
+        type: 'run_started',
+        title: '开始图片分析',
+        summary: '正在分析上传的 5 张商品图片，识别材质、版型、颜色等属性。',
+        at: now.subtract(10, 'minute').toISOString()
+      },
+      {
+        id: 'evt_p04',
+        type: 'step_completed',
+        title: '属性识别完成',
+        summary: '已识别：材质=速干涤纶、版型=修身、颜色=黑/白/灰。正在生成 SEO 标题…',
+        at: now.subtract(5, 'minute').toISOString()
+      }
+    ]
+  },
+  {
+    id: 'task_011',
+    title: '蓝牙耳机 Pro 第二代 — 排队中',
+    storeId: 'store_001',
+    agentType: 'product_launch',
+    goal: '上架商品「蓝牙耳机 Pro 第二代」到 TikTok Shop 美国旗舰店',
+    status: 'queued',
+    riskLevel: 'low',
+    createdAt: now.subtract(5, 'minute').toISOString(),
+    updatedAt: now.subtract(5, 'minute').toISOString(),
+    timeline: [
+      {
+        id: 'evt_p05',
+        type: 'run_started',
+        title: '任务已排队',
+        summary: '商品上架任务已进入执行队列，等待前置任务完成。预计 3 分钟后开始处理。',
+        at: now.subtract(5, 'minute').toISOString()
+      }
+    ]
   }
 ];
 
@@ -358,33 +432,154 @@ export const approvals: Approval[] = [
 ];
 
 export const auditLogs: AuditLog[] = [
+  // ===== 审批事件 =====
   {
     id: 'audit_001',
-    actor: 'MuleRun Agent',
-    action: '需要审批',
-    entity: '任务',
-    entityId: 'task_001',
-    summary: '预算调整动作超过租户阈值。',
-    at: now.subtract(12, 'minute').toISOString()
+    actor: 'MuleRun Agent', action: '需要审批', entity: '任务', entityId: 'task_001',
+    summary: '广告计划 C-102 预算调整超过租户风险阈值，暂停等待审批。',
+    at: now.subtract(12, 'minute').toISOString(), category: 'approval', linkTo: '/approvals/approval_001'
   },
   {
     id: 'audit_002',
-    actor: '李鹏',
-    action: '店铺已连接',
-    entity: '店铺',
-    entityId: 'store_001',
-    summary: 'TikTok Shop 通过 connectToken 完成会话绑定。',
-    at: now.subtract(5, 'day').toISOString()
+    actor: '李鹏', action: '审批通过', entity: '审批', entityId: 'approval_003',
+    summary: '批准 TikTok Shop 蓝牙耳机 Pro 价格下调 8%。',
+    at: now.subtract(1, 'hour').toISOString(), category: 'approval', linkTo: '/approvals/approval_003'
   },
   {
     id: 'audit_003',
-    actor: 'AllMall 系统',
-    action: '需要重新登录',
-    entity: '店铺',
-    entityId: 'store_002',
-    summary: 'Amazon 店铺会话已失效。',
-    at: now.subtract(5, 'hour').toISOString()
-  }
+    actor: '风控审批人', action: '审批通过', entity: '审批', entityId: 'approval_002',
+    summary: '双人审批：批准 Amazon 户外店广告预算上调 15%。',
+    at: now.subtract(3, 'hour').toISOString(), category: 'approval', linkTo: '/approvals/approval_002'
+  },
+  {
+    id: 'audit_004',
+    actor: 'AllMall 系统', action: '超时自动拒绝', entity: '审批', entityId: 'approval_005',
+    summary: 'Shopify 独立站满减促销审批超时 24 小时，自动拒绝。',
+    at: now.subtract(1, 'day').toISOString(), category: 'approval'
+  },
+  {
+    id: 'audit_005',
+    actor: '李鹏', action: '审批拒绝', entity: '审批', entityId: 'approval_001',
+    summary: '拒绝 TikTok Shop 广告预算增加 200%，认为 ROI 不支撑。',
+    at: now.subtract(2, 'day').toISOString(), category: 'approval', linkTo: '/approvals/approval_001'
+  },
+  // ===== Agent 自动操作 =====
+  {
+    id: 'audit_006',
+    actor: '广告投放 Agent', action: '暂停广告计划', entity: '广告计划', entityId: 'campaign_c102',
+    summary: 'ROI 连续 3 天低于 1.5 红线，自动暂停广告计划 C-102。',
+    at: now.subtract(8, 'hour').toISOString(), category: 'agent_action', linkTo: '/agents/ads_optimizer'
+  },
+  {
+    id: 'audit_007',
+    actor: '定价策略 Agent', action: '动态调价', entity: '商品', entityId: 'prod_001',
+    summary: 'SKU BT-E01 蓝牙耳机 Pro 竞品均价下跌 8%，自动调价 $39.99 → $36.99。',
+    at: now.subtract(7, 'hour').toISOString(), category: 'agent_action', linkTo: '/agents/pricing_strategy'
+  },
+  {
+    id: 'audit_008',
+    actor: 'CRM 复购 Agent', action: '发放优惠券', entity: '客户群', entityId: 'segment_lapsed',
+    summary: '向沉默客户群发放 15% OFF 优惠券 167 张，预算 $250。',
+    at: now.subtract(6, 'hour').toISOString(), category: 'agent_action', linkTo: '/agents/crm_retention'
+  },
+  {
+    id: 'audit_009',
+    actor: '评价管理 Agent', action: '自动回复', entity: '评价', entityId: 'rev_003',
+    summary: '自动回复 5 星好评 3 条，生成回复草稿 2 条。',
+    at: now.subtract(5, 'hour').toISOString(), category: 'agent_action', linkTo: '/agents/review_manager'
+  },
+  {
+    id: 'audit_010',
+    actor: '风险控制 Agent', action: '阻断操作', entity: '商品描述', entityId: 'prod_001',
+    summary: '检测到 "最强降噪" 绝对化用语，已阻断发布。',
+    at: now.subtract(4, 'hour').toISOString(), category: 'agent_action', linkTo: '/agents/risk_control'
+  },
+  {
+    id: 'audit_011',
+    actor: '库存预警 Agent', action: '低库存告警', entity: '商品', entityId: 'prod_003',
+    summary: 'SKU CK-C01 65W GaN 充电器库存 35 件低于安全阈值 50，建议补货 200 件。',
+    at: now.subtract(6, 'hour').toISOString(), category: 'agent_action', linkTo: '/agents/inventory_alert'
+  },
+  {
+    id: 'audit_012',
+    actor: '财务对账 Agent', action: '账单比对', entity: '对账', entityId: 'bill_202606',
+    summary: 'TikTok Shop 6 月账单与内部记录差异 $0.00，完全匹配。',
+    at: now.subtract(5, 'hour').toISOString(), category: 'agent_action', linkTo: '/agents/finance_audit'
+  },
+  // ===== 人工操作 =====
+  {
+    id: 'audit_013',
+    actor: '李鹏', action: '店铺已连接', entity: '店铺', entityId: 'store_001',
+    summary: 'TikTok Shop 美国旗舰店通过 connectToken 完成会话绑定。',
+    at: now.subtract(5, 'day').toISOString(), category: 'human_ops', linkTo: '/stores/store_001'
+  },
+  {
+    id: 'audit_014',
+    actor: '李鹏', action: '启用 Agent', entity: 'Agent', entityId: 'login_bootstrap',
+    summary: '启用店铺保活 Agent，开始监控 3 个店铺登录态。',
+    at: now.subtract(4, 'day').toISOString(), category: 'human_ops', linkTo: '/agents/login_bootstrap'
+  },
+  {
+    id: 'audit_015',
+    actor: '运营负责人', action: '添加成本项', entity: '成本', entityId: 'cost_009',
+    summary: '添加 TikTok Shop 美国旗舰店 7 月广告预算 $5000。',
+    at: now.subtract(2, 'day').toISOString(), category: 'human_ops', linkTo: '/operations'
+  },
+  {
+    id: 'audit_016',
+    actor: '李鹏', action: '通过商品草稿', entity: '商品', entityId: 'prod_008',
+    summary: '批准 便携式野营炉 上架草稿，自动发布到 Amazon。',
+    at: now.subtract(1, 'day').toISOString(), category: 'human_ops', linkTo: '/operations'
+  },
+  {
+    id: 'audit_017',
+    actor: '运营负责人', action: '添加成员', entity: '成员', entityId: 'mem_003',
+    summary: '邀请 风控审批人 (risk@example.com) 加入团队，角色 Approver。',
+    at: now.subtract(6, 'day').toISOString(), category: 'human_ops', linkTo: '/settings/members'
+  },
+  {
+    id: 'audit_018',
+    actor: '李鹏', action: '修改设置', entity: '通知', entityId: 'notif_001',
+    summary: '将差评告警通知方式从 邮件 改为 企业微信 + 邮件。',
+    at: now.subtract(3, 'day').toISOString(), category: 'human_ops', linkTo: '/settings/notifications'
+  },
+  // ===== 系统事件 =====
+  {
+    id: 'audit_019',
+    actor: 'AllMall 系统', action: '需要重新登录', entity: '店铺', entityId: 'store_002',
+    summary: 'Amazon 户外用品店登录会话已失效，保活 Agent 正在尝试重新认证。',
+    at: now.subtract(5, 'hour').toISOString(), category: 'store_session', linkTo: '/stores/store_002'
+  },
+  {
+    id: 'audit_020',
+    actor: 'AllMall 系统', action: '会话刷新成功', entity: '店铺', entityId: 'store_003',
+    summary: 'Shopify 独立站登录会话过期，保活 Agent 自动重新登录成功。',
+    at: now.subtract(1, 'day').toISOString(), category: 'store_session', linkTo: '/stores/store_003'
+  },
+  {
+    id: 'audit_021',
+    actor: 'AllMall 系统', action: 'Token 额度预警', entity: '模型', entityId: 'model_deepseek',
+    summary: 'DeepSeek-chat 模型本月 Token 用量已达 85%，建议关注。',
+    at: now.subtract(2, 'day').toISOString(), category: 'system_event', linkTo: '/billing'
+  },
+  {
+    id: 'audit_022',
+    actor: 'AllMall 系统', action: '定时任务触发', entity: 'Agent', entityId: 'competitor_intel',
+    summary: '市场情报 Agent 按照 cron 0 0 */2 * * 自动启动竞品数据采集。',
+    at: now.subtract(4, 'hour').toISOString(), category: 'system_event', linkTo: '/agents/competitor_intel'
+  },
+  {
+    id: 'audit_023',
+    actor: 'AllMall 系统', action: '备份完成', entity: '系统', entityId: 'system',
+    summary: '每日数据备份完成，快照大小 2.3 GB，耗时 18 秒。',
+    at: now.subtract(12, 'hour').toISOString(), category: 'system_event'
+  },
+  {
+    id: 'audit_024',
+    actor: 'AllMall 系统', action: '熔断触发', entity: '广告计划', entityId: 'campaign_d021',
+    summary: 'Amazon 户外店广告计划 D-021 花费超预算 130%，自动熔断暂停。',
+    at: now.subtract(3, 'day').toISOString(), category: 'system_event', linkTo: '/agents/risk_control'
+  },
 ];
 
 export const members: Member[] = [

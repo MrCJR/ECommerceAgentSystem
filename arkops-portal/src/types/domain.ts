@@ -93,6 +93,8 @@ export interface Approval {
   decidedAt?: string;
 }
 
+export type AuditCategory = 'approval' | 'agent_action' | 'human_ops' | 'system_event' | 'store_session';
+
 export interface AuditLog {
   id: string;
   actor: string;
@@ -101,6 +103,8 @@ export interface AuditLog {
   entityId: string;
   summary: string;
   at: string;
+  category: AuditCategory;
+  linkTo?: string;
 }
 
 export interface Member {
@@ -128,7 +132,9 @@ export type AgentType =
   | 'creative_factory'
   | 'inventory_alert'
   | 'risk_control'
-  | 'finance_audit';
+  | 'finance_audit'
+  | 'promotion_campaign'
+  | 'live_stream_ops';
 
 export type AgentLayer = 'foundation' | 'traffic' | 'growth' | 'support' | 'standalone';
 
@@ -196,6 +202,11 @@ export interface AgentStrategyConfig {
   afterSalesConfig?: { autoRefundCap: number; returnAddress: string };
   creativeConfig?: { outputSizes: string; copyTone: string };
   riskControlConfig?: RiskControlConfig;
+  inventoryConfig?: { lowStockThreshold: number; deadStockDays: number; autoReplenishEnabled: boolean; replenishLeadTimeDays: number };
+  intelConfig?: { monitorFrequencyHours: number; monitoredCategories: string[]; competitorUrls: string[] };
+  financeConfig?: { autoReconcileDay: number; discrepancyAlertThreshold: number; autoGenerateReport: boolean };
+  promotionConfig?: { maxDiscountPercent: number; campaignBudget: number; autoSchedule: boolean; targetPlatforms: string[] };
+  liveStreamConfig?: { autoPinProducts: boolean; replyTemplate: string; performanceAlertThreshold: number; peakHourBoost: boolean };
 }
 
 export interface RiskControlConfig {

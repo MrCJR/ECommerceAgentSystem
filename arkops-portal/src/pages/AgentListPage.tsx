@@ -31,15 +31,17 @@ export function AgentListPage() {
     { id: 'competitor_intel', label: t('agent.competitor_intel'), layer: 'support' as const, w: 80 },
     { id: 'product_launch', label: t('agent.product_launch'), layer: 'foundation' as const, w: 80 },
     { id: 'creative_factory', label: t('agent.creative_factory'), layer: 'support' as const, w: 80 },
-    { id: 'ads_optimizer', label: t('agent.ads_optimizer'), layer: 'traffic' as const, w: 80 },
-    { id: 'pricing_strategy', label: t('agent.pricing_strategy'), layer: 'traffic' as const, w: 80 },
+    { id: 'ads_optimizer', label: t('agent.ads_optimizer'), layer: 'traffic' as const, w: 90 },
+    { id: 'pricing_strategy', label: t('agent.pricing_strategy'), layer: 'traffic' as const, w: 90 },
+    { id: 'live_stream_ops', label: t('agent.live_stream_ops'), layer: 'traffic' as const, w: 90 },
   ];
 
   const growthSubLabels = [
     t('agent.crm_retention'),
     t('agent.review_manager'),
     t('agent.customer_service'),
-    t('agent.after_sales')
+    t('agent.after_sales'),
+    t('agent.promotion_campaign')
   ];
 
   const toggleMutation = useMutation({
@@ -223,9 +225,11 @@ export function AgentListPage() {
               <div className="agent-flow-split-vbar" style={{ background: layerColors.foundation }} />
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ width: 2, height: 12, background: 'var(--ark-border)' }} />
-                <div className="agent-flow-node agent-flow-node--traffic" style={{ width: 80 }}>{flowNodes[4].label}</div>
+                <div className="agent-flow-node agent-flow-node--traffic" style={{ width: 90 }}>{flowNodes[4].label}</div>
                 <div style={{ width: 2, height: 6, background: 'var(--ark-border)' }} />
-                <div className="agent-flow-node agent-flow-node--traffic" style={{ width: 80 }}>{flowNodes[5].label}</div>
+                <div className="agent-flow-node agent-flow-node--traffic" style={{ width: 90 }}>{flowNodes[5].label}</div>
+                <div style={{ width: 2, height: 6, background: 'var(--ark-border)' }} />
+                <div className="agent-flow-node agent-flow-node--traffic" style={{ width: 90 }}>{flowNodes[6].label}</div>
               </div>
             </div>
           </div>
