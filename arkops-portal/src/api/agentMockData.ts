@@ -53,15 +53,7 @@ export const agentConfigs: AgentConfig[] = [
     modelBinding: { provider: 'Anthropic', model: 'claude-sonnet-4-20250514' },
     retryPolicy: { maxRetries: 1, retryIntervalMinutes: 3 },
     timeoutMinutes: 20,
-    enabled: false,
-    strategyConfig: {
-      pricingRule: {
-        mode: 'market',
-        targetMargin: 30,
-        competitorStrategy: 'match',
-        currency: 'USD'
-      }
-    }
+    enabled: false
   },
 
   // ===== 流量引擎 =====
