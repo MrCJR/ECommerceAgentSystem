@@ -145,6 +145,39 @@ body {
   margin-bottom: 16px;
 }
 
+.page-filter-card {
+  margin-bottom: 16px;
+}
+
+.page-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.page-filter-bar-spaced {
+  margin-bottom: 16px;
+}
+
+.page-filter-bar .ant-input-search {
+  max-width: 320px;
+}
+
+.page-filter-bar .ant-input-affix-wrapper {
+  max-width: 320px;
+  min-width: 260px;
+}
+
+.page-filter-bar .ant-select {
+  min-width: 180px;
+}
+
+.page-filter-bar .ant-picker {
+  min-width: 260px;
+}
+
 .metric-card-top {
   display: flex;
   align-items: center;

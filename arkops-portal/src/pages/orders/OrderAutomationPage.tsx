@@ -35,6 +35,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { useMemo, useState } from 'react';
 import { useI18n } from '../../app/i18n';
+import { PageFilterBar } from '../../components/filters/PageFilterBar';
 import { MetricCard } from '../../components/metrics/MetricCard';
 import { PageHeader } from '../../components/PageHeader';
 import { DataTableCard } from '../../components/table/DataTableCard';
@@ -416,9 +417,7 @@ export function OrderAutomationPage() {
       </Row>
 
       {/* 搜索与筛选栏 */}
-      <Card size="small" style={{ marginBottom: 16 }}>
-        <Row gutter={[12, 12]} align="middle">
-          <Col xs={24} sm={6}>
+      <PageFilterBar variant="card">
             <Input
               prefix={<SearchOutlined />}
               placeholder={t('order.searchPlaceholder')}
@@ -426,22 +425,16 @@ export function OrderAutomationPage() {
               value={searchKw}
               onChange={(e) => setSearchKw(e.target.value)}
             />
-          </Col>
-          <Col xs={12} sm={4}>
             <Select
               allowClear
               placeholder={t('order.filterStore')}
-              style={{ width: '100%' }}
               value={storeFilter}
               onChange={setStoreFilter}
               options={storeNames.map((s) => ({ value: s, label: s }))}
             />
-          </Col>
-          <Col xs={12} sm={4}>
             <Select
               allowClear
               placeholder={t('order.status')}
-              style={{ width: '100%' }}
               value={statusFilter}
               onChange={setStatusFilter}
               options={[
@@ -453,11 +446,8 @@ export function OrderAutomationPage() {
                 { value: 'cancelled', label: t('order.status_cancelled') },
               ]}
             />
-          </Col>
-          <Col xs={24} sm={5}>
             <DatePicker.RangePicker
               size="middle"
-              style={{ width: '100%' }}
               placeholder={[t('order.startDate'), t('order.endDate')]}
               onChange={(dates) => {
                 if (dates && dates[0] && dates[1]) {
@@ -467,9 +457,7 @@ export function OrderAutomationPage() {
                 }
               }}
             />
-          </Col>
-        </Row>
-      </Card>
+      </PageFilterBar>
 
       <Tabs
         defaultActiveKey="all"

@@ -1,4 +1,4 @@
-import { DownloadOutlined, EyeOutlined, FilterOutlined } from '@ant-design/icons';
+import { DownloadOutlined, EyeOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Input, Segmented, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auditLogsApi } from '../../api/auditLogs';
 import { useI18n } from '../../app/i18n';
+import { PageFilterBar } from '../../components/filters/PageFilterBar';
 import { PageHeader } from '../../components/PageHeader';
 import { DataTableCard } from '../../components/table/DataTableCard';
 import type { AuditCategory, AuditLog } from '../../types/domain';
@@ -116,11 +117,10 @@ export function AuditLogsPage() {
         pagination={{ pageSize: 20, size: 'small' }}
         scroll={{ x: 900 }}
         toolbar={
-          <>
+          <PageFilterBar>
           <Input.Search
             placeholder={t('audit.search')}
             onChange={(event) => setKeyword(event.target.value)}
-            style={{ maxWidth: 320 }}
             allowClear
           />
           <Segmented
@@ -135,7 +135,7 @@ export function AuditLogsPage() {
               { label: `${t('audit.cat_system_event')} (${stats.system_event})`, value: 'system_event' },
             ]}
           />
-          </>
+          </PageFilterBar>
         }
       />
     </div>

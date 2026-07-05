@@ -9,6 +9,7 @@ import { agentsApi } from '../../api/agents';
 import { approvalsApi } from '../../api/approvals';
 import { approvalPolicyApi } from '../../api/approvalPolicies';
 import { useI18n } from '../../app/i18n';
+import { PageFilterBar } from '../../components/filters/PageFilterBar';
 import { PageHeader } from '../../components/PageHeader';
 import { StatusBadge } from '../../components/StatusBadge';
 import { DataTableCard } from '../../components/table/DataTableCard';
@@ -133,8 +134,8 @@ export function ApprovalListPage() {
         pagination={{ pageSize: 10, size: 'small' }}
         scroll={{ x: 900 }}
         toolbar={
+          <PageFilterBar>
           <Select
-            style={{ width: 200 }}
             value={agentFilter}
             onChange={(v) => setAgentFilter(v)}
             options={[
@@ -142,6 +143,7 @@ export function ApprovalListPage() {
               ...agents.map((a) => ({ value: a.agentType as AgentType, label: t(`agent.${a.agentType}`) }))
             ]}
           />
+          </PageFilterBar>
         }
       />
     </div>

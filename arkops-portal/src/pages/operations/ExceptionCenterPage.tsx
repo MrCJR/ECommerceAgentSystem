@@ -37,6 +37,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../app/i18n';
+import { PageFilterBar } from '../../components/filters/PageFilterBar';
 import { PageHeader } from '../../components/PageHeader';
 import { TableActionGroup } from '../../components/table/TableActionGroup';
 
@@ -414,7 +415,7 @@ export function ExceptionCenterPage() {
             ),
             children: (
               <>
-                <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                <PageFilterBar className="page-filter-bar-spaced">
                   <Segmented
                     size="small"
                     value={agentFilter}
@@ -435,7 +436,7 @@ export function ExceptionCenterPage() {
                       { label: t('exc.all'), value: 'all' },
                     ]}
                   />
-                </div>
+                </PageFilterBar>
                 <Table
                   rowKey="id"
                   columns={columns}
