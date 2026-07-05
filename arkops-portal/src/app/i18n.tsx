@@ -5,7 +5,7 @@ export type Language = 'en' | 'zh';
 
 type Dictionary = Record<string, string>;
 
-const dictionaries: Record<Language, Dictionary> = {
+const dictionaries = {
   en: {
     'nav.dashboard': 'Dashboard',
     'nav.exceptions': 'Exceptions',
@@ -2187,14 +2187,16 @@ const dictionaries: Record<Language, Dictionary> = {
     'liveConsole.provider': '执行环境',
     'liveConsole.events': '事件'
   }
-};
+} as const satisfies Record<Language, Dictionary>;
+
+export type TranslationKey = keyof typeof dictionaries.en;
 
 const LANGUAGE_STORAGE_KEY = 'allmall-portal-language';
 
 interface I18nContextValue {
   language: Language;
   setLanguage: (language: Language) => void;
-  t: (key: string, params?: Record<string, string | number>) => string;
+  t: (key: TranslationKey | (string & {}), params?: Record<string, string | number>) => string;
 }
 
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
@@ -2213,7 +2215,9 @@ export function I18nProvider({ children }: PropsWithChildren) {
         setLanguage(next);
       },
       t: (key, params) => {
-        const template = dictionaries[language][key] ?? dictionaries.en[key] ?? key;
+        const activeDictionary = dictionaries[language] as Dictionary;
+        const fallbackDictionary = dictionaries.en as Dictionary;
+        const template = activeDictionary[key] ?? fallbackDictionary[key] ?? key;
         if (!params) return template;
         return Object.entries(params).reduce(
           (result, [paramKey, paramValue]) => result.replace(`{${paramKey}}`, String(paramValue)),

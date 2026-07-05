@@ -235,7 +235,7 @@ export function ExceptionCenterPage() {
         <Space direction="vertical" size={0}>
           <Typography.Text strong>{title}</Typography.Text>
           <Typography.Text type="secondary" style={{ fontSize: 11 }}>
-            {record.storeName} · {t(`agent.${record.agentType}` as any)}
+            {record.storeName} · {t(`agent.${record.agentType}`)}
           </Typography.Text>
         </Space>
       ),
@@ -316,7 +316,7 @@ export function ExceptionCenterPage() {
       dataIndex: 'agentType',
       width: 110,
       render: (agentType: string) => (
-        <Tag>{t(`agent.${agentType}` as any)}</Tag>
+        <Tag>{t(`agent.${agentType}`)}</Tag>
       ),
     },
     {
