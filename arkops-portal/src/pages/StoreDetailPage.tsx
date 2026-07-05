@@ -30,41 +30,43 @@ import { useI18n } from '../app/i18n';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
 import type { Store, StoreBusinessDetail, StoreConnection, StoreServiceType } from '../types/domain';
+import { parseAllMallId } from '../utils/id';
 
 export function StoreDetailPage({ mode }: { mode?: 'new' }) {
   const { t } = useI18n();
   const { storeId } = useParams();
+  const parsedStoreId = parseAllMallId(storeId);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [bizTimeRange, setBizTimeRange] = useState<'today' | '7d' | '30d'>('today');
 
   const { data: store } = useQuery({
-    queryKey: ['store', storeId],
-    queryFn: () => storesApi.get(storeId!),
-    enabled: Boolean(storeId) && mode !== 'new'
+    queryKey: ['store', parsedStoreId],
+    queryFn: () => storesApi.get(parsedStoreId!),
+    enabled: parsedStoreId !== undefined && mode !== 'new'
   });
   const { data: storeBiz } = useQuery({
-    queryKey: ['store-biz', storeId, bizTimeRange],
-    queryFn: () => storeBusinessApi.getDetail(storeId!),
-    enabled: Boolean(storeId) && mode !== 'new'
+    queryKey: ['store-biz', parsedStoreId, bizTimeRange],
+    queryFn: () => storeBusinessApi.getDetail(parsedStoreId!),
+    enabled: parsedStoreId !== undefined && mode !== 'new'
   });
   const createStore = useMutation({
     mutationFn: storesApi.create,
     onSuccess: (created) => navigate(`/stores/${created.id}`)
   });
   const revokeMutation = useMutation({
-    mutationFn: () => storesApi.updateStatus(storeId!, 'revoked'),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store', storeId] })
+    mutationFn: () => storesApi.updateStatus(parsedStoreId!, 'revoked'),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store', parsedStoreId] })
   });
   const [connectionModalOpen, setConnectionModalOpen] = useState(false);
   const [connectionForm] = Form.useForm();
   const addConnectionMutation = useMutation({
     mutationFn: (values: { serviceName: string; serviceType: StoreServiceType; authMethod: Store['authMethod']; apiKey?: string; account?: string }) =>
-      storesApi.addConnection(storeId!, values),
+      storesApi.addConnection(parsedStoreId!, values),
     onSuccess: () => {
       message.success(t('stores.connectionAdded'));
-      queryClient.invalidateQueries({ queryKey: ['store', storeId] });
+      queryClient.invalidateQueries({ queryKey: ['store', parsedStoreId] });
       setConnectionModalOpen(false);
       connectionForm.resetFields();
     }

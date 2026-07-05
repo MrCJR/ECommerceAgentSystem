@@ -2,13 +2,13 @@ import { makeConnectToken, mockDelay } from './client';
 import { storeConfigs } from './storeMockData';
 import { stores, tasks } from './mockData';
 import { appendItem, insertFirst, replaceItem } from './mockRepository';
-import type { Store, StoreConfig, StoreConnection } from '../types/domain';
+import type { AllMallId, Store, StoreConfig, StoreConnection } from '../types/domain';
 
 export const storesApi = {
   list: () => mockDelay([...stores]),
-  get: (storeId: string) => mockDelay(stores.find((store) => store.id === storeId)),
-  recentTasks: (storeId: string) => mockDelay(tasks.filter((task) => task.storeId === storeId)),
-  createConnectToken: (storeId: string) =>
+  get: (storeId: AllMallId) => mockDelay(stores.find((store) => store.id === storeId)),
+  recentTasks: (storeId: AllMallId) => mockDelay(tasks.filter((task) => task.storeId === storeId)),
+  createConnectToken: (storeId: AllMallId) =>
     mockDelay({
       storeId,
       connectToken: makeConnectToken(storeId),
@@ -16,7 +16,7 @@ export const storesApi = {
     }),
   create: (input: { name: string; platform: string; authMethod?: Store['authMethod']; apiKey?: string; apiSecret?: string; account?: string; password?: string; region?: string; currency?: string; maxBudgetAdjust?: number; operationWindowStart?: string; operationWindowEnd?: string; autoReconnectRetry?: number; maxRetries?: number }) => {
     const store: Store = {
-      id: `store_${String(stores.length + 1).padStart(3, '0')}`,
+      id: 1000 + stores.length + 1,
       name: input.name,
       platform: input.platform,
       status: 'pending_login',
@@ -42,11 +42,11 @@ export const storesApi = {
     });
     return mockDelay(store);
   },
-  updateStatus: (storeId: string, status: Store['status']) => {
+  updateStatus: (storeId: AllMallId, status: Store['status']) => {
     const store = replaceItem(stores, (item) => item.id === storeId, (item) => ({ ...item, status }));
     return mockDelay(store);
   },
-  getConfig: (storeId: string): Promise<StoreConfig> => {
+  getConfig: (storeId: AllMallId): Promise<StoreConfig> => {
     const existing = storeConfigs.find((c) => c.storeId === storeId);
     if (existing) return mockDelay(existing);
     const defaults: StoreConfig = {
@@ -59,7 +59,7 @@ export const storesApi = {
     appendItem(storeConfigs, defaults);
     return mockDelay(defaults);
   },
-  saveConfig: (storeId: string, input: Partial<StoreConfig>): Promise<StoreConfig> => {
+  saveConfig: (storeId: AllMallId, input: Partial<StoreConfig>): Promise<StoreConfig> => {
     const existing = replaceItem(storeConfigs, (c) => c.storeId === storeId, (current) => ({ ...current, ...input, storeId }));
     if (existing) {
       return mockDelay(existing);
@@ -75,10 +75,10 @@ export const storesApi = {
     appendItem(storeConfigs, defaults);
     return mockDelay(defaults);
   },
-  addConnection: (storeId: string, input: { serviceName: string; serviceType: StoreConnection['serviceType']; authMethod: Store['authMethod']; apiKey?: string; account?: string }): Promise<StoreConnection> => {
+  addConnection: (storeId: AllMallId, input: { serviceName: string; serviceType: StoreConnection['serviceType']; authMethod: Store['authMethod']; apiKey?: string; account?: string }): Promise<StoreConnection> => {
     const store = stores.find((s) => s.id === storeId);
     const conn: StoreConnection = {
-      id: `conn_${String(storeId)}_${Date.now()}`,
+      id: Date.now(),
       serviceName: input.serviceName,
       serviceType: input.serviceType,
       authMethod: input.authMethod,

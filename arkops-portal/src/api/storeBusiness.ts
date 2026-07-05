@@ -1,9 +1,9 @@
 import { mockDelay } from './client';
-import type { StoreBusinessDetail } from '../types/domain';
+import type { AllMallId, StoreBusinessDetail } from '../types/domain';
 
-const details: Record<string, StoreBusinessDetail> = {
-  store_001: {
-    storeId: 'store_001',
+const details: Record<AllMallId, StoreBusinessDetail> = {
+  1001: {
+    storeId: 1001,
     storeName: 'TikTok Shop 美国旗舰店',
     gmv: {
       today: 15620, yesterday: 14800,
@@ -51,8 +51,8 @@ const details: Record<string, StoreBusinessDetail> = {
       { name: '户外防潮垫', gmv: 1320, orders: 35, sku: 'TTS-00456' }
     ]
   },
-  store_002: {
-    storeId: 'store_002',
+  1002: {
+    storeId: 1002,
     storeName: 'Amazon 户外用品店',
     gmv: {
       today: 8740, yesterday: 8200,
@@ -98,8 +98,8 @@ const details: Record<string, StoreBusinessDetail> = {
       { name: '多功能工兵铲', gmv: 780, orders: 15, sku: 'AMZ-00789' }
     ]
   },
-  store_003: {
-    storeId: 'store_003',
+  1003: {
+    storeId: 1003,
     storeName: 'Shopify 独立站',
     gmv: {
       today: 4280, yesterday: 4100,
@@ -147,7 +147,7 @@ const details: Record<string, StoreBusinessDetail> = {
 };
 
 export const storeBusinessApi = {
-  getDetail: (storeId: string): Promise<StoreBusinessDetail | undefined> =>
+  getDetail: (storeId: AllMallId): Promise<StoreBusinessDetail | undefined> =>
     mockDelay(details[storeId] ?? {
       storeId,
       storeName: '未知店铺',

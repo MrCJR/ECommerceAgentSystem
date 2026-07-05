@@ -1,10 +1,10 @@
 import { mockDelay } from './client';
 import { appendItem, replaceItem } from './mockRepository';
-import type { ApprovalPolicy } from '../types/domain';
+import type { AllMallId, ApprovalPolicy } from '../types/domain';
 
 const policies: ApprovalPolicy[] = [
   {
-    id: 'policy_001',
+    id: 8001,
     riskLevel: 'low',
     action: 'auto_execute',
     approverType: 'role',
@@ -13,7 +13,7 @@ const policies: ApprovalPolicy[] = [
     storeSpecificRules: []
   },
   {
-    id: 'policy_002',
+    id: 8002,
     riskLevel: 'medium',
     action: 'single_approval',
     approverType: 'role',
@@ -23,7 +23,7 @@ const policies: ApprovalPolicy[] = [
     storeSpecificRules: []
   },
   {
-    id: 'policy_003',
+    id: 8003,
     riskLevel: 'high',
     action: 'dual_approval',
     approverType: 'role',
@@ -36,10 +36,10 @@ const policies: ApprovalPolicy[] = [
 
 export const approvalPolicyApi = {
   list: (): Promise<ApprovalPolicy[]> => mockDelay([...policies]),
-  get: (id: string): Promise<ApprovalPolicy | undefined> => mockDelay(policies.find((p) => p.id === id)),
+  get: (id: AllMallId): Promise<ApprovalPolicy | undefined> => mockDelay(policies.find((p) => p.id === id)),
   create: (input: Partial<ApprovalPolicy>): Promise<ApprovalPolicy> => {
     const policy: ApprovalPolicy = {
-      id: `policy_${String(policies.length + 1).padStart(3, '0')}`,
+      id: 8000 + policies.length + 1,
       riskLevel: input.riskLevel ?? 'low',
       action: input.action ?? 'single_approval',
       approverType: input.approverType ?? 'role',
@@ -52,7 +52,7 @@ export const approvalPolicyApi = {
     appendItem(policies, policy);
     return mockDelay(policy);
   },
-  update: (id: string, input: Partial<ApprovalPolicy>): Promise<ApprovalPolicy | undefined> => {
+  update: (id: AllMallId, input: Partial<ApprovalPolicy>): Promise<ApprovalPolicy | undefined> => {
     const policy = replaceItem(policies, (item) => item.id === id, (item) => ({ ...item, ...input }));
     return mockDelay(policy);
   }

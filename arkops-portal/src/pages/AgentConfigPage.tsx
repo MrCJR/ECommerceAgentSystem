@@ -36,7 +36,7 @@ import { useI18n } from '../app/i18n';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
 import { EmptyState } from '../components/EmptyState';
-import type { AgentConfig, AgentType, Task, TaskStatus } from '../types/domain';
+import type { AgentConfig, AgentType, AllMallId, Task, TaskStatus } from '../types/domain';
 import {
   mockBreakerLogs,
   mockBudgetSuggestions,
@@ -130,7 +130,7 @@ export function AgentConfigPage() {
   });
 
   const createTaskMutation = useMutation({
-    mutationFn: (values: { title?: string; goal?: string; storeId: string }) =>
+    mutationFn: (values: { title?: string; goal?: string; storeId: AllMallId }) =>
       agentsApi.createTask(agentType!, {
         title: values.title || values.goal || '',
         goal: values.goal || '',
@@ -164,7 +164,7 @@ export function AgentConfigPage() {
   };
 
   const cancelTaskMutation = useMutation({
-    mutationFn: (taskId: string) => agentsApi.cancelTask(taskId),
+    mutationFn: (taskId: AllMallId) => agentsApi.cancelTask(taskId),
     onSuccess: () => {
       message.success(t('agent.taskCancelled'));
       queryClient.invalidateQueries({ queryKey: ['agent-tasks', agentType] });

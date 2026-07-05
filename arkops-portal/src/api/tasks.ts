@@ -1,14 +1,14 @@
 import { mockDelay } from './client';
 import { tasks } from './mockData';
 import { insertFirst } from './mockRepository';
-import type { Task } from '../types/domain';
+import type { AllMallId, Task } from '../types/domain';
 
 export const tasksApi = {
   list: () => mockDelay([...tasks]),
-  get: (taskId: string) => mockDelay(tasks.find((task) => task.id === taskId)),
+  get: (taskId: AllMallId) => mockDelay(tasks.find((task) => task.id === taskId)),
   create: (input: Pick<Task, 'storeId' | 'agentType' | 'goal'>) => {
     const task: Task = {
-      id: `task_${String(tasks.length + 1).padStart(3, '0')}`,
+      id: 3000 + tasks.length + 1,
       title: input.goal.slice(0, 58),
       storeId: input.storeId,
       agentType: input.agentType,
@@ -19,7 +19,7 @@ export const tasksApi = {
       updatedAt: new Date().toISOString(),
       timeline: [
         {
-          id: `evt_${Date.now()}`,
+          id: Date.now(),
           type: 'run_started',
           title: '任务已排队',
           summary: 'AllMall 已为 Runtime Adapter 创建任务载荷。',

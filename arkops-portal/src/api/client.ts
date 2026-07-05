@@ -4,7 +4,7 @@ export function mockDelay<T>(value: T, delay = 180): Promise<T> {
   });
 }
 
-export function makeConnectToken(storeId: string) {
+export function makeConnectToken(storeId: number) {
   const suffix = Math.random().toString(36).slice(2, 8);
   return `allmall_connect_${storeId}_${suffix}`;
 }

@@ -2,7 +2,7 @@ import { mockDelay } from './client';
 import { agentConfigs, agentRunStatsMap } from './agentMockData';
 import { stores, tasks } from './mockData';
 import { insertFirst, replaceItem } from './mockRepository';
-import type { AgentConfig, AgentType, Task, TaskStatus } from '../types/domain';
+import type { AgentConfig, AgentType, AllMallId, Task, TaskStatus } from '../types/domain';
 
 export const agentsApi = {
   list: (): Promise<AgentConfig[]> => mockDelay([...agentConfigs]),
@@ -12,8 +12,8 @@ export const agentsApi = {
     mockDelay(agentRunStatsMap[agentType]),
   getTasks: (agentType: AgentType): Promise<Task[]> =>
     mockDelay(tasks.filter((t) => t.agentType === agentType)),
-  createTask: (agentType: AgentType, input: { title: string; goal: string; storeId: string; images?: string[] }): Promise<Task> => {
-    const newId = `task_${String(tasks.length + 1).padStart(3, '0')}`;
+  createTask: (agentType: AgentType, input: { title: string; goal: string; storeId: AllMallId; images?: string[] }): Promise<Task> => {
+    const newId = 3000 + tasks.length + 1;
     const task: Task = {
       id: newId,
       title: input.title,
@@ -25,7 +25,7 @@ export const agentsApi = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       timeline: input.images ? input.images.map((name, i) => ({
-        id: `evt_${newId}_img${i}`,
+        id: Date.now() + i,
         type: 'step_completed' as const,
         title: `上传图片 ${i + 1}`,
         summary: name,
@@ -124,7 +124,7 @@ export const agentsApi = {
     }
     return mockDelay(agent);
   },
-  cancelTask: (taskId: string): Promise<Task | undefined> => {
+  cancelTask: (taskId: AllMallId): Promise<Task | undefined> => {
     const task = replaceItem(tasks, (t) => t.id === taskId, (current) => ({
       ...current,
       status: 'cancelled' as const,
@@ -132,11 +132,11 @@ export const agentsApi = {
       timeline: [
         ...current.timeline,
         {
-        id: `evt_cancel_${Date.now()}`,
-        type: 'run_failed' as const,
-        title: '任务已取消',
-        summary: '由用户手动取消',
-        at: new Date().toISOString()
+          id: Date.now(),
+          type: 'run_failed' as const,
+          title: '任务已取消',
+          summary: '由用户手动取消',
+          at: new Date().toISOString()
         }
       ]
     }));

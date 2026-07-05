@@ -11,9 +11,10 @@ export type TaskStatus =
   | 'cancelled';
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected' | 'expired';
 export type RiskLevel = 'low' | 'medium' | 'high';
+export type AllMallId = number;
 
 export interface StoreConnection {
-  id: string;
+  id: AllMallId;
   serviceName: string;
   serviceType: StoreServiceType;
   authMethod: StoreAuthMethod;
@@ -28,7 +29,7 @@ export interface StoreConnection {
 }
 
 export interface Store {
-  id: string;
+  id: AllMallId;
   name: string;
   platform: string;
   status: StoreStatus;
@@ -43,12 +44,12 @@ export interface Store {
   currency?: string;
   lastVerifiedAt?: string;
   createdAt: string;
-  recentTaskIds: string[];
+  recentTaskIds: AllMallId[];
   connections: StoreConnection[];
 }
 
 export interface TimelineEvent {
-  id: string;
+  id: AllMallId;
   type:
     | 'run_started'
     | 'step_started'
@@ -64,9 +65,9 @@ export interface TimelineEvent {
 }
 
 export interface Task {
-  id: string;
+  id: AllMallId;
   title: string;
-  storeId: string;
+  storeId: AllMallId;
   agentType: AgentType;
   goal: string;
   status: TaskStatus;
@@ -77,9 +78,9 @@ export interface Task {
 }
 
 export interface Approval {
-  id: string;
-  taskId: string;
-  storeId: string;
+  id: AllMallId;
+  taskId: AllMallId;
+  storeId: AllMallId;
   storeName: string;
   agentType: string;
   title: string;
@@ -96,11 +97,11 @@ export interface Approval {
 export type AuditCategory = 'approval' | 'agent_action' | 'human_ops' | 'system_event' | 'store_session';
 
 export interface AuditLog {
-  id: string;
+  id: AllMallId;
   actor: string;
   action: string;
   entity: string;
-  entityId: string;
+  entityId: AllMallId | string;
   summary: string;
   at: string;
   category: AuditCategory;
@@ -108,7 +109,7 @@ export interface AuditLog {
 }
 
 export interface Member {
-  id: string;
+  id: AllMallId;
   name: string;
   email: string;
   role: 'Owner' | 'Admin' | 'Operator' | 'Approver' | 'Viewer';
@@ -242,7 +243,7 @@ export interface AgentRunStats {
 // ===== Store Config =====
 
 export interface StoreConfig {
-  storeId: string;
+  storeId: AllMallId;
   riskThresholds: {
     maxBudgetAdjustment: number;
     highRiskActions: string[];
@@ -260,7 +261,7 @@ export interface StoreConfig {
   };
   approvalRules: {
     useIndependentApprover: boolean;
-    approverMemberId?: string;
+    approverMemberId?: AllMallId;
     enableSecondApproval: boolean;
   };
 }
@@ -268,15 +269,15 @@ export interface StoreConfig {
 // ===== Approval Policy =====
 
 export interface ApprovalPolicy {
-  id: string;
+  id: AllMallId;
   riskLevel: RiskLevel;
   action: 'auto_execute' | 'single_approval' | 'dual_approval';
   approverType: 'role' | 'specific';
   approverRole?: string;
-  approverMemberId?: string;
+  approverMemberId?: AllMallId;
   timeoutHours: number;
   timeoutAction: 'auto_reject' | 'auto_approve' | 'escalate';
-  storeSpecificRules: { storeId: string; riskLevel: RiskLevel; action: string }[];
+  storeSpecificRules: { storeId: AllMallId; riskLevel: RiskLevel; action: string }[];
 }
 
 // ===== Business Dashboard Metrics =====
@@ -386,7 +387,7 @@ export interface AgentModelBinding {
 // ===== Store Business Detail =====
 
 export interface StoreBusinessDetail {
-  storeId: string;
+  storeId: AllMallId;
   storeName: string;
   gmv: { today: number; yesterday: number; trend: { date: string; value: number }[] };
   orders: { today: number; yesterday: number; trend: { date: string; value: number }[] };

@@ -195,7 +195,7 @@ export const mockBudgetSuggestions = [
 ];
 
 export const productDrafts: Record<string, ProductDraft> = {
-  'task_009': {
+  3009: {
     productName: '65W GaN 氮化镓快充充电器',
     category: '消费电子 > 充电器 > GaN 快速充电器', platform: 'TikTok Shop',
     skus: [
@@ -218,7 +218,7 @@ export const productDrafts: Record<string, ProductDraft> = {
     description: '【65W 大功率三接口】支持同时为笔记本、平板和手机充电。氮化镓技术体积缩小 50%，折叠插脚便于携带。',
     sellingPoints: ['65W 大功率，笔记本也能充', '氮化镓 GaN 技术，体积缩小50%', '三口同时输出，一个顶三个', '智能温控，充电不发烫', '全球通用电压 100-240V'],
   },
-  'task_010': {
+  3010: {
     productName: '夏季速干运动T恤 男女同款',
     category: '运动户外 > 运动服饰 > 运动T恤', platform: 'Amazon',
     skus: [
@@ -243,7 +243,7 @@ export const productDrafts: Record<string, ProductDraft> = {
     description: '【4级速干科技】采用蜂窝导汗结构面料，出汗后 5 分钟速干，运动全程干爽不贴身。',
     sellingPoints: ['蜂窝导汗，5分钟速干', '四面弹力，运动无束缚', '仅 180g，穿着如无物', 'S-3XL 全尺码覆盖', '机洗不变形，不掉色'],
   },
-  'task_011': {
+  3011: {
     productName: '蓝牙耳机 Pro 第二代',
     category: '消费电子 > 音频 > 真无线耳机', platform: 'TikTok Shop',
     skus: [

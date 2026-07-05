@@ -13,7 +13,7 @@ import dayjs from 'dayjs';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '../app/i18n';
-import type { Approval, Task } from '../types/domain';
+import type { AllMallId, Approval, Task } from '../types/domain';
 
 type FeedLevel = 'info' | 'success' | 'warning' | 'error';
 
@@ -23,8 +23,8 @@ interface FeedTemplate {
   source: string;
   title: string;
   summary: string;
-  taskId?: string;
-  approvalId?: string;
+  taskId?: AllMallId;
+  approvalId?: AllMallId;
 }
 
 interface FeedEvent extends FeedTemplate {

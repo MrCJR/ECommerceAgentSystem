@@ -9,20 +9,23 @@ import { useI18n } from '../app/i18n';
 import { EmptyState } from '../components/EmptyState';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
+import { parseAllMallId } from '../utils/id';
 
 export function ApprovalDetailPage() {
   const { t } = useI18n();
   const { approvalId } = useParams();
+  const parsedApprovalId = parseAllMallId(approvalId);
   const queryClient = useQueryClient();
   const { data: approval } = useQuery({
-    queryKey: ['approval', approvalId],
-    queryFn: () => approvalsApi.get(approvalId!)
+    queryKey: ['approval', parsedApprovalId],
+    queryFn: () => approvalsApi.get(parsedApprovalId!),
+    enabled: parsedApprovalId !== undefined
   });
   const decide = useMutation({
-    mutationFn: (status: 'approved' | 'rejected') => approvalsApi.decide(approvalId!, status),
+    mutationFn: (status: 'approved' | 'rejected') => approvalsApi.decide(parsedApprovalId!, status),
     onSuccess: () => {
       message.success(t('approvals.updated'));
-      queryClient.invalidateQueries({ queryKey: ['approval', approvalId] });
+      queryClient.invalidateQueries({ queryKey: ['approval', parsedApprovalId] });
       queryClient.invalidateQueries({ queryKey: ['approvals'] });
     }
   });

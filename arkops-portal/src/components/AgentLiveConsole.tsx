@@ -290,7 +290,7 @@ export function AgentLiveConsole({ task }: { task: Task }) {
       }
     >
       <div className="agent-live-meta">
-        <span>{t('liveConsole.runId')}: run_{task.id.replace('task_', '')}</span>
+        <span>{t('liveConsole.runId')}: run_{task.id}</span>
         <span>{t('liveConsole.provider')}: MuleRun</span>
         <span>{t('liveConsole.events')}: {visibleEvents.length}/{allEvents.length}</span>
       </div>
