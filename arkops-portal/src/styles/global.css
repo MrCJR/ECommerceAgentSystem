@@ -118,6 +118,21 @@ body {
   font-size: 12px;
 }
 
+.table-action-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.table-action-wrap .ant-btn,
+.table-action-wrap .ant-tag {
+  flex: 0 0 auto;
+  margin-inline-end: 0;
+}
+
 .metric-card-top {
   display: flex;
   align-items: center;

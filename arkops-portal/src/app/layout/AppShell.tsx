@@ -96,9 +96,7 @@ export function AppShell() {
         <span>
           {t('nav.stores')}
           {loginRequired > 0 && (
-            <Badge dot offset={[6, 0]} style={{ marginLeft: 4 }}>
-              <span style={{ display: 'none' }} />
-            </Badge>
+            <Badge count={loginRequired} size="small" offset={[8, -2]} style={{ marginLeft: 8 }} />
           )}
         </span>
       )

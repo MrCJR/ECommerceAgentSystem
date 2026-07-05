@@ -231,6 +231,7 @@ export function ExceptionCenterPage() {
     {
       title: t('exc.title'),
       dataIndex: 'title',
+      width: 260,
       render: (title: string, record: ExceptionItem) => (
         <Space direction="vertical" size={0}>
           <Typography.Text strong>{title}</Typography.Text>
@@ -260,6 +261,7 @@ export function ExceptionCenterPage() {
     {
       title: t('exc.summary'),
       dataIndex: 'summary',
+      width: 280,
       ellipsis: true,
     },
     {
@@ -269,9 +271,9 @@ export function ExceptionCenterPage() {
     },
     {
       title: t('common.actions'),
-      width: 260,
+      width: 360,
       render: (_: unknown, record: ExceptionItem) => (
-        <Space>
+        <div className="table-action-wrap">
           <Button size="small" onClick={() => { setDetailItem(record); setAssigneeModal(record.assignee); }}>
             {t('common.view')}
           </Button>
@@ -299,7 +301,7 @@ export function ExceptionCenterPage() {
             </Button>
           )}
           {record.resolved && <Tag color="green">{t('exc.resolvedStatus')}</Tag>}
-        </Space>
+        </div>
       ),
     },
   ];
@@ -439,6 +441,8 @@ export function ExceptionCenterPage() {
                   dataSource={filtered}
                   pagination={false}
                   size="small"
+                  tableLayout="fixed"
+                  scroll={{ x: 1360 }}
                 />
               </>
             ),
@@ -457,6 +461,8 @@ export function ExceptionCenterPage() {
                   dataSource={agentLogData}
                   pagination={false}
                   size="small"
+                  tableLayout="fixed"
+                  scroll={{ x: 960 }}
                 />
               </Card>
             ),
