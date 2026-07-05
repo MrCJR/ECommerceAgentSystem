@@ -1,5 +1,6 @@
 import { mockDelay } from './client';
 import { tasks } from './mockData';
+import { insertFirst } from './mockRepository';
 import type { Task } from '../types/domain';
 
 export const tasksApi = {
@@ -26,7 +27,7 @@ export const tasksApi = {
         }
       ]
     };
-    tasks.unshift(task);
+    insertFirst(tasks, task);
     return mockDelay(task);
   }
 };

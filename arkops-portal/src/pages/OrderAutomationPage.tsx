@@ -164,6 +164,9 @@ const orders: OrderItem[] = [
 export function OrderAutomationPage() {
   const { t } = useI18n();
   const [tabFilter, setTabFilter] = useState<'all' | 'exception' | 'auto'>('all');
+  const [orderItems, setOrderItems] = useState<OrderItem[]>(() =>
+    orders.map((order) => ({ ...order, timeline: [...order.timeline] }))
+  );
   const [detailOrder, setDetailOrder] = useState<OrderItem | null>(null);
   const [searchKw, setSearchKw] = useState('');
   const [storeFilter, setStoreFilter] = useState<string | undefined>();
@@ -172,14 +175,24 @@ export function OrderAutomationPage() {
 
   // 处理异常订单操作
   const handleCancelAndRefund = (order: OrderItem) => {
-    const idx = orders.findIndex((o) => o.id === order.id);
-    if (idx >= 0) {
-      orders[idx].status = 'cancelled';
-      orders[idx].agentAction = `运营取消并退款 — ${new Date().toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
-      orders[idx].timeline.push({ title: '运营取消并退款', at: new Date().toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }), icon: 'close' });
-      orders[idx].timeline.push({ title: '退款已发起', at: new Date().toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }), icon: 'check' });
-      message.success(`${t('order.cancelledAndRefunded')}: ${order.orderNo}`);
-    }
+    const actionAt = new Date().toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    setOrderItems((items) =>
+      items.map((item) =>
+        item.id === order.id
+          ? {
+              ...item,
+              status: 'cancelled',
+              agentAction: `运营取消并退款 — ${actionAt}`,
+              timeline: [
+                ...item.timeline,
+                { title: '运营取消并退款', at: actionAt, icon: 'close' },
+                { title: '退款已发起', at: actionAt, icon: 'check' }
+              ]
+            }
+          : item
+      )
+    );
+    message.success(`${t('order.cancelledAndRefunded')}: ${order.orderNo}`);
     setDetailOrder(null);
   };
 
@@ -188,25 +201,36 @@ export function OrderAutomationPage() {
   };
 
   const handleApproveFraud = (order: OrderItem) => {
-    const idx = orders.findIndex((o) => o.id === order.id);
-    if (idx >= 0) {
-      orders[idx].status = 'awaiting_shipment';
-      orders[idx].agentAction = '运营人工审核通过 → 订单放行，进入正常发货流程';
-      orders[idx].exceptionReason = undefined;
-      orders[idx].exceptionType = undefined;
-      orders[idx].timeline.push({ title: '人工审核通过', at: new Date().toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }), icon: 'check' });
-      orders[idx].timeline.push({ title: '进入发货流程', at: '预计 2 小时内', icon: 'sync', estimated: new Date(Date.now() + 2 * 3600000).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) });
-      message.success(`${t('order.fraudApproved')}: ${order.orderNo}`);
-    }
+    const actionAt = new Date().toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const estimatedAt = new Date(Date.now() + 2 * 3600000).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    setOrderItems((items) =>
+      items.map((item) =>
+        item.id === order.id
+          ? {
+              ...item,
+              status: 'awaiting_shipment',
+              agentAction: '运营人工审核通过 → 订单放行，进入正常发货流程',
+              exceptionReason: undefined,
+              exceptionType: undefined,
+              timeline: [
+                ...item.timeline,
+                { title: '人工审核通过', at: actionAt, icon: 'check' },
+                { title: '进入发货流程', at: '预计 2 小时内', icon: 'sync', estimated: estimatedAt }
+              ]
+            }
+          : item
+      )
+    );
+    message.success(`${t('order.fraudApproved')}: ${order.orderNo}`);
     setDetailOrder(null);
   };
 
-  const autoCount = orders.filter((o) => ['auto_completed', 'auto_shipped', 'awaiting_shipment', 'cancelled'].includes(o.status)).length;
-  const exceptionCount = orders.filter((o) => o.status === 'exception' || o.status === 'fraud_blocked').length;
-  const autoRate = orders.length > 0 ? Math.round((autoCount / orders.length) * 100) : 0;
+  const autoCount = orderItems.filter((o) => ['auto_completed', 'auto_shipped', 'awaiting_shipment', 'cancelled'].includes(o.status)).length;
+  const exceptionCount = orderItems.filter((o) => o.status === 'exception' || o.status === 'fraud_blocked').length;
+  const autoRate = orderItems.length > 0 ? Math.round((autoCount / orderItems.length) * 100) : 0;
 
   const filtered = useMemo(() => {
-    let items = orders;
+    let items = orderItems;
 
     // Tab 筛选
     if (tabFilter === 'auto') {
@@ -241,7 +265,7 @@ export function OrderAutomationPage() {
     }
 
     return items;
-  }, [tabFilter, searchKw, storeFilter, statusFilter, dateRange]);
+  }, [orderItems, tabFilter, searchKw, storeFilter, statusFilter, dateRange]);
 
   const statusColors: Record<string, string> = {
     auto_processing: 'blue',
@@ -363,7 +387,7 @@ export function OrderAutomationPage() {
           <Card>
             <Statistic
               title={t('order.totalToday')}
-              value={orders.length}
+              value={orderItems.length}
               prefix={<ShoppingCartOutlined />}
             />
           </Card>

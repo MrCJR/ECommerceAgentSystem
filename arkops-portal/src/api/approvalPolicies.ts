@@ -1,4 +1,5 @@
 import { mockDelay } from './client';
+import { appendItem, replaceItem } from './mockRepository';
 import type { ApprovalPolicy } from '../types/domain';
 
 const policies: ApprovalPolicy[] = [
@@ -48,15 +49,11 @@ export const approvalPolicyApi = {
       timeoutAction: input.timeoutAction ?? 'auto_reject',
       storeSpecificRules: input.storeSpecificRules ?? []
     };
-    policies.push(policy);
+    appendItem(policies, policy);
     return mockDelay(policy);
   },
   update: (id: string, input: Partial<ApprovalPolicy>): Promise<ApprovalPolicy | undefined> => {
-    const idx = policies.findIndex((p) => p.id === id);
-    if (idx !== -1) {
-      policies[idx] = { ...policies[idx], ...input };
-      return mockDelay(policies[idx]);
-    }
-    return mockDelay(undefined);
+    const policy = replaceItem(policies, (item) => item.id === id, (item) => ({ ...item, ...input }));
+    return mockDelay(policy);
   }
 };

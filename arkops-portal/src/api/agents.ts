@@ -1,6 +1,7 @@
 import { mockDelay } from './client';
 import { agentConfigs, agentRunStatsMap } from './agentMockData';
 import { stores, tasks } from './mockData';
+import { insertFirst, replaceItem } from './mockRepository';
 import type { AgentConfig, AgentType, Task, TaskStatus } from '../types/domain';
 
 export const agentsApi = {
@@ -31,7 +32,7 @@ export const agentsApi = {
         at: new Date().toISOString()
       })) : []
     };
-    tasks.unshift(task);
+    insertFirst(tasks, task);
     return mockDelay(task);
   },
   toggle: (agentType: AgentType): Promise<AgentConfig | undefined> => {
@@ -46,7 +47,10 @@ export const agentsApi = {
           throw new Error(`依赖未满足: ${missing.join(', ')}`);
         }
       }
-      agent.enabled = !agent.enabled;
+      return mockDelay(replaceItem(agentConfigs, (a) => a.agentType === agentType, (current) => ({
+        ...current,
+        enabled: !current.enabled
+      })));
     }
     return mockDelay(agent);
   },
@@ -61,8 +65,17 @@ export const agentsApi = {
     const shuffled = [...pool].sort(() => Math.random() - 0.5);
     const keywords = shuffled.slice(0, 6 + Math.floor(Math.random() * 4));
     if (agent?.strategyConfig?.seoKeywords) {
-      agent.strategyConfig.seoKeywords.keywords = keywords;
-      agent.strategyConfig.seoKeywords.lastGenerated = new Date().toISOString();
+      replaceItem(agentConfigs, (a) => a.agentType === agentType, (current) => ({
+        ...current,
+        strategyConfig: current.strategyConfig
+          ? {
+              ...current.strategyConfig,
+              seoKeywords: current.strategyConfig.seoKeywords
+                ? { ...current.strategyConfig.seoKeywords, keywords, lastGenerated: new Date().toISOString() }
+                : undefined
+            }
+          : undefined
+      }));
     }
     return mockDelay(keywords);
   },
@@ -76,33 +89,57 @@ export const agentsApi = {
     const shuffled = [...pool].sort(() => Math.random() - 0.5);
     const tags = shuffled.slice(0, 4 + Math.floor(Math.random() * 4));
     if (agent?.strategyConfig?.targetAudience) {
-      agent.strategyConfig.targetAudience.tags = tags;
-      agent.strategyConfig.targetAudience.lastGenerated = new Date().toISOString();
+      replaceItem(agentConfigs, (a) => a.agentType === agentType, (current) => ({
+        ...current,
+        strategyConfig: current.strategyConfig
+          ? {
+              ...current.strategyConfig,
+              targetAudience: current.strategyConfig.targetAudience
+                ? { ...current.strategyConfig.targetAudience, tags, lastGenerated: new Date().toISOString() }
+                : undefined
+            }
+          : undefined
+      }));
     }
     return mockDelay(tags);
   },
   saveStrategyConfig: (agentType: AgentType, config: { costMultiplier?: number; dailyCap?: number }): Promise<AgentConfig | undefined> => {
     const agent = agentConfigs.find((a) => a.agentType === agentType);
     if (agent?.strategyConfig) {
-      const sc = agent.strategyConfig;
-      if (sc.pricingRule && config.costMultiplier !== undefined) sc.pricingRule.costMultiplier = config.costMultiplier;
-      if (sc.adSpendBudget && config.dailyCap !== undefined) sc.adSpendBudget.dailyCap = config.dailyCap;
+      const updated = replaceItem(agentConfigs, (a) => a.agentType === agentType, (current) => ({
+        ...current,
+        strategyConfig: current.strategyConfig
+          ? {
+              ...current.strategyConfig,
+              pricingRule: current.strategyConfig.pricingRule && config.costMultiplier !== undefined
+                ? { ...current.strategyConfig.pricingRule, costMultiplier: config.costMultiplier }
+                : current.strategyConfig.pricingRule,
+              adSpendBudget: current.strategyConfig.adSpendBudget && config.dailyCap !== undefined
+                ? { ...current.strategyConfig.adSpendBudget, dailyCap: config.dailyCap }
+                : current.strategyConfig.adSpendBudget
+            }
+          : undefined
+      }));
+      return mockDelay(updated);
     }
     return mockDelay(agent);
   },
   cancelTask: (taskId: string): Promise<Task | undefined> => {
-    const task = tasks.find((t) => t.id === taskId);
-    if (task) {
-      task.status = 'cancelled';
-      task.updatedAt = new Date().toISOString();
-      task.timeline.push({
+    const task = replaceItem(tasks, (t) => t.id === taskId, (current) => ({
+      ...current,
+      status: 'cancelled' as const,
+      updatedAt: new Date().toISOString(),
+      timeline: [
+        ...current.timeline,
+        {
         id: `evt_cancel_${Date.now()}`,
-        type: 'run_failed',
+        type: 'run_failed' as const,
         title: '任务已取消',
         summary: '由用户手动取消',
         at: new Date().toISOString()
-      });
-    }
+        }
+      ]
+    }));
     return mockDelay(task);
   }
 };

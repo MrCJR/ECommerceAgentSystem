@@ -1,4 +1,5 @@
 import { mockDelay } from './client';
+import { insertFirst, removeWhere, replaceItem } from './mockRepository';
 import type { AgentModelBinding, ModelInfo, ModelUsageStats } from '../types/domain';
 
 const platformModels: ModelInfo[] = [
@@ -50,9 +51,8 @@ export const modelsApi = {
   listCustom: (): Promise<ModelInfo[]> => mockDelay([...customModels]),
   toggle: (modelId: string, isCustom: boolean): Promise<ModelInfo | undefined> => {
     const list = isCustom ? customModels : platformModels;
-    const m = list.find((x) => x.id === modelId);
-    if (m) m.active = !m.active;
-    return mockDelay(m);
+    const model = replaceItem(list, (item) => item.id === modelId, (item) => ({ ...item, active: !item.active }));
+    return mockDelay(model);
   },
   addCustom: (input: { modelType: string; description: string; apiKey: string }): Promise<ModelInfo> => {
     const labels: Record<string, string> = {
@@ -70,11 +70,11 @@ export const modelsApi = {
       apiKey: `••••${input.apiKey.slice(-4)}`,
       active: true
     };
-    customModels.unshift(model);
+    insertFirst(customModels, model);
     return mockDelay(model);
   },
   removeCustom: (modelId: string): Promise<void> => {
-    customModels.splice(0, customModels.length, ...customModels.filter((m) => m.id !== modelId));
+    removeWhere(customModels, (model) => model.id === modelId);
     return mockDelay(undefined);
   },
   getUsageStats: (): Promise<ModelUsageStats[]> => {
@@ -83,8 +83,11 @@ export const modelsApi = {
   },
   getBindings: (): Promise<AgentModelBinding[]> => mockDelay([...bindings]),
   updateBinding: (agentType: string, modelId: string, modelName: string): Promise<AgentModelBinding[]> => {
-    const idx = bindings.findIndex((b) => b.agentType === agentType);
-    if (idx !== -1) bindings[idx] = { ...bindings[idx], boundModelId: modelId, boundModelName: modelName };
+    replaceItem(bindings, (binding) => binding.agentType === agentType, (binding) => ({
+      ...binding,
+      boundModelId: modelId,
+      boundModelName: modelName
+    }));
     return mockDelay([...bindings]);
   }
 };

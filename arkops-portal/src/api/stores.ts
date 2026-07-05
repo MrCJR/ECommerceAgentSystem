@@ -1,6 +1,7 @@
 import { makeConnectToken, mockDelay } from './client';
 import { storeConfigs } from './storeMockData';
 import { stores, tasks } from './mockData';
+import { appendItem, insertFirst, replaceItem } from './mockRepository';
 import type { Store, StoreConfig, StoreConnection } from '../types/domain';
 
 export const storesApi = {
@@ -30,9 +31,9 @@ export const storesApi = {
       recentTaskIds: [],
       connections: []
     };
-    stores.unshift(store);
+    insertFirst(stores, store);
     // Auto-create store config
-    storeConfigs.push({
+    appendItem(storeConfigs, {
       storeId: store.id,
       riskThresholds: { maxBudgetAdjustment: input.maxBudgetAdjust ?? 200, highRiskActions: ['adjust_budget', 'pause_campaign'] },
       operationWindow: { enabled: true, startTime: input.operationWindowStart ?? '09:00', endTime: input.operationWindowEnd ?? '22:00', timezone: 'Asia/Shanghai' },
@@ -42,8 +43,7 @@ export const storesApi = {
     return mockDelay(store);
   },
   updateStatus: (storeId: string, status: Store['status']) => {
-    const store = stores.find((item) => item.id === storeId);
-    if (store) store.status = status;
+    const store = replaceItem(stores, (item) => item.id === storeId, (item) => ({ ...item, status }));
     return mockDelay(store);
   },
   getConfig: (storeId: string): Promise<StoreConfig> => {
@@ -56,14 +56,13 @@ export const storesApi = {
       autoReconnect: { enabled: true, retryAfterMinutes: 5, maxRetries: 3 },
       approvalRules: { useIndependentApprover: false, enableSecondApproval: false }
     };
-    storeConfigs.push(defaults);
+    appendItem(storeConfigs, defaults);
     return mockDelay(defaults);
   },
   saveConfig: (storeId: string, input: Partial<StoreConfig>): Promise<StoreConfig> => {
-    const idx = storeConfigs.findIndex((c) => c.storeId === storeId);
-    if (idx !== -1) {
-      storeConfigs[idx] = { ...storeConfigs[idx], ...input, storeId };
-      return mockDelay(storeConfigs[idx]);
+    const existing = replaceItem(storeConfigs, (c) => c.storeId === storeId, (current) => ({ ...current, ...input, storeId }));
+    if (existing) {
+      return mockDelay(existing);
     }
     const defaults: StoreConfig = {
       storeId,
@@ -73,7 +72,7 @@ export const storesApi = {
       approvalRules: { useIndependentApprover: false, enableSecondApproval: false },
       ...input
     };
-    storeConfigs.push(defaults);
+    appendItem(storeConfigs, defaults);
     return mockDelay(defaults);
   },
   addConnection: (storeId: string, input: { serviceName: string; serviceType: StoreConnection['serviceType']; authMethod: Store['authMethod']; apiKey?: string; account?: string }): Promise<StoreConnection> => {
@@ -89,9 +88,7 @@ export const storesApi = {
       runtimeProvider: input.authMethod === 'api_key' ? 'direct' : 'mulerun',
       createdAt: new Date().toISOString()
     };
-    if (store) {
-      store.connections.push(conn);
-    }
+    if (store) replaceItem(stores, (s) => s.id === storeId, (current) => ({ ...current, connections: [...current.connections, conn] }));
     return mockDelay(conn);
   }
 };
