@@ -1,11 +1,13 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Col, Descriptions, Row, Space, Tag, Typography, message } from 'antd';
+import { Button, Card, Col, Row, Space, Tag, Typography, message } from 'antd';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { approvalsApi } from '../../api/approvals';
 import { useI18n } from '../../app/i18n';
+import { DescriptionPanel } from '../../components/detail/DescriptionPanel';
+import { DetailSection } from '../../components/detail/DetailSection';
 import { EmptyState } from '../../components/EmptyState';
 import { PageHeader } from '../../components/PageHeader';
 import { StatusBadge } from '../../components/StatusBadge';
@@ -94,27 +96,26 @@ export function ApprovalDetailPage() {
           ) : null
         }
       />
-      <Card>
-        <Descriptions column={2}>
-          <Descriptions.Item label={t('approvals.agentHeader')}>{t(`agent.${approval.agentType}`)}</Descriptions.Item>
-          <Descriptions.Item label={t('approvals.storeHeader')}>{approval.storeName}</Descriptions.Item>
-          <Descriptions.Item label={t('approvals.item')}>{approval.title}</Descriptions.Item>
-          <Descriptions.Item label={t('approvals.riskHeader')}>
-            <StatusBadge value={approval.riskLevel} />
-          </Descriptions.Item>
-          <Descriptions.Item label={t('approvals.statusHeader')}>
-            <StatusBadge value={approval.status} />
-          </Descriptions.Item>
-          <Descriptions.Item label={t('approvals.requested')}>{dayjs(approval.requestedAt).format('YYYY-MM-DD HH:mm')}</Descriptions.Item>
-          <Descriptions.Item label={t('entity.task')}>{approval.taskId}</Descriptions.Item>
-          <Descriptions.Item label={t('approvals.decided')}>
-            {approval.decidedAt ? dayjs(approval.decidedAt).format('YYYY-MM-DD HH:mm') : t('approvals.waiting')}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-      <Card title={t('approvals.detail')}>
+      <DescriptionPanel
+        column={2}
+        size="default"
+        items={[
+          { label: t('approvals.agentHeader'), value: t(`agent.${approval.agentType}`) },
+          { label: t('approvals.storeHeader'), value: approval.storeName },
+          { label: t('approvals.item'), value: approval.title },
+          { label: t('approvals.riskHeader'), value: <StatusBadge value={approval.riskLevel} /> },
+          { label: t('approvals.statusHeader'), value: <StatusBadge value={approval.status} /> },
+          { label: t('approvals.requested'), value: dayjs(approval.requestedAt).format('YYYY-MM-DD HH:mm') },
+          { label: t('entity.task'), value: approval.taskId },
+          {
+            label: t('approvals.decided'),
+            value: approval.decidedAt ? dayjs(approval.decidedAt).format('YYYY-MM-DD HH:mm') : t('approvals.waiting'),
+          },
+        ]}
+      />
+      <DetailSection title={t('approvals.detail')}>
         <Typography.Paragraph>{approval.proposedAction}</Typography.Paragraph>
-      </Card>
+      </DetailSection>
       {comparisonData && (
         <Card
           title={<Space><span>{t('approvals.proposedAction')}</span><Tag color="blue">{t('approvals.changeAmount')}: {comparisonData.changeAmount}</Tag></Space>}

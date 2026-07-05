@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Button, Card, Descriptions, List, Switch } from 'antd';
+import { Button, Card, List, Switch } from 'antd';
 import { settingsApi } from '../../api/settings';
 import { useI18n } from '../../app/i18n';
+import { DescriptionPanel } from '../../components/detail/DescriptionPanel';
 import { PageHeader } from '../../components/PageHeader';
 
 export function NotificationsSettingsPage() {
@@ -24,17 +25,16 @@ export function NotificationsSettingsPage() {
           )}
         />
       </Card>
-      <Card title={t('settings.defaultPolicy')}>
-        <Descriptions column={1}>
-          <Descriptions.Item label={t('settings.eventApprovalRequired')}>
-            {t('settings.policyApprovalRequired')}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('settings.eventLoginRequired')}>
-            {t('settings.policyLoginRequired')}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('settings.eventRunFailed')}>{t('settings.policyRunFailed')}</Descriptions.Item>
-        </Descriptions>
-      </Card>
+      <DescriptionPanel
+        title={t('settings.defaultPolicy')}
+        column={1}
+        size="default"
+        items={[
+          { label: t('settings.eventApprovalRequired'), value: t('settings.policyApprovalRequired') },
+          { label: t('settings.eventLoginRequired'), value: t('settings.policyLoginRequired') },
+          { label: t('settings.eventRunFailed'), value: t('settings.policyRunFailed') },
+        ]}
+      />
     </div>
   );
 }

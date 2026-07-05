@@ -178,6 +178,10 @@ body {
   min-width: 260px;
 }
 
+.detail-section-bottom {
+  margin-bottom: 16px;
+}
+
 .metric-card-top {
   display: flex;
   align-items: center;

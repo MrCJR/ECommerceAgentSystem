@@ -19,7 +19,7 @@ import {
   WarningOutlined
 } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Col, Descriptions, Form, Input, Modal, Progress, Row, Segmented, Select, Space, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
+import { Button, Card, Col, Form, Input, Modal, Progress, Row, Segmented, Select, Space, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -28,6 +28,7 @@ import { storeBusinessApi } from '../../api/storeBusiness';
 import { storesApi } from '../../api/stores';
 import { useI18n } from '../../app/i18n';
 import { TrendBarChart } from '../../components/charts/TrendBarChart';
+import { DescriptionPanel } from '../../components/detail/DescriptionPanel';
 import { MetricCard } from '../../components/metrics/MetricCard';
 import { PageHeader } from '../../components/PageHeader';
 import { StatusBadge } from '../../components/StatusBadge';
@@ -274,22 +275,26 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
   const settingsTab = (
     <>
       {/* 店铺主体授权 */}
-      <Card title={<><LinkOutlined /> {t('stores.primaryAuth')}</>} style={{ marginBottom: 16 }}>
-        <Descriptions column={{ xs: 1, sm: 2 }} size="small">
-          <Descriptions.Item label={t('stores.platform')}>{store?.platform}</Descriptions.Item>
-          <Descriptions.Item label={t('stores.authMethod')}>
-            <Tag color={store?.authMethod === 'credentials' ? 'orange' : store?.authMethod === 'api_key' ? 'green' : 'purple'}>
-              {store?.authMethod === 'credentials' ? t('stores.authCredentials') : store?.authMethod === 'api_key' ? t('stores.authApiKey') : t('stores.authOauth')}
-            </Tag>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('stores.status')}>{store ? <StatusBadge value={store.status} /> : null}</Descriptions.Item>
-
-          {store?.apiKey && <Descriptions.Item label="API Key"><Typography.Text code>{store.apiKey}</Typography.Text></Descriptions.Item>}
-          {store?.account && <Descriptions.Item label={t('stores.account')}>{store.account}</Descriptions.Item>}
-          {store?.region && <Descriptions.Item label={t('stores.region')}>{store.region}</Descriptions.Item>}
-          {store?.currency && <Descriptions.Item label={t('stores.currency')}>{store.currency}</Descriptions.Item>}
-        </Descriptions>
-      </Card>
+      <DescriptionPanel
+        title={<><LinkOutlined /> {t('stores.primaryAuth')}</>}
+        spacing="bottom"
+        items={[
+          { label: t('stores.platform'), value: store?.platform },
+          {
+            label: t('stores.authMethod'),
+            value: (
+              <Tag color={store?.authMethod === 'credentials' ? 'orange' : store?.authMethod === 'api_key' ? 'green' : 'purple'}>
+                {store?.authMethod === 'credentials' ? t('stores.authCredentials') : store?.authMethod === 'api_key' ? t('stores.authApiKey') : t('stores.authOauth')}
+              </Tag>
+            ),
+          },
+          { label: t('stores.status'), value: store ? <StatusBadge value={store.status} /> : null },
+          ...(store?.apiKey ? [{ label: 'API Key', value: <Typography.Text code>{store.apiKey}</Typography.Text> }] : []),
+          ...(store?.account ? [{ label: t('stores.account'), value: store.account }] : []),
+          ...(store?.region ? [{ label: t('stores.region'), value: store.region }] : []),
+          ...(store?.currency ? [{ label: t('stores.currency'), value: store.currency }] : []),
+        ]}
+      />
 
       {/* 服务授权 */}
       <Card
