@@ -18,6 +18,8 @@ Frontend status:
 - The approval badge in the sidebar reflects pending approvals from mock summary data.
 - Light, dark, and system theme switching are available.
 - Chinese and English language switching is available.
+- Routes are lazy-loaded so page modules are split into separate Vite chunks.
+- AllMall-owned mock entity IDs now use numeric values in frontend types and data.
 
 Not started yet:
 
@@ -94,9 +96,7 @@ http://localhost:5173/
 | `/approvals/:approvalId` | Approval Detail | Implemented | Approve or reject high-risk actions. |
 | `/audit-logs` | Audit Logs | Implemented | System and execution audit records. |
 | `/billing` | Billing Ledger | Implemented | Usage, monthly cost, bills, invoices. |
-| `/subscription` | Subscription | Implemented | Plan selection, payment methods, invoice info, enterprise solutions. |
 | `/settings/members` | Members | Implemented | Member list and invitations. |
-| `/settings/approval-policy` | Approval Policy | Implemented | Agent-level approval policy display. |
 | `/settings/notifications` | Notifications | Implemented | Notification channels and preferences. |
 
 Removed from the latest navigation:
@@ -104,6 +104,8 @@ Removed from the latest navigation:
 - `/tasks`
 - `/tasks/new`
 - `/tasks/:taskId`
+- `/subscription`
+- `/settings/approval-policy`
 
 Task creation and task history now belong to each Agent detail page.
 
@@ -246,6 +248,15 @@ Important mock API groups:
 - `approvals.ts`
 - `auditLogs.ts`
 
+Mock API state changes should go through `mockRepository.ts` helpers where practical. This keeps create, update, replace, and remove behavior centralized while the app is still frontend-only.
+
+Current frontend type conventions:
+
+- AllMall-owned IDs use numeric `AllMallId` values.
+- Route params are parsed with `src/utils/id.ts` before calling mock APIs.
+- External or vendor identifiers, such as model provider IDs, invoice references, campaign codes, SKU codes, and runtime references, remain strings.
+- Large static Agent detail mock datasets are kept outside the page component in `src/pages/agentConfigMockData.ts`.
+
 Backend integration has not started. When backend work begins, replace mock implementations with typed API clients while preserving the UI-facing response shapes where practical.
 
 ## Backend Boundary
@@ -303,6 +314,12 @@ arkops-portal/
 
 The implementation currently uses page-level modules under `src/pages/` and mock API modules under `src/api/`.
 
+Implementation notes:
+
+- Routes in `src/app/router.tsx` use `React.lazy` and `Suspense` for page-level code splitting.
+- Translation dictionaries live in `src/app/i18n.tsx` and expose a typed `TranslationKey`.
+- Repeated Agent task card styling is centralized in `src/styles/global.css`.
+
 ## UX Principles
 
 - Build an operational SaaS console, not a marketing landing page.
@@ -319,3 +336,4 @@ The implementation currently uses page-level modules under `src/pages/` and mock
 - Before adding new pages, confirm the navigation and module scope in `product-design.md`.
 - Before adding API contracts, follow the root README API/data conventions.
 - Before replacing mock APIs, align with the SaaS-to-Agent interface specification and future database design.
+- Keep new AllMall-owned mock IDs numeric; use string fields only for external refs or display codes.
