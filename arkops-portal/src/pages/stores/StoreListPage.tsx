@@ -1,12 +1,13 @@
 import { ApiOutlined, CustomerServiceOutlined, DollarOutlined, PlusOutlined, ShoppingCartOutlined, ThunderboltOutlined, WalletOutlined, WifiOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Card, Space, Table, Tag, Typography } from 'antd';
+import { Button, Space, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { Link, useNavigate } from 'react-router-dom';
 import { storesApi } from '../../api/stores';
 import { useI18n } from '../../app/i18n';
 import { PageHeader } from '../../components/PageHeader';
 import { StatusBadge } from '../../components/StatusBadge';
+import { DataTableCard } from '../../components/table/DataTableCard';
 import type { Store } from '../../types/domain';
 
 const serviceIcons: Record<string, JSX.Element> = {
@@ -104,9 +105,12 @@ export function StoreListPage() {
           </Button>
         }
       />
-      <Card>
-        <Table rowKey="id" columns={columns} dataSource={data} pagination={false} />
-      </Card>
+      <DataTableCard<Store>
+        rowKey="id"
+        columns={columns}
+        dataSource={data}
+        scroll={{ x: 1100 }}
+      />
     </div>
   );
 }

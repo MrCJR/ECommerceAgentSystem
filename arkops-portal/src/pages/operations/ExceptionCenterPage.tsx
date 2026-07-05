@@ -38,6 +38,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../app/i18n';
 import { PageHeader } from '../../components/PageHeader';
+import { TableActionGroup } from '../../components/table/TableActionGroup';
 
 // ===== 异常类型 =====
 type ExceptionType = 'review_negative' | 'chat_escalation' | 'ad_low_roi' | 'logistics_stuck' | 'compliance_flag';
@@ -273,7 +274,7 @@ export function ExceptionCenterPage() {
       title: t('common.actions'),
       width: 360,
       render: (_: unknown, record: ExceptionItem) => (
-        <div className="table-action-wrap">
+        <TableActionGroup>
           <Button size="small" onClick={() => { setDetailItem(record); setAssigneeModal(record.assignee); }}>
             {t('common.view')}
           </Button>
@@ -301,7 +302,7 @@ export function ExceptionCenterPage() {
             </Button>
           )}
           {record.resolved && <Tag color="green">{t('exc.resolvedStatus')}</Tag>}
-        </div>
+        </TableActionGroup>
       ),
     },
   ];

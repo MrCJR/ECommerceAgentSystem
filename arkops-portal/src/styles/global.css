@@ -133,6 +133,18 @@ body {
   margin-inline-end: 0;
 }
 
+.data-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.data-table-description {
+  margin-bottom: 16px;
+}
+
 .metric-card-top {
   display: flex;
   align-items: center;

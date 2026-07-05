@@ -26,7 +26,6 @@ import {
   Row,
   Select,
   Space,
-  Table,
   Tabs,
   Tag,
   Timeline,
@@ -38,6 +37,8 @@ import { useMemo, useState } from 'react';
 import { useI18n } from '../../app/i18n';
 import { MetricCard } from '../../components/metrics/MetricCard';
 import { PageHeader } from '../../components/PageHeader';
+import { DataTableCard } from '../../components/table/DataTableCard';
+import { TableActionGroup } from '../../components/table/TableActionGroup';
 
 type OrderStatus = 'auto_processing' | 'awaiting_shipment' | 'auto_shipped' | 'auto_completed' | 'exception' | 'fraud_blocked' | 'cancelled';
 
@@ -336,7 +337,7 @@ export function OrderAutomationPage() {
       title: t('common.actions'),
       width: 160,
       render: (_: unknown, record: OrderItem) => (
-        <Space size="small">
+        <TableActionGroup>
           <Button size="small" icon={<EyeOutlined />} onClick={() => setDetailOrder(record)}>
             {t('common.view')}
           </Button>
@@ -359,7 +360,7 @@ export function OrderAutomationPage() {
               )}
             </>
           )}
-        </Space>
+        </TableActionGroup>
       ),
     },
   ];
@@ -478,9 +479,13 @@ export function OrderAutomationPage() {
             key: 'all',
             label: <span><ShoppingCartOutlined /> {t('order.allOrders')} ({filtered.length})</span>,
             children: (
-              <Card>
-                <Table rowKey="id" columns={columns} dataSource={filtered} pagination={{ pageSize: 15, size: 'small' }} size="small" />
-              </Card>
+              <DataTableCard<OrderItem>
+                rowKey="id"
+                columns={columns}
+                dataSource={filtered}
+                pagination={{ pageSize: 15, size: 'small' }}
+                scroll={{ x: 1120 }}
+              />
             ),
           },
           {
@@ -492,12 +497,14 @@ export function OrderAutomationPage() {
               </span>
             ),
             children: (
-              <Card>
-                <Typography.Paragraph type="secondary" style={{ marginBottom: 16 }}>
-                  {t('order.autoProcessedDesc')}
-                </Typography.Paragraph>
-                <Table rowKey="id" columns={columns} dataSource={filtered} pagination={{ pageSize: 15, size: 'small' }} size="small" />
-              </Card>
+              <DataTableCard<OrderItem>
+                rowKey="id"
+                columns={columns}
+                dataSource={filtered}
+                pagination={{ pageSize: 15, size: 'small' }}
+                scroll={{ x: 1120 }}
+                description={t('order.autoProcessedDesc')}
+              />
             ),
           },
           {
@@ -509,12 +516,14 @@ export function OrderAutomationPage() {
               </span>
             ),
             children: (
-              <Card>
-                <Typography.Paragraph type="secondary" style={{ marginBottom: 16 }}>
-                  {t('order.exceptionOrderDesc')}
-                </Typography.Paragraph>
-                <Table rowKey="id" columns={columns} dataSource={filtered} pagination={{ pageSize: 15, size: 'small' }} size="small" />
-              </Card>
+              <DataTableCard<OrderItem>
+                rowKey="id"
+                columns={columns}
+                dataSource={filtered}
+                pagination={{ pageSize: 15, size: 'small' }}
+                scroll={{ x: 1120 }}
+                description={t('order.exceptionOrderDesc')}
+              />
             ),
           },
         ]}

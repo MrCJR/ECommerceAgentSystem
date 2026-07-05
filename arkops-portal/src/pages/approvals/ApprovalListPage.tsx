@@ -11,6 +11,7 @@ import { approvalPolicyApi } from '../../api/approvalPolicies';
 import { useI18n } from '../../app/i18n';
 import { PageHeader } from '../../components/PageHeader';
 import { StatusBadge } from '../../components/StatusBadge';
+import { DataTableCard } from '../../components/table/DataTableCard';
 import type { AgentConfig, AgentType, Approval, ApprovalPolicy } from '../../types/domain';
 
 const actionLabels: Record<ApprovalPolicy['action'], string> = {
@@ -125,8 +126,13 @@ export function ApprovalListPage() {
       </Card>
 
       {/* 审批列表 */}
-      <Card>
-        <Space style={{ marginBottom: 16 }}>
+      <DataTableCard<Approval>
+        rowKey="id"
+        columns={approvalColumns}
+        dataSource={filteredApprovals}
+        pagination={{ pageSize: 10, size: 'small' }}
+        scroll={{ x: 900 }}
+        toolbar={
           <Select
             style={{ width: 200 }}
             value={agentFilter}
@@ -136,9 +142,8 @@ export function ApprovalListPage() {
               ...agents.map((a) => ({ value: a.agentType as AgentType, label: t(`agent.${a.agentType}`) }))
             ]}
           />
-        </Space>
-        <Table rowKey="id" columns={approvalColumns} dataSource={filteredApprovals} />
-      </Card>
+        }
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { DownloadOutlined, EyeOutlined, FilterOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Card, Input, Segmented, Space, Table, Tag } from 'antd';
+import { Button, Input, Segmented, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { auditLogsApi } from '../../api/auditLogs';
 import { useI18n } from '../../app/i18n';
 import { PageHeader } from '../../components/PageHeader';
+import { DataTableCard } from '../../components/table/DataTableCard';
 import type { AuditCategory, AuditLog } from '../../types/domain';
 
 const categoryColors: Record<AuditCategory, string> = {
@@ -108,8 +109,14 @@ export function AuditLogsPage() {
           </Button>
         }
       />
-      <Card>
-        <Space style={{ marginBottom: 16, display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+      <DataTableCard<AuditLog>
+        rowKey="id"
+        columns={columns}
+        dataSource={filtered}
+        pagination={{ pageSize: 20, size: 'small' }}
+        scroll={{ x: 900 }}
+        toolbar={
+          <>
           <Input.Search
             placeholder={t('audit.search')}
             onChange={(event) => setKeyword(event.target.value)}
@@ -128,9 +135,9 @@ export function AuditLogsPage() {
               { label: `${t('audit.cat_system_event')} (${stats.system_event})`, value: 'system_event' },
             ]}
           />
-        </Space>
-        <Table rowKey="id" columns={columns} dataSource={filtered} pagination={{ pageSize: 20, size: 'small' }} size="small" />
-      </Card>
+          </>
+        }
+      />
     </div>
   );
 }
