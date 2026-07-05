@@ -182,6 +182,26 @@ body {
   margin-bottom: 16px;
 }
 
+.section-card {
+  margin-bottom: 24px;
+}
+
+.section-card-sm {
+  margin-bottom: 16px;
+}
+
+.panel-soft {
+  background: var(--ark-panel-soft);
+}
+
+.full-height {
+  height: 100%;
+}
+
+.subscription-private-card {
+  background: linear-gradient(135deg, #f8fafb 0%, #f0f5ff 100%);
+}
+
 .metric-card-top {
   display: flex;
   align-items: center;

@@ -329,7 +329,7 @@ export function BankTransferInfoSection() {
           </Descriptions>
         </Col>
         <Col xs={24} lg={10}>
-          <Card size="small" style={{ background: 'var(--ark-panel-soft)', height: '100%' }}>
+          <Card size="small" className="panel-soft full-height">
             <Typography.Title level={5}>{t('subscription.transferNote')}</Typography.Title>
             <ul style={{ paddingLeft: 20, lineHeight: 2, color: '#64748b', fontSize: 13 }}>
               <li>{t('subscription.transferNote1')}</li>
@@ -354,7 +354,7 @@ export function PrivateDeploySection() {
   return (
     <Card
       title={<><SafetyCertificateOutlined /> {t('subscription.privateDeploy')}</>}
-      style={{ marginBottom: 24, background: 'linear-gradient(135deg, #f8fafb 0%, #f0f5ff 100%)' }}
+      className="section-card subscription-private-card"
     >
       <Row gutter={[24, 16]}>
         <Col xs={24} sm={8}>
