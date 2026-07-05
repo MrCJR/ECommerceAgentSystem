@@ -13,7 +13,7 @@ Frontend status:
 - The main SaaS console pages have been implemented with mock data.
 - The navigation has been updated to match the latest product design.
 - Agent tasks are now managed inside Agent detail pages rather than through standalone task list/detail pages.
-- Billing and subscription are split into separate navigation entries.
+- Billing ledger is available from the main navigation; the standalone subscription page has been removed from the latest navigation.
 - Model Center has been redesigned around Agent-to-model assignment.
 - The approval badge in the sidebar reflects pending approvals from mock summary data.
 - Light, dark, and system theme switching are available.
@@ -45,7 +45,7 @@ This document defines:
 - Current P0/P1/P2 roadmap
 - Navigation structure
 - Implemented frontend module scope
-- Dashboard, stores, agents, models, approvals, billing, subscription, and settings behavior
+- Dashboard, stores, agents, models, approvals, billing, and settings behavior
 
 When changing page scope or navigation, update `product-design.md` first, then update this README and frontend routes.
 
@@ -163,11 +163,21 @@ Implemented:
 
 Implemented Agent types:
 
-- Advertising Optimization Agent
-- Product Launch Agent
-- CRM Repurchase Agent
 - Login Guide Agent
+- Product Launch Agent
+- Advertising Optimization Agent
+- Pricing Strategy Agent
+- CRM Repurchase Agent
+- Review Management Agent
+- Customer Service Agent
+- After-sales Agent
+- Market Intelligence Agent
+- Creative Factory Agent
+- Inventory Alert Agent
 - Finance Reconciliation Agent
+- Risk Control Agent
+- Promotion Campaign Agent
+- Live Stream Operations Agent
 
 Future P2 scope:
 
@@ -194,9 +204,8 @@ Implemented:
 - Approval detail
 - Approve / reject actions
 - Sidebar pending approval badge
-- Agent-level approval policy page
 
-### Billing and Subscription
+### Billing
 
 Billing ledger includes:
 
@@ -209,21 +218,11 @@ Billing ledger includes:
 - Current bill details
 - Historical invoice list
 
-Subscription page includes:
-
-- Current subscription
-- Free / Starter / Professional / Enterprise plans
-- Payment methods
-- Invoice information
-- Bank transfer details
-- Enterprise solution cards
-
 ### Settings
 
 Implemented:
 
 - Member management
-- Approval policy
 - Notification settings
 
 ## Data Layer
