@@ -13,7 +13,6 @@ import {
   Select,
   Space,
   Spin,
-  Statistic,
   Switch,
   Table,
   Tag,
@@ -27,6 +26,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { agentsApi } from '../../api/agents';
 import { storesApi } from '../../api/stores';
 import { useI18n } from '../../app/i18n';
+import { MetricCard } from '../../components/metrics/MetricCard';
 import { PageHeader } from '../../components/PageHeader';
 import { StatusBadge } from '../../components/StatusBadge';
 import { AgentBuiltinTasksSection } from './AgentBuiltinTasksSection';
@@ -229,16 +229,16 @@ export function AgentConfigPage() {
       {stats && (
         <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
           <Col span={6}>
-            <Card><Statistic title={t('agent.totalRuns')} value={stats.totalRuns} prefix={<LineChartOutlined />} /></Card>
+            <MetricCard title={t('agent.totalRuns')} value={stats.totalRuns} prefix={<LineChartOutlined />} />
           </Col>
           <Col span={6}>
-            <Card><Statistic title={t('agent.successRate')} value={`${stats.successRate}%`} valueStyle={{ color: stats.successRate >= 90 ? '#16a34a' : '#ea580c' }} /></Card>
+            <MetricCard title={t('agent.successRate')} value={`${stats.successRate}%`} valueStyle={{ color: stats.successRate >= 90 ? '#16a34a' : '#ea580c' }} />
           </Col>
           <Col span={6}>
-            <Card><Statistic title={t('agent.succeededRuns')} value={Math.round(stats.totalRuns * stats.successRate / 100)} valueStyle={{ color: '#16a34a' }} prefix={<CheckCircleOutlined />} /></Card>
+            <MetricCard title={t('agent.succeededRuns')} value={Math.round(stats.totalRuns * stats.successRate / 100)} valueStyle={{ color: '#16a34a' }} prefix={<CheckCircleOutlined />} />
           </Col>
           <Col span={6}>
-            <Card><Statistic title={t('agent.failedRuns')} value={stats.totalRuns - Math.round(stats.totalRuns * stats.successRate / 100)} valueStyle={{ color: '#dc2626' }} prefix={<CloseCircleOutlined />} /></Card>
+            <MetricCard title={t('agent.failedRuns')} value={stats.totalRuns - Math.round(stats.totalRuns * stats.successRate / 100)} valueStyle={{ color: '#dc2626' }} prefix={<CloseCircleOutlined />} />
           </Col>
         </Row>
       )}

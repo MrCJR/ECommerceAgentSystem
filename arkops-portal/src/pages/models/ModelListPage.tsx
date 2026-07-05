@@ -1,11 +1,12 @@
 import { DeleteOutlined, KeyOutlined, LineChartOutlined, PlusOutlined, RobotOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Col, Form, Input, Modal, Row, Select, Space, Statistic, Table, Tag, Typography, message } from 'antd';
+import { Button, Card, Col, Form, Input, Modal, Row, Select, Space, Table, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
 import { modelsApi } from '../../api/models';
 import { useI18n } from '../../app/i18n';
 import { TrendBarChart } from '../../components/charts/TrendBarChart';
+import { MetricCard } from '../../components/metrics/MetricCard';
 import { PageHeader } from '../../components/PageHeader';
 import type { AgentModelBinding, ModelInfo, ModelUsageStats } from '../../types/domain';
 
@@ -109,13 +110,13 @@ export function ModelListPage() {
       <PageHeader title={t('model.title')} description={t('model.descriptionSimple')} />
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={12} sm={8}>
-          <Card><Statistic title={t('model.totalModels')} value={allActive.length} prefix={<ThunderboltOutlined />} /></Card>
+          <MetricCard title={t('model.totalModels')} value={allActive.length} prefix={<ThunderboltOutlined />} />
         </Col>
         <Col xs={12} sm={8}>
-          <Card><Statistic title={t('model.totalCalls')} value={totalCalls} prefix={<LineChartOutlined />} /></Card>
+          <MetricCard title={t('model.totalCalls')} value={totalCalls} prefix={<LineChartOutlined />} />
         </Col>
         <Col xs={12} sm={8}>
-          <Card><Statistic title={t('model.totalTokens')} value={usageStats.reduce((s, u) => s + u.totalTokens, 0)} prefix="T" /></Card>
+          <MetricCard title={t('model.totalTokens')} value={usageStats.reduce((s, u) => s + u.totalTokens, 0)} prefix="T" />
         </Col>
       </Row>
 

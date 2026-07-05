@@ -26,7 +26,6 @@ import {
   Row,
   Select,
   Space,
-  Statistic,
   Table,
   Tabs,
   Tag,
@@ -37,6 +36,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { useMemo, useState } from 'react';
 import { useI18n } from '../../app/i18n';
+import { MetricCard } from '../../components/metrics/MetricCard';
 import { PageHeader } from '../../components/PageHeader';
 
 type OrderStatus = 'auto_processing' | 'awaiting_shipment' | 'auto_shipped' | 'auto_completed' | 'exception' | 'fraud_blocked' | 'cancelled';
@@ -384,45 +384,33 @@ export function OrderAutomationPage() {
       {/* 自动化统计 */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={12} sm={6}>
-          <Card>
-            <Statistic
-              title={t('order.totalToday')}
-              value={orderItems.length}
-              prefix={<ShoppingCartOutlined />}
-            />
-          </Card>
+          <MetricCard title={t('order.totalToday')} value={orderItems.length} prefix={<ShoppingCartOutlined />} />
         </Col>
         <Col xs={12} sm={6}>
-          <Card>
-            <Statistic
-              title={t('order.autoProcessed')}
-              value={autoCount}
-              valueStyle={{ color: '#16a34a' }}
-              prefix={<ThunderboltOutlined />}
-              suffix={<Typography.Text type="secondary" style={{ fontSize: 12 }}>{autoRate}%</Typography.Text>}
-            />
-          </Card>
+          <MetricCard
+            title={t('order.autoProcessed')}
+            value={autoCount}
+            valueStyle={{ color: '#16a34a' }}
+            prefix={<ThunderboltOutlined />}
+            suffix={<Typography.Text type="secondary" style={{ fontSize: 12 }}>{autoRate}%</Typography.Text>}
+          />
         </Col>
         <Col xs={12} sm={6}>
-          <Card>
-            <Statistic
-              title={t('order.autoRate')}
-              value={autoRate}
-              suffix="%"
-              valueStyle={{ color: autoRate >= 80 ? '#16a34a' : '#ea580c' }}
-              prefix={<LineChartOutlined />}
-            />
-          </Card>
+          <MetricCard
+            title={t('order.autoRate')}
+            value={autoRate}
+            suffix="%"
+            valueStyle={{ color: autoRate >= 80 ? '#16a34a' : '#ea580c' }}
+            prefix={<LineChartOutlined />}
+          />
         </Col>
         <Col xs={12} sm={6}>
-          <Card>
-            <Statistic
-              title={t('order.exceptionCount')}
-              value={exceptionCount}
-              valueStyle={{ color: exceptionCount > 0 ? '#ea580c' : '#16a34a' }}
-              prefix={<ExclamationCircleOutlined />}
-            />
-          </Card>
+          <MetricCard
+            title={t('order.exceptionCount')}
+            value={exceptionCount}
+            valueStyle={{ color: exceptionCount > 0 ? '#ea580c' : '#16a34a' }}
+            prefix={<ExclamationCircleOutlined />}
+          />
         </Col>
       </Row>
 

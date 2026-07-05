@@ -24,6 +24,7 @@ import { useState } from 'react';
 import { financeApi } from '../../api/finance';
 import { useI18n } from '../../app/i18n';
 import { TrendBarChart } from '../../components/charts/TrendBarChart';
+import { MetricCard } from '../../components/metrics/MetricCard';
 import { PageHeader } from '../../components/PageHeader';
 import type { BillingRecord, SubscriptionPlan } from '../../types/domain';
 
@@ -56,52 +57,46 @@ function FinanceSummary({ onSwitchToSubscription }: { onSwitchToSubscription: ()
         </Card>
       </Col>
       <Col xs={12} sm={6} lg={4}>
-        <Card>
-          <Statistic
-            title={t('finance.monthlyFee')}
-            value={currentBill?.total ?? 0}
-            prefix="$"
-            precision={2}
-            valueStyle={{ color: '#2563eb', fontWeight: 'bold', fontSize: 22 }}
-          />
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>{t('finance.baseFee')} ${currentBill?.baseSubscription ?? 0}</Typography.Text>
-        </Card>
+        <MetricCard
+          title={t('finance.monthlyFee')}
+          value={currentBill?.total ?? 0}
+          prefix="$"
+          precision={2}
+          valueStyle={{ color: '#2563eb', fontWeight: 'bold', fontSize: 22 }}
+          helper={`${t('finance.baseFee')} $${currentBill?.baseSubscription ?? 0}`}
+        />
       </Col>
       <Col xs={12} sm={6} lg={4}>
-        <Card>
-          <Statistic
-            title={t('finance.usagePercent')}
-            value={usage ? Math.round((usage.agentCalls.used / usage.agentCalls.limit) * 100) : 0}
-            suffix="%"
-            valueStyle={{ color: usage && usage.agentCalls.used > usage.agentCalls.limit ? '#dc2626' : '#16a34a', fontWeight: 'bold', fontSize: 22 }}
-          />
+        <MetricCard
+          title={t('finance.usagePercent')}
+          value={usage ? Math.round((usage.agentCalls.used / usage.agentCalls.limit) * 100) : 0}
+          suffix="%"
+          valueStyle={{ color: usage && usage.agentCalls.used > usage.agentCalls.limit ? '#dc2626' : '#16a34a', fontWeight: 'bold', fontSize: 22 }}
+        >
           <Progress
             percent={usage ? Math.min(Math.round((usage.agentCalls.used / usage.agentCalls.limit) * 100), 100) : 0}
             size="small"
             strokeColor={usage && usage.agentCalls.used > usage.agentCalls.limit ? '#dc2626' : '#2563eb'}
           />
-        </Card>
+        </MetricCard>
       </Col>
       <Col xs={12} sm={6} lg={4}>
-        <Card>
-          <Statistic
-            title={t('finance.savedAmount')}
-            value={analysis?.estimatedSaving.savedAmount ?? 0}
-            prefix="$"
-            valueStyle={{ color: '#16a34a', fontWeight: 'bold', fontSize: 22 }}
-          />
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>{t('finance.savedShort')}</Typography.Text>
-        </Card>
+        <MetricCard
+          title={t('finance.savedAmount')}
+          value={analysis?.estimatedSaving.savedAmount ?? 0}
+          prefix="$"
+          valueStyle={{ color: '#16a34a', fontWeight: 'bold', fontSize: 22 }}
+          helper={t('finance.savedShort')}
+        />
       </Col>
       <Col xs={12} sm={6} lg={4}>
-        <Card>
-          <Statistic
-            title={t('finance.nextDueDate')}
-            value={pendingRecord?.dueDate ?? '-'}
-            valueStyle={{ color: '#ea580c', fontWeight: 'bold', fontSize: 22 }}
-          />
+        <MetricCard
+          title={t('finance.nextDueDate')}
+          value={pendingRecord?.dueDate ?? '-'}
+          valueStyle={{ color: '#ea580c', fontWeight: 'bold', fontSize: 22 }}
+        >
           <Tag color={pendingRecord ? 'orange' : 'default'}>{pendingRecord ? t('finance.status_pending') : t('finance.noPending')}</Tag>
-        </Card>
+        </MetricCard>
       </Col>
     </Row>
   );

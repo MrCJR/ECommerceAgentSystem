@@ -28,6 +28,7 @@ import { storeBusinessApi } from '../../api/storeBusiness';
 import { storesApi } from '../../api/stores';
 import { useI18n } from '../../app/i18n';
 import { TrendBarChart } from '../../components/charts/TrendBarChart';
+import { MetricCard } from '../../components/metrics/MetricCard';
 import { PageHeader } from '../../components/PageHeader';
 import { StatusBadge } from '../../components/StatusBadge';
 import type { Store, StoreBusinessDetail, StoreConnection, StoreServiceType } from '../../types/domain';
@@ -363,64 +364,60 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
       {/* 核心指标 */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
-          <Card className="stat-card stat-card-primary">
-            <div className="stat-card-icon"><DollarOutlined /></div>
-            <Statistic
-              title={gmvLabel}
-              value={storeBiz.gmv.today}
-              prefix="$"
-              valueStyle={{ color: '#2563eb', fontWeight: 700, fontSize: 26 }}
-              suffix={
-                <span style={{ fontSize: 14, fontWeight: 600, color: storeBiz.gmv.today >= storeBiz.gmv.yesterday ? '#16a34a' : '#dc2626' }}>
-                  {storeBiz.gmv.today >= storeBiz.gmv.yesterday ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                  {' '}{Math.abs(Math.round(((storeBiz.gmv.today - storeBiz.gmv.yesterday) / storeBiz.gmv.yesterday) * 100))}%
-                </span>
-              }
-            />
-            <Typography.Text type="secondary">{vsLabel} ${storeBiz.gmv.yesterday.toLocaleString()}</Typography.Text>
-          </Card>
+          <MetricCard
+            className="stat-card stat-card-primary"
+            overlayIcon={<DollarOutlined />}
+            title={gmvLabel}
+            value={storeBiz.gmv.today}
+            prefix="$"
+            valueStyle={{ color: '#2563eb', fontWeight: 700, fontSize: 26 }}
+            suffix={
+              <span style={{ fontSize: 14, fontWeight: 600, color: storeBiz.gmv.today >= storeBiz.gmv.yesterday ? '#16a34a' : '#dc2626' }}>
+                {storeBiz.gmv.today >= storeBiz.gmv.yesterday ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                {' '}{Math.abs(Math.round(((storeBiz.gmv.today - storeBiz.gmv.yesterday) / storeBiz.gmv.yesterday) * 100))}%
+              </span>
+            }
+            helper={`${vsLabel} $${storeBiz.gmv.yesterday.toLocaleString()}`}
+          />
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card className="stat-card stat-card-success">
-            <div className="stat-card-icon"><ShoppingCartOutlined /></div>
-            <Statistic
-              title={ordersLabel}
-              value={storeBiz.orders.today}
-              valueStyle={{ color: '#0f766e', fontWeight: 700, fontSize: 26 }}
-              suffix={
-                <span style={{ fontSize: 14, fontWeight: 600, color: storeBiz.orders.today >= storeBiz.orders.yesterday ? '#16a34a' : '#dc2626' }}>
-                  {storeBiz.orders.today >= storeBiz.orders.yesterday ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                  {' '}{Math.abs(Math.round(((storeBiz.orders.today - storeBiz.orders.yesterday) / storeBiz.orders.yesterday) * 100))}%
-                </span>
-              }
-            />
-            <Typography.Text type="secondary">{vsLabel} {storeBiz.orders.yesterday} {t('biz.orders')}</Typography.Text>
-          </Card>
+          <MetricCard
+            className="stat-card stat-card-success"
+            overlayIcon={<ShoppingCartOutlined />}
+            title={ordersLabel}
+            value={storeBiz.orders.today}
+            valueStyle={{ color: '#0f766e', fontWeight: 700, fontSize: 26 }}
+            suffix={
+              <span style={{ fontSize: 14, fontWeight: 600, color: storeBiz.orders.today >= storeBiz.orders.yesterday ? '#16a34a' : '#dc2626' }}>
+                {storeBiz.orders.today >= storeBiz.orders.yesterday ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                {' '}{Math.abs(Math.round(((storeBiz.orders.today - storeBiz.orders.yesterday) / storeBiz.orders.yesterday) * 100))}%
+              </span>
+            }
+            helper={`${vsLabel} ${storeBiz.orders.yesterday} ${t('biz.orders')}`}
+          />
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card className="stat-card stat-card-purple">
-            <div className="stat-card-icon"><RiseOutlined /></div>
-            <Statistic
-              title={t('biz.aov')}
-              value={storeBiz.aov}
-              prefix="$"
-              precision={1}
-              valueStyle={{ color: '#7c3aed', fontWeight: 700, fontSize: 26 }}
-            />
-            <Typography.Text type="secondary">{t('biz.aovHint')}</Typography.Text>
-          </Card>
+          <MetricCard
+            className="stat-card stat-card-purple"
+            overlayIcon={<RiseOutlined />}
+            title={t('biz.aov')}
+            value={storeBiz.aov}
+            prefix="$"
+            precision={1}
+            valueStyle={{ color: '#7c3aed', fontWeight: 700, fontSize: 26 }}
+            helper={t('biz.aovHint')}
+          />
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card className="stat-card stat-card-warning">
-            <div className="stat-card-icon"><TrophyOutlined /></div>
-            <Statistic
-              title={t('biz.storeRating')}
-              value={storeBiz.afterSales.storeRating}
-              suffix="/5.0"
-              valueStyle={{ color: storeBiz.afterSales.storeRating >= 4.5 ? '#16a34a' : '#ea580c', fontWeight: 700, fontSize: 26 }}
-            />
-            <Typography.Text type="secondary">{t('biz.ratingHint')}</Typography.Text>
-          </Card>
+          <MetricCard
+            className="stat-card stat-card-warning"
+            overlayIcon={<TrophyOutlined />}
+            title={t('biz.storeRating')}
+            value={storeBiz.afterSales.storeRating}
+            suffix="/5.0"
+            valueStyle={{ color: storeBiz.afterSales.storeRating >= 4.5 ? '#16a34a' : '#ea580c', fontWeight: 700, fontSize: 26 }}
+            helper={t('biz.ratingHint')}
+          />
         </Col>
       </Row>
 
