@@ -23,6 +23,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
 import { financeApi } from '../../api/finance';
 import { useI18n } from '../../app/i18n';
+import { TrendBarChart } from '../../components/charts/TrendBarChart';
 import { PageHeader } from '../../components/PageHeader';
 import type { BillingRecord, SubscriptionPlan } from '../../types/domain';
 
@@ -134,24 +135,25 @@ function UsageSection() {
         {metrics.map((m) => (
           <Col xs={24} lg={12} key={m.key}>
             <Typography.Text strong style={{ display: 'block', marginBottom: 8 }}>{m.label}</Typography.Text>
-            <div className="trend-chart usage-chart" style={{ minHeight: 120 }}>
-              {trend.map((d) => (
-                <div className="trend-column" key={d.month}>
-                  <div className="trend-bars" style={{ height: 100 }}>
-                    <span
-                      className="trend-bar"
-                      style={{
-                        height: `${Math.max(10, (d[m.key] ?? 0) / maxValues[m.key] * 90)}px`,
-                        width: 18,
-                        background: m.color
-                      }}
-                      title={`${m.label}: ${d[m.key]}${m.key === 'tokenUsage' ? 'K' : ''}`}
-                    />
-                  </div>
-                  <Typography.Text type="secondary" style={{ fontSize: 11 }}>{d.month}</Typography.Text>
-                </div>
-              ))}
-            </div>
+            <TrendBarChart
+              className="usage-chart"
+              barAreaHeight={100}
+              maxBarHeight={90}
+              points={trend.map((item) => ({
+                key: `${m.key}-${item.month}`,
+                label: item.month,
+                bars: [
+                  {
+                    value: item[m.key] ?? 0,
+                    max: maxValues[m.key],
+                    title: `${m.label}: ${item[m.key]}${m.key === 'tokenUsage' ? 'K' : ''}`,
+                    color: m.color,
+                    minHeight: 10,
+                    width: 18
+                  }
+                ]
+              }))}
+            />
             <div style={{ textAlign: 'right', marginTop: 4 }}>
               <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                 {t('finance.monthAvg')}: {Math.round(trend.reduce((sum, d) => sum + (d[m.key] ?? 0), 0) / trend.length).toLocaleString()}{m.key === 'tokenUsage' ? 'K' : ' 次'}

@@ -5,6 +5,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
 import { modelsApi } from '../../api/models';
 import { useI18n } from '../../app/i18n';
+import { TrendBarChart } from '../../components/charts/TrendBarChart';
 import { PageHeader } from '../../components/PageHeader';
 import type { AgentModelBinding, ModelInfo, ModelUsageStats } from '../../types/domain';
 
@@ -149,29 +150,26 @@ export function ModelListPage() {
           <Typography.Text type="secondary">{t('model.noStats')}</Typography.Text>
         ) : (
           <>
-            <div className="trend-chart usage-chart" style={{ minHeight: 140 }}>
-              {usageStats.map((stat) => {
-                const maxCalls = Math.max(...usageStats.map((s) => s.totalCalls), 1);
-                return (
-                  <div className="trend-column" key={stat.modelId}>
-                    <div className="trend-bars" style={{ height: 110 }}>
-                      <span
-                        className="trend-bar"
-                        style={{
-                          height: `${Math.max(12, (stat.totalCalls / maxCalls) * 100)}px`,
-                          width: 22,
-                          background: '#2563eb'
-                        }}
-                        title={`${stat.modelName}: ${stat.totalCalls.toLocaleString()} 次`}
-                      />
-                    </div>
-                    <Typography.Text type="secondary" style={{ fontSize: 11, textAlign: 'center', maxWidth: 60, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {stat.modelName}
-                    </Typography.Text>
-                  </div>
-                );
-              })}
-            </div>
+            <TrendBarChart
+              className="usage-chart"
+              barAreaHeight={110}
+              maxBarHeight={100}
+              labelMaxWidth={60}
+              points={usageStats.map((stat) => ({
+                key: stat.modelId,
+                label: stat.modelName,
+                bars: [
+                  {
+                    value: stat.totalCalls,
+                    max: Math.max(...usageStats.map((item) => item.totalCalls), 1),
+                    title: `${stat.modelName}: ${stat.totalCalls.toLocaleString()} 次`,
+                    color: '#2563eb',
+                    minHeight: 12,
+                    width: 22
+                  }
+                ]
+              }))}
+            />
             <div style={{ marginTop: 12 }}>
               {usageStats.map((stat) => (
                 <div key={stat.modelId} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--ark-border-soft)' }}>

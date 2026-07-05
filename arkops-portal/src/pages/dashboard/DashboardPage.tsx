@@ -25,6 +25,7 @@ import { Link } from 'react-router-dom';
 import { businessDashboardApi } from '../../api/businessDashboard';
 import { dashboardApi } from '../../api/dashboard';
 import { useI18n } from '../../app/i18n';
+import { TrendBarChart } from '../../components/charts/TrendBarChart';
 import { DashboardLiveFeed } from '../../components/DashboardLiveFeed';
 import { PageHeader } from '../../components/PageHeader';
 import { StatusBadge } from '../../components/StatusBadge';
@@ -191,17 +192,17 @@ function BusinessOverview() {
           <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
             <Col xs={24} lg={14}>
               <Card title={<><LineChartOutlined /> {t('biz.gmvTrend')}</>}>
-                <div className="trend-chart" aria-label={t('biz.gmvTrend')}>
-                  {biz.gmvTrend.map((point) => (
-                    <div className="trend-column" key={point.date}>
-                      <div className="trend-bars">
-                        <span className="trend-bar trend-bar-runs" style={{ height: `${(point.gmv / 35000) * 140}px` }} title={`GMV: $${formatNumber(point.gmv)}`} />
-                        <span className="trend-bar trend-bar-approvals" style={{ height: `${Math.max(8, (point.orders / 500) * 140)}px` }} title={`${t('biz.orders')}: ${point.orders}`} />
-                      </div>
-                      <Typography.Text type="secondary">{point.date}</Typography.Text>
-                    </div>
-                  ))}
-                </div>
+                <TrendBarChart
+                  ariaLabel={t('biz.gmvTrend')}
+                  points={biz.gmvTrend.map((point) => ({
+                    key: point.date,
+                    label: point.date,
+                    bars: [
+                      { value: point.gmv, max: 35000, title: `GMV: $${formatNumber(point.gmv)}`, className: 'trend-bar-runs', minHeight: 0 },
+                      { value: point.orders, max: 500, title: `${t('biz.orders')}: ${point.orders}`, className: 'trend-bar-approvals', minHeight: 8 }
+                    ]
+                  }))}
+                />
                 <div className="chart-legend">
                   <span><i className="legend-dot legend-runs" />GMV</span>
                   <span><i className="legend-dot legend-approvals" />{t('biz.orders')}</span>
@@ -356,18 +357,19 @@ function OpsMonitor() {
       <Row gutter={[16, 16]}>
         <Col xs={24} xl={14}>
           <Card title={<><LineChartOutlined /> {t('dashboard.trendTitle')}</>} extra={<Typography.Text type="secondary">{t('dashboard.trendDescription')}</Typography.Text>}>
-            <div className="trend-chart" aria-label={t('dashboard.trendTitle')}>
-              {data?.operationTrend.map((point) => (
-                <div className="trend-column" key={point.dayKey}>
-                  <div className="trend-bars">
-                    <span className="trend-bar trend-bar-runs" style={{ height: `${Math.max(12, (point.runs / trendMax) * 150)}px` }} title={`${t('dashboard.runs')}: ${point.runs}`} />
-                    <span className="trend-bar trend-bar-approvals" style={{ height: `${Math.max(8, (point.approvals / trendMax) * 150)}px` }} title={`${t('dashboard.approvalShort')}: ${point.approvals}`} />
-                    <span className="trend-bar trend-bar-failures" style={{ height: `${Math.max(6, (point.failures / trendMax) * 150)}px` }} title={`${t('dashboard.failures')}: ${point.failures}`} />
-                  </div>
-                  <Typography.Text type="secondary">{t(point.dayKey)}</Typography.Text>
-                </div>
-              ))}
-            </div>
+            <TrendBarChart
+              ariaLabel={t('dashboard.trendTitle')}
+              maxBarHeight={150}
+              points={(data?.operationTrend ?? []).map((point) => ({
+                key: point.dayKey,
+                label: t(point.dayKey),
+                bars: [
+                  { value: point.runs, max: trendMax, title: `${t('dashboard.runs')}: ${point.runs}`, className: 'trend-bar-runs', minHeight: 12 },
+                  { value: point.approvals, max: trendMax, title: `${t('dashboard.approvalShort')}: ${point.approvals}`, className: 'trend-bar-approvals', minHeight: 8 },
+                  { value: point.failures, max: trendMax, title: `${t('dashboard.failures')}: ${point.failures}`, className: 'trend-bar-failures', minHeight: 6 }
+                ]
+              }))}
+            />
             <div className="chart-legend">
               <span><i className="legend-dot legend-runs" />{t('dashboard.runs')}</span>
               <span><i className="legend-dot legend-approvals" />{t('dashboard.approvalShort')}</span>

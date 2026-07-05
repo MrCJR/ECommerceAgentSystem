@@ -27,6 +27,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { storeBusinessApi } from '../../api/storeBusiness';
 import { storesApi } from '../../api/stores';
 import { useI18n } from '../../app/i18n';
+import { TrendBarChart } from '../../components/charts/TrendBarChart';
 import { PageHeader } from '../../components/PageHeader';
 import { StatusBadge } from '../../components/StatusBadge';
 import type { Store, StoreBusinessDetail, StoreConnection, StoreServiceType } from '../../types/domain';
@@ -427,17 +428,20 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} lg={14}>
           <Card title={<><DollarOutlined /> {t('biz.gmvTrend')}</>} size="small" className="trend-card">
-            <div className="trend-chart">
-              {storeBiz.gmv.trend.map((p, i) => (
-                <div className="trend-column" key={p.date}>
-                  <div className="trend-bars">
-                    <span className="trend-bar trend-bar-gmv" style={{ height: `${Math.max(16, (p.value / Math.max(...storeBiz.gmv.trend.map(x => x.value), 1)) * 140)}px` }} title={`GMV: $${p.value}`} />
-                    <span className="trend-bar trend-bar-orders" style={{ height: `${Math.max(10, ((storeBiz.orders.trend[i]?.value ?? 0) / Math.max(...storeBiz.orders.trend.map(x => x.value), 1)) * 140)}px` }} title={`${t('biz.orders')}: ${storeBiz.orders.trend[i]?.value ?? 0}`} />
-                  </div>
-                  <Typography.Text type="secondary" style={{ fontSize: 11 }}>{p.date}</Typography.Text>
-                </div>
-              ))}
-            </div>
+            <TrendBarChart
+              points={storeBiz.gmv.trend.map((point, index) => {
+                const orderPoint = storeBiz.orders.trend[index];
+                return {
+                  key: point.date,
+                  label: point.date,
+                  bars: [
+                    { value: point.value, max: Math.max(...storeBiz.gmv.trend.map((item) => item.value), 1), title: `GMV: $${point.value}`, className: 'trend-bar-gmv', minHeight: 16 },
+                    { value: orderPoint?.value ?? 0, max: Math.max(...storeBiz.orders.trend.map((item) => item.value), 1), title: `${t('biz.orders')}: ${orderPoint?.value ?? 0}`, className: 'trend-bar-orders', minHeight: 10 }
+                  ]
+                };
+              })}
+              labelMaxWidth={60}
+            />
             <div className="chart-legend">
               <span><i className="legend-dot legend-gmv" />GMV</span>
               <span><i className="legend-dot legend-orders" />{t('biz.orders')}</span>
