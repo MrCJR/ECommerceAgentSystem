@@ -36,8 +36,8 @@ import {
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useMemo, useState } from 'react';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
 
 type OrderStatus = 'auto_processing' | 'awaiting_shipment' | 'auto_shipped' | 'auto_completed' | 'exception' | 'fraud_blocked' | 'cancelled';
 

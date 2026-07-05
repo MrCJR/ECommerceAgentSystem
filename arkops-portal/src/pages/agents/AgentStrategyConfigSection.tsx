@@ -1,9 +1,9 @@
 import { PlusOutlined, ReloadOutlined, SettingOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Card, Col, Input, InputNumber, Row, Select, Space, Switch, Tag, Typography, Upload, message } from 'antd';
-import { agentsApi } from '../api/agents';
-import { useI18n } from '../app/i18n';
-import type { AgentConfig } from '../types/domain';
+import { agentsApi } from '../../api/agents';
+import { useI18n } from '../../app/i18n';
+import type { AgentConfig } from '../../types/domain';
 
 interface AgentStrategyConfigSectionProps {
   agent: AgentConfig;

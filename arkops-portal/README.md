@@ -255,7 +255,7 @@ Current frontend type conventions:
 - AllMall-owned IDs use numeric `AllMallId` values.
 - Route params are parsed with `src/utils/id.ts` before calling mock APIs.
 - External or vendor identifiers, such as model provider IDs, invoice references, campaign codes, SKU codes, and runtime references, remain strings.
-- Large static Agent detail mock datasets are kept outside the page component in `src/pages/agentConfigMockData.ts`.
+- Large static Agent detail mock datasets are kept outside the page component in `src/pages/agents/agentConfigMockData.ts`.
 
 Backend integration has not started. When backend work begins, replace mock implementations with typed API clients while preserving the UI-facing response shapes where practical.
 
@@ -308,11 +308,23 @@ arkops-portal/
       theme.tsx
     components/
     pages/
+      agents/
+      approvals/
+      audit/
+      auth/
+      billing/
+      dashboard/
+      guide/
+      models/
+      operations/
+      orders/
+      settings/
+      stores/
     styles/
     types/
 ```
 
-The implementation currently uses page-level modules under `src/pages/` and mock API modules under `src/api/`.
+The implementation groups page-level modules by product domain under `src/pages/` and keeps mock API modules under `src/api/`.
 
 Implementation notes:
 

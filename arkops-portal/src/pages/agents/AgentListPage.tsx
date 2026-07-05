@@ -3,11 +3,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, Switch, Table, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useNavigate } from 'react-router-dom';
-import { agentsApi } from '../api/agents';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
-import type { AgentConfig, AgentLayer, AgentType } from '../types/domain';
+import { agentsApi } from '../../api/agents';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
+import type { AgentConfig, AgentLayer, AgentType } from '../../types/domain';
 
 const layerOrder: AgentLayer[] = ['foundation', 'traffic', 'growth', 'support', 'standalone'];
 const layerColors: Record<AgentLayer, string> = {

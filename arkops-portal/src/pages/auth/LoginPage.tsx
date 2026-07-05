@@ -1,7 +1,7 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Form, Input, Segmented, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useI18n } from '../app/i18n';
+import { useI18n } from '../../app/i18n';
 
 export function LoginPage() {
   const navigate = useNavigate();

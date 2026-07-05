@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Button, Card, Descriptions, List, Switch } from 'antd';
-import { settingsApi } from '../api/settings';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
+import { settingsApi } from '../../api/settings';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
 
 export function NotificationsSettingsPage() {
   const { t } = useI18n();

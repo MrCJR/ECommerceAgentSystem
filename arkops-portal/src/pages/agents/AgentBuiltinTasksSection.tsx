@@ -30,8 +30,8 @@ import {
   WarningOutlined
 } from '@ant-design/icons';
 import { Card, Col, Row, Tag, Typography } from 'antd';
-import { useI18n } from '../app/i18n';
-import type { AgentType } from '../types/domain';
+import { useI18n } from '../../app/i18n';
+import type { AgentType } from '../../types/domain';
 
 interface AgentBuiltinTasksSectionProps {
   agentType: AgentType;

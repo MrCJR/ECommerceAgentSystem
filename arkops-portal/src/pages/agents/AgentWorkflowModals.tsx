@@ -1,8 +1,8 @@
 import { CheckCircleOutlined, CloseCircleOutlined, CustomerServiceOutlined, EditOutlined, FundOutlined, PictureOutlined, PlayCircleOutlined, PushpinOutlined, ReloadOutlined, RobotOutlined, SafetyOutlined, SendOutlined, StarOutlined, TeamOutlined, ToolOutlined, WarningOutlined } from '@ant-design/icons';
 import { Badge, Button, Card, Col, Input, Modal, Progress, Rate, Row, Space, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
 import { useState } from 'react';
-import { useI18n } from '../app/i18n';
-import { EmptyState } from '../components/EmptyState';
+import { useI18n } from '../../app/i18n';
+import { EmptyState } from '../../components/EmptyState';
 import {
   mockBreakerLogs,
   mockBudgetSuggestions,

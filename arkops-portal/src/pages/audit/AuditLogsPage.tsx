@@ -5,10 +5,10 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auditLogsApi } from '../api/auditLogs';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
-import type { AuditCategory, AuditLog } from '../types/domain';
+import { auditLogsApi } from '../../api/auditLogs';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
+import type { AuditCategory, AuditLog } from '../../types/domain';
 
 const categoryColors: Record<AuditCategory, string> = {
   approval: 'orange',

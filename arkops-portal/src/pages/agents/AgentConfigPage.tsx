@@ -24,17 +24,17 @@ import {
 import type { UploadFile } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { agentsApi } from '../api/agents';
-import { storesApi } from '../api/stores';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
+import { agentsApi } from '../../api/agents';
+import { storesApi } from '../../api/stores';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
 import { AgentBuiltinTasksSection } from './AgentBuiltinTasksSection';
 import { AgentStrategyConfigSection } from './AgentStrategyConfigSection';
 import { AgentWorkflowModals } from './AgentWorkflowModals';
 import { ProductDraftPreview } from './ProductDraftPreview';
 import { TaskTimelinePreview } from './TaskTimelinePreview';
-import type { AgentConfig, AgentType, AllMallId, Task, TaskStatus } from '../types/domain';
+import type { AgentConfig, AgentType, AllMallId, Task, TaskStatus } from '../../types/domain';
 import {
   productDrafts,
   recognitionVariants,

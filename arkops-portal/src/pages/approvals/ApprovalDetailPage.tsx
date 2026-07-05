@@ -4,12 +4,12 @@ import { Button, Card, Col, Descriptions, Row, Space, Tag, Typography, message }
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { approvalsApi } from '../api/approvals';
-import { useI18n } from '../app/i18n';
-import { EmptyState } from '../components/EmptyState';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
-import { parseAllMallId } from '../utils/id';
+import { approvalsApi } from '../../api/approvals';
+import { useI18n } from '../../app/i18n';
+import { EmptyState } from '../../components/EmptyState';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
+import { parseAllMallId } from '../../utils/id';
 
 export function ApprovalDetailPage() {
   const { t } = useI18n();

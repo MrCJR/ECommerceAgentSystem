@@ -5,13 +5,13 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { agentsApi } from '../api/agents';
-import { approvalsApi } from '../api/approvals';
-import { approvalPolicyApi } from '../api/approvalPolicies';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
-import type { AgentConfig, AgentType, Approval, ApprovalPolicy } from '../types/domain';
+import { agentsApi } from '../../api/agents';
+import { approvalsApi } from '../../api/approvals';
+import { approvalPolicyApi } from '../../api/approvalPolicies';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
+import type { AgentConfig, AgentType, Approval, ApprovalPolicy } from '../../types/domain';
 
 const actionLabels: Record<ApprovalPolicy['action'], string> = {
   auto_execute: 'agent.autoExecute',

@@ -36,8 +36,8 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
 
 // ===== 异常类型 =====
 type ExceptionType = 'review_negative' | 'chat_escalation' | 'ad_low_roi' | 'logistics_stuck' | 'compliance_flag';

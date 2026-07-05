@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { Button, Card, Space, Table, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { Link, useNavigate } from 'react-router-dom';
-import { storesApi } from '../api/stores';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
-import type { Store } from '../types/domain';
+import { storesApi } from '../../api/stores';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
+import type { Store } from '../../types/domain';
 
 const serviceIcons: Record<string, JSX.Element> = {
   advertising: <ThunderboltOutlined />,

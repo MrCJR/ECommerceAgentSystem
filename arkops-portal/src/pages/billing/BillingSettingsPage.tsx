@@ -21,10 +21,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Card, Col, Descriptions, Form, Input, message, Progress, Row, Statistic, Switch, Table, Tabs, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
-import { financeApi } from '../api/finance';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
-import type { BillingRecord, SubscriptionPlan } from '../types/domain';
+import { financeApi } from '../../api/finance';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
+import type { BillingRecord, SubscriptionPlan } from '../../types/domain';
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(value);

@@ -22,12 +22,12 @@ import { Card, Col, Progress, Row, Segmented, Space, Statistic, Table, Tabs, Tag
 import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { businessDashboardApi } from '../api/businessDashboard';
-import { dashboardApi } from '../api/dashboard';
-import { useI18n } from '../app/i18n';
-import { DashboardLiveFeed } from '../components/DashboardLiveFeed';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
+import { businessDashboardApi } from '../../api/businessDashboard';
+import { dashboardApi } from '../../api/dashboard';
+import { useI18n } from '../../app/i18n';
+import { DashboardLiveFeed } from '../../components/DashboardLiveFeed';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
 
 const statusColors: Record<string, string> = {
   succeeded: '#16a34a',

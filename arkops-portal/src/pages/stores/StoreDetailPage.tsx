@@ -24,13 +24,13 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { storeBusinessApi } from '../api/storeBusiness';
-import { storesApi } from '../api/stores';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
-import type { Store, StoreBusinessDetail, StoreConnection, StoreServiceType } from '../types/domain';
-import { parseAllMallId } from '../utils/id';
+import { storeBusinessApi } from '../../api/storeBusiness';
+import { storesApi } from '../../api/stores';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
+import type { Store, StoreBusinessDetail, StoreConnection, StoreServiceType } from '../../types/domain';
+import { parseAllMallId } from '../../utils/id';
 
 export function StoreDetailPage({ mode }: { mode?: 'new' }) {
   const { t } = useI18n();

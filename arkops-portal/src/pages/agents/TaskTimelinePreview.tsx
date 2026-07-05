@@ -1,5 +1,5 @@
 import { Timeline, Typography } from 'antd';
-import type { Task } from '../types/domain';
+import type { Task } from '../../types/domain';
 
 interface TaskTimelinePreviewProps {
   task: Task;

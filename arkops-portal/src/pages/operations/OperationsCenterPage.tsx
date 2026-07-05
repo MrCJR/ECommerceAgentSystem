@@ -31,8 +31,8 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
 
 interface CostItem {
   id: string;

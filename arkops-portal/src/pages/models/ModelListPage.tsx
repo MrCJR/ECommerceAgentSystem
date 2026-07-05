@@ -3,10 +3,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Card, Col, Form, Input, Modal, Row, Select, Space, Statistic, Table, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
-import { modelsApi } from '../api/models';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
-import type { AgentModelBinding, ModelInfo, ModelUsageStats } from '../types/domain';
+import { modelsApi } from '../../api/models';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
+import type { AgentModelBinding, ModelInfo, ModelUsageStats } from '../../types/domain';
 
 export function ModelListPage() {
   const { t } = useI18n();

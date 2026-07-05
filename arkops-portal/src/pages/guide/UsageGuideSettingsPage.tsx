@@ -13,8 +13,8 @@ import {
   UnorderedListOutlined
 } from '@ant-design/icons';
 import { Card, Col, Divider, Row, Space, Steps, Tag, Timeline, Typography } from 'antd';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
 
 export function UsageGuideSettingsPage() {
   const { t } = useI18n();

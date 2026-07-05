@@ -2,10 +2,10 @@ import { UserAddOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Card, Space, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { settingsApi } from '../api/settings';
-import { useI18n } from '../app/i18n';
-import { PageHeader } from '../components/PageHeader';
-import type { Member } from '../types/domain';
+import { settingsApi } from '../../api/settings';
+import { useI18n } from '../../app/i18n';
+import { PageHeader } from '../../components/PageHeader';
+import type { Member } from '../../types/domain';
 
 export function MembersSettingsPage() {
   const { t } = useI18n();

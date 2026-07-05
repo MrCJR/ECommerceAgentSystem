@@ -1,6 +1,6 @@
 import { CheckCircleOutlined, ReloadOutlined, StopOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Descriptions, Divider, Row, Space, Statistic, Table, Tag, Typography, message } from 'antd';
-import type { AllMallId, Task } from '../types/domain';
+import type { AllMallId, Task } from '../../types/domain';
 import type { ProductDraft } from './agentConfigMockData';
 
 interface ProductDraftPreviewProps {
