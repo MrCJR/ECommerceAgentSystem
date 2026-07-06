@@ -1,6 +1,31 @@
+/**
+ * File: PageHeader.tsx
+ * Purpose: Shared page title row used by route-level pages to keep title, description,
+ * and action controls visually consistent.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ *
+ * Main exports:
+ * - PageHeader: renders a standardized page heading with optional actions.
+ *
+ * Major updates:
+ * - 2026-07-03: Added ownership and function documentation for AI-assisted collaboration.
+ */
 import { Typography } from 'antd';
 import type { ReactNode } from 'react';
 
+/**
+ * Renders a route-level page heading with optional secondary text and action controls.
+ *
+ * @param title - Main page title content.
+ * @param description - Optional secondary description under the title.
+ * @param actions - Optional controls aligned to the right of the title row.
+ * @returns React element containing the standard page header.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ */
 export function PageHeader({
   title,
   description,

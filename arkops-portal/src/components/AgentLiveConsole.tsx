@@ -1,3 +1,17 @@
+/**
+ * File: AgentLiveConsole.tsx
+ * Purpose: Task-level simulated runtime console for Agent detail pages. It builds localized
+ * execution events, streams them into the terminal UI, and supports replay, pause, and copy actions.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ *
+ * Main exports:
+ * - AgentLiveConsole: renders a task-scoped live execution console.
+ *
+ * Major updates:
+ * - 2026-07-03: Added ownership and function documentation for AI-assisted collaboration.
+ */
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -32,6 +46,16 @@ const levelIcon: Record<LiveEventLevel, JSX.Element> = {
   error: <ExclamationCircleOutlined />
 };
 
+/**
+ * Builds visible runtime events for the task-level live console.
+ *
+ * @param task - Current task shown in the Agent detail page.
+ * @param language - Active UI language.
+ * @returns Ordered live-event list used by AgentLiveConsole.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ */
 function buildLiveEvents(task: Task, language: 'en' | 'zh'): LiveEvent[] {
   const zh = language === 'zh';
   const base = dayjs(task.createdAt);
@@ -219,10 +243,28 @@ function buildLiveEvents(task: Task, language: 'en' | 'zh'): LiveEvent[] {
   ];
 }
 
+/**
+ * Converts one live event into a plain text log line for clipboard export.
+ *
+ * @param event - Runtime event currently visible in the console.
+ * @returns Human-readable log line with time, source, title, and summary.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ */
 function formatLine(event: LiveEvent) {
   return `[${dayjs(event.at).format('HH:mm:ss')}] ${event.source} :: ${event.title} - ${event.summary}`;
 }
 
+/**
+ * Renders a task-level live execution console with localized simulated runtime events.
+ *
+ * @param task - Agent task used to derive the event stream and runtime metadata.
+ * @returns React element containing the live console card.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ */
 export function AgentLiveConsole({ task }: { task: Task }) {
   const { language, t } = useI18n();
   const allEvents = useMemo(() => buildLiveEvents(task, language), [task, language]);
@@ -249,6 +291,14 @@ export function AgentLiveConsole({ task }: { task: Task }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [visibleEvents.length]);
 
+  /**
+   * Copies the currently visible execution stream into the clipboard.
+   *
+   * @returns Promise that resolves after the browser clipboard write completes.
+   *
+   * Author: Michael Lee
+   * Created: 2026-07-03
+   */
   const copyLog = async () => {
     await navigator.clipboard?.writeText(visibleEvents.map(formatLine).join('\n'));
     message.success(t('liveConsole.copied'));

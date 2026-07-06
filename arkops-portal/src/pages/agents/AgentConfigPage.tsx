@@ -1,3 +1,17 @@
+/**
+ * File: AgentConfigPage.tsx
+ * Purpose: Route-level Agent detail page. It composes Agent status, dependency checks,
+ * strategy configuration, built-in task entry points, task creation, active runs, and logs.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ *
+ * Main exports:
+ * - AgentConfigPage: page component for /agents/:agentType.
+ *
+ * Major updates:
+ * - 2026-07-03: Added ownership and page-level documentation for AI-assisted collaboration.
+ */
 import { CameraOutlined, CheckCircleOutlined, CloseCircleOutlined, EditOutlined, InfoCircleOutlined, KeyOutlined, LineChartOutlined, PlusOutlined, ReloadOutlined, SafetyOutlined, StopOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -41,6 +55,15 @@ import {
   type ProductRecognitionResult
 } from './agentConfigMockData';
 
+/**
+ * Renders the Agent detail page and coordinates Agent state, task creation, built-in workflows,
+ * strategy configuration, active tasks, and historical logs.
+ *
+ * @returns React element containing the route-level Agent detail experience.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ */
 export function AgentConfigPage() {
   const { t } = useI18n();
   const { agentType } = useParams<{ agentType: AgentType }>();
@@ -134,6 +157,14 @@ export function AgentConfigPage() {
     }
   });
 
+  /**
+   * Simulates product image recognition and opens the generated draft preview flow.
+   *
+   * @returns void
+   *
+   * Author: Michael Lee
+   * Created: 2026-07-03
+   */
   const handleStartRecognize = () => {
     if (fileList.length === 0) {
       message.warning(t('agent.uploadHint'));

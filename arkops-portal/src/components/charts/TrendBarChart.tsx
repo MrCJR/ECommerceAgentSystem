@@ -1,3 +1,17 @@
+/**
+ * File: TrendBarChart.tsx
+ * Purpose: Compact reusable multi-bar trend chart for management dashboards where full charting
+ * libraries would be too heavy for simple comparative trend displays.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ *
+ * Main exports:
+ * - TrendBarChart: renders grouped vertical bars with labels.
+ *
+ * Major updates:
+ * - 2026-07-03: Added ownership and function documentation for AI-assisted collaboration.
+ */
 import { Typography } from 'antd';
 
 export interface TrendBarItem {
@@ -25,6 +39,20 @@ interface TrendBarChartProps {
   labelMaxWidth?: number;
 }
 
+/**
+ * Renders a compact grouped bar trend chart from normalized point data.
+ *
+ * @param points - Ordered trend points; each point can contain one or more bars.
+ * @param ariaLabel - Accessible label for the chart container.
+ * @param className - Optional CSS class for domain-specific styling.
+ * @param barAreaHeight - Optional fixed height for the bar area.
+ * @param maxBarHeight - Maximum rendered bar height in pixels.
+ * @param labelMaxWidth - Optional width used to clamp labels.
+ * @returns React element containing the trend chart.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ */
 export function TrendBarChart({
   points,
   ariaLabel,

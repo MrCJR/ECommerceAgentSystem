@@ -1,3 +1,17 @@
+/**
+ * File: DashboardLiveFeed.tsx
+ * Purpose: Dashboard-level rolling event feed. It converts current tasks and approvals into
+ * localized execution events, then streams them as a lightweight runtime activity console.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ *
+ * Main exports:
+ * - DashboardLiveFeed: renders a dashboard-scoped live event stream.
+ *
+ * Major updates:
+ * - 2026-07-03: Added ownership and function documentation for AI-assisted collaboration.
+ */
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -39,6 +53,17 @@ const feedIcon: Record<FeedLevel, JSX.Element> = {
   error: <ExclamationCircleOutlined />
 };
 
+/**
+ * Builds reusable event templates from task and approval state.
+ *
+ * @param tasks - Agent tasks shown in the current dashboard scope.
+ * @param approvals - Approval records shown in the current dashboard scope.
+ * @param language - Active UI language.
+ * @returns Ordered event templates that can be streamed repeatedly by DashboardLiveFeed.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ */
 function buildFeedTemplates(tasks: Task[], approvals: Approval[], language: 'en' | 'zh'): FeedTemplate[] {
   const zh = language === 'zh';
   const taskEvents = tasks.flatMap<FeedTemplate>((task) => {
@@ -132,10 +157,29 @@ function buildFeedTemplates(tasks: Task[], approvals: Approval[], language: 'en'
   return [...taskEvents, ...approvalEvents];
 }
 
+/**
+ * Converts one dashboard feed event into a plain text log line for clipboard export.
+ *
+ * @param event - Runtime feed event currently visible in the dashboard console.
+ * @returns Human-readable log line with time, source, title, and summary.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ */
 function formatFeedLine(event: FeedEvent) {
   return `[${dayjs(event.at).format('HH:mm:ss')}] ${event.source} :: ${event.title} - ${event.summary}`;
 }
 
+/**
+ * Renders a dashboard-level live feed from current Agent tasks and approval records.
+ *
+ * @param tasks - Tasks that can produce simulated Agent runtime events.
+ * @param approvals - Approval records that can produce governance events.
+ * @returns React element containing the dashboard live feed card.
+ *
+ * Author: Michael Lee
+ * Created: 2026-07-03
+ */
 export function DashboardLiveFeed({ tasks, approvals }: { tasks: Task[]; approvals: Approval[] }) {
   const { language, t } = useI18n();
   const templates = useMemo(() => buildFeedTemplates(tasks, approvals, language), [approvals, language, tasks]);
@@ -172,6 +216,14 @@ export function DashboardLiveFeed({ tasks, approvals }: { tasks: Task[]; approva
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [events.length]);
 
+  /**
+   * Copies the currently visible dashboard feed into the clipboard.
+   *
+   * @returns Promise that resolves after the browser clipboard write completes.
+   *
+   * Author: Michael Lee
+   * Created: 2026-07-03
+   */
   const copyLog = async () => {
     await navigator.clipboard?.writeText(events.map(formatFeedLine).join('\n'));
     message.success(t('liveConsole.copied'));
