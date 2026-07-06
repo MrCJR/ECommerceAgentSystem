@@ -14,6 +14,7 @@ Frontend status:
 - The navigation has been updated to match the latest product design.
 - Agent tasks are now managed inside Agent detail pages rather than through standalone task list/detail pages.
 - Billing ledger is available from the main navigation; the standalone subscription page has been removed from the latest navigation.
+- Exception Center, Order Automation, Operations Center, and Usage Guide are available from the main navigation.
 - Model Center has been redesigned around Agent-to-model assignment.
 - The approval badge in the sidebar reflects pending approvals from mock summary data.
 - Light, dark, and system theme switching are available.
@@ -45,7 +46,7 @@ This document defines:
 - Current P0/P1/P2 roadmap
 - Navigation structure
 - Implemented frontend module scope
-- Dashboard, stores, agents, models, approvals, billing, and settings behavior
+- Dashboard, exceptions, orders, stores, agents, models, operations, approvals, billing, guide, and settings behavior
 
 When changing page scope or navigation, update `product-design.md` first, then update this README and frontend routes.
 
@@ -86,16 +87,20 @@ http://localhost:5173/
 | --- | --- | --- | --- |
 | `/login` | Login | Implemented | User authentication entry page with mock flow. |
 | `/dashboard` | Dashboard | Implemented | Business overview and Agent monitoring tabs. |
+| `/exception-center` | Exception Center | Implemented | High-priority issues that require operator intervention. |
+| `/approvals` | Approval List | Implemented | Pending approval list. |
+| `/approvals/:approvalId` | Approval Detail | Implemented | Approve or reject high-risk actions. |
+| `/orders` | Order Automation | Implemented | Order handling, automation progress, and exception workflows. |
 | `/stores` | Store List | Implemented | Store list, authorization status, service tags, add-store entry. |
 | `/stores/new` | Add Store | Implemented | Store creation / onboarding flow. |
 | `/stores/:storeId` | Store Detail | Implemented | Store business overview and settings tabs. |
 | `/agents` | Agent Center | Implemented | My Agents and available Agents panels. |
 | `/agents/:agentType` | Agent Detail | Implemented | Agent stats, run instructions, task history, task creation modal. |
 | `/models` | Model Center | Implemented | Agent model assignment, custom models, monthly usage. |
-| `/approvals` | Approval List | Implemented | Pending approval list. |
-| `/approvals/:approvalId` | Approval Detail | Implemented | Approve or reject high-risk actions. |
+| `/operations` | Operations Center | Implemented | Business, cost, product, and efficiency analysis. |
 | `/audit-logs` | Audit Logs | Implemented | System and execution audit records. |
 | `/billing` | Billing Ledger | Implemented | Usage, monthly cost, bills, invoices. |
+| `/guide` | Usage Guide | Implemented | Product usage guide and core workflow explanations. |
 | `/settings/members` | Members | Implemented | Member list and invitations. |
 | `/settings/notifications` | Notifications | Implemented | Notification channels and preferences. |
 
@@ -108,6 +113,8 @@ Removed from the latest navigation:
 - `/settings/approval-policy`
 
 Task creation and task history now belong to each Agent detail page.
+Subscription, payment, invoice, and enterprise plan content now belong to `/billing`.
+Approval rules are configured in Agent/risk-control contexts rather than through a standalone approval policy page.
 
 ## Implemented Modules
 
@@ -205,6 +212,33 @@ Implemented:
 - Approve / reject actions
 - Sidebar pending approval badge
 
+### Exception Center
+
+Implemented:
+
+- Login-required issues
+- Failed Agent runs
+- Approval timeouts
+- Data uncertainty and runtime issues
+- Operator action buttons and links back to related stores, Agents, or approvals
+
+### Order Automation
+
+Implemented:
+
+- Order automation metrics
+- Order tabs and filters
+- Exception handling actions
+- Order detail modal and execution timeline
+
+### Operations Center
+
+Implemented:
+
+- Business and efficiency analysis panels
+- Cost and product performance views
+- Operational insights for follow-up automation work
+
 ### Billing
 
 Billing ledger includes:
@@ -217,6 +251,15 @@ Billing ledger includes:
 - Monthly usage chart
 - Current bill details
 - Historical invoice list
+- Subscription, payment, invoice, and enterprise plan sections
+
+### Usage Guide
+
+Implemented:
+
+- Product usage guide
+- Core workflow explanations
+- Beta capability boundaries
 
 ### Settings
 
@@ -237,6 +280,7 @@ Important mock API groups:
 
 - `businessDashboard.ts`
 - `storeBusiness.ts`
+- `dashboard.ts`
 - `agents.ts`
 - `agentMockData.ts`
 - `models.ts`
@@ -244,6 +288,8 @@ Important mock API groups:
 - `finance.ts`
 - `settings.ts`
 - `stores.ts`
+- `storeMockData.ts`
+- `tasks.ts`
 - `approvals.ts`
 - `auditLogs.ts`
 
@@ -330,6 +376,107 @@ Implementation notes:
 - Routes in `src/app/router.tsx` use `React.lazy` and `Suspense` for page-level code splitting.
 - Translation dictionaries live in `src/app/i18n.tsx` and expose a typed `TranslationKey`.
 - Repeated Agent task card styling is centralized in `src/styles/global.css`.
+
+## Component and Page Boundaries
+
+Use this section as the default map for AI-assisted coding.
+
+### Shared components
+
+Cross-page UI belongs in `src/components/`.
+
+Current shared component groups:
+
+- `PageHeader.tsx`: page title, subtitle, and action area.
+- `StatusBadge.tsx`: localized status/risk tags.
+- `metrics/MetricCard.tsx`: reusable KPI cards.
+- `charts/TrendBarChart.tsx`: compact bar trend chart used by dashboard, stores, models, and billing.
+- `table/DataTableCard.tsx`: Ant Design table inside a card with optional toolbar and description.
+- `table/TableActionGroup.tsx`: compact action button wrapper for table rows.
+- `filters/PageFilterBar.tsx`: inline or card-style filter rows.
+- `detail/DetailSection.tsx`: detail card wrapper.
+- `detail/DescriptionPanel.tsx`: reusable `Descriptions` panel inside `DetailSection`.
+- `agents/AgentTaskCard.tsx`: reusable Agent built-in task cards and grids.
+- `AgentLiveConsole.tsx`: task-level simulated runtime console.
+- `DashboardLiveFeed.tsx`: dashboard-level live event feed.
+
+Guideline:
+
+- If a UI pattern appears on two or more product domains, put it in `src/components/`.
+- If a component depends heavily on one page's business rules, keep it under that page folder.
+- Do not move page-specific mock datasets into `components/`.
+
+### Page modules
+
+Page-level code belongs in `src/pages/<domain>/`.
+
+Current page domains:
+
+- `agents/`: Agent list, detail, strategy config, built-in task cards, workflow modals, product draft preview.
+- `stores/`: store list, add-store flow, store detail, store business overview, store settings.
+- `dashboard/`: business dashboard and Agent monitoring.
+- `approvals/`: approval list and detail.
+- `operations/`: exception center and operations center.
+- `orders/`: order automation page and order exception workflows.
+- `billing/`: billing page and billing section components.
+- `models/`: model center.
+- `settings/`: members and notifications.
+- `guide/`: usage guide.
+- `auth/`: login page.
+
+Guideline:
+
+- Page folders may contain section components, modal components, column builders, and page-only mock data.
+- Keep route-level page files focused on composition where practical.
+- Large static page datasets should live next to the page, such as `pages/agents/agentConfigMockData.ts`.
+- Repeated section patterns should graduate into `src/components/` only after they are reused across domains.
+
+### Known large files
+
+These files are intentionally feature-rich but are good future refactor candidates:
+
+- `src/pages/agents/AgentConfigPage.tsx`: Agent detail orchestration, task modal, recognition flow, and task logs.
+- `src/pages/orders/OrderAutomationPage.tsx`: order mock data, filters, actions, detail modal, and timeline.
+- `src/components/AgentLiveConsole.tsx` and `src/components/DashboardLiveFeed.tsx`: similar live-console behavior with different scopes.
+
+Future extraction ideas:
+
+- `AgentTaskLogSection`
+- `AgentTaskCreateModal`
+- `OrderMetricsSection`
+- `OrderExceptionModal`
+- `OrderTimeline`
+- `LiveConsoleShell` or `LiveEventStream` if a third live-feed surface is added.
+
+## AI-Assisted Development Workflow
+
+This project is friendly to "vibe coding" with Codex, Cursor, Claude Code, or similar AI tools, but changes should stay inside the product boundaries above.
+
+Recommended workflow:
+
+1. Read `product-design.md` for product scope.
+2. Check `src/app/router.tsx` to find the route and page file.
+3. Check `src/types/domain.ts` before inventing new frontend data shapes.
+4. Check `src/api/mockData.ts`, `src/api/agentMockData.ts`, or page-local mock data before adding new mock records.
+5. Reuse shared components from `src/components/` before creating a new UI pattern.
+6. Add page-only components inside the relevant `src/pages/<domain>/` folder.
+7. Add translations in `src/app/i18n.tsx` for all user-facing text.
+8. Run `npm run build` before handing off code.
+
+Good AI prompts for this repo:
+
+- "Modify only `src/pages/orders/OrderAutomationPage.tsx` and reuse existing shared components."
+- "Extract a page-local section component under `src/pages/agents/` without changing routes."
+- "Update mock data and types consistently; do not call MuleRun directly from the frontend."
+- "Use `MetricCard`, `DataTableCard`, `PageFilterBar`, and `StatusBadge` where possible."
+
+Avoid:
+
+- Adding a new navigation item without updating `product-design.md`, this README, and `src/app/router.tsx`.
+- Calling MuleRun, Browserbase, Steel, or any Agent runtime directly from frontend code.
+- Storing secrets, API keys, cookies, platform passwords, or runtime tokens in mock data.
+- Creating duplicate table/card/filter components inside page folders when a shared component already exists.
+- Adding raw string IDs for AllMall-owned entities; use numeric `AllMallId`.
 
 ## UX Principles
 
