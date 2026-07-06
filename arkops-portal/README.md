@@ -686,6 +686,20 @@ function buildLiveEvents(task: Task, language: 'en' | 'zh'): LiveEvent[] {
 - Keep Agent execution explainable through run history, evidence, approval records, and audit logs.
 - Do not expose MuleRun API keys, raw secrets, or platform credentials in frontend code.
 
+### Create Flow Pattern
+
+Use one of three patterns for creation flows:
+
+- Use a dedicated page for complex creation flows that involve external authorization, multiple steps, failure/retry states, or a URL worth bookmarking. Example: `/stores/new`.
+- Use a modal for simple creation flows with only a few fields that belong to the current page context. Examples: adding a custom model and adding a cost item.
+- Use a drawer for medium-complexity side workflows when the user should keep the current page context visible.
+
+Dedicated creation pages must include:
+
+- Parent navigation highlighting in the sidebar.
+- A visible breadcrumb or page label showing the user is in an add/create flow.
+- An in-page back/cancel action so users do not depend on the browser back button.
+
 ## Development Notes
 
 - Current implementation is frontend-only with mock data.

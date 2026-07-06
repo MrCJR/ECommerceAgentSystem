@@ -1,5 +1,6 @@
 import {
   ApiOutlined,
+  ArrowLeftOutlined,
   ArrowDownOutlined,
   ArrowUpOutlined,
   BarChartOutlined,
@@ -19,7 +20,7 @@ import {
   WarningOutlined
 } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Col, Form, Input, Modal, Progress, Row, Segmented, Select, Space, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
+import { Breadcrumb, Button, Card, Col, Form, Input, Modal, Progress, Row, Segmented, Select, Space, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -103,7 +104,21 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
 
     return (
       <div className="page-stack">
-        <PageHeader title={t('stores.addTitle')} description={t('stores.addDescription')} />
+        <Breadcrumb
+          items={[
+            { title: <Link to="/stores">{t('nav.stores')}</Link> },
+            { title: t('stores.addTitle') }
+          ]}
+        />
+        <PageHeader
+          title={t('stores.addTitle')}
+          description={t('stores.addDescription')}
+          actions={
+            <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/stores')}>
+              {t('stores.backToList')}
+            </Button>
+          }
+        />
         {/* 步骤1：店铺信息 */}
         <Card title={t('stores.stepPlatform')} style={{ marginBottom: 16 }}>
           <Form.Item label={t('stores.name')} name="storeName" rules={[{ required: true }]}>
@@ -215,9 +230,14 @@ export function StoreDetailPage({ mode }: { mode?: 'new' }) {
               )}
 
               {/* 提交按钮 */}
-              <Button type="primary" htmlType="submit" loading={createStore.isPending} block size="large" style={{ marginTop: 24 }}>
-                {t('stores.create')}
-              </Button>
+              <Space style={{ width: '100%', justifyContent: 'flex-end', marginTop: 24 }}>
+                <Button onClick={() => navigate('/stores')}>
+                  {t('common.cancel')}
+                </Button>
+                <Button type="primary" htmlType="submit" loading={createStore.isPending} size="large">
+                  {t('stores.create')}
+                </Button>
+              </Space>
             </Form>
           </Card>
         )}

@@ -26,6 +26,26 @@ import { useQuery } from '@tanstack/react-query';
 
 const { Header, Sider, Content } = Layout;
 
+const routeMenuPrefixes = [
+  '/exception-center',
+  '/approvals',
+  '/orders',
+  '/stores',
+  '/agents',
+  '/models',
+  '/operations',
+  '/audit-logs',
+  '/billing',
+  '/guide',
+  '/settings'
+];
+
+function getSelectedMenuKey(pathname: string) {
+  if (pathname === '/') return '/dashboard';
+  if (pathname.startsWith('/settings/')) return pathname;
+  return routeMenuPrefixes.find((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)) ?? pathname;
+}
+
 export function AppShell() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -41,6 +61,7 @@ export function AppShell() {
   const exceptionPending = dashboard?.exceptionCenterPending ?? 0;
   const orderExceptions = dashboard?.orderExceptions ?? 0;
   const loginRequired = dashboard?.loginRequiredStores ?? 0;
+  const selectedMenuKey = getSelectedMenuKey(location.pathname);
 
   const menuItems = [
     // 1. 控制台 — 第一眼看到的全局概览
@@ -146,8 +167,7 @@ export function AppShell() {
         </div>
         <Menu
           mode="inline"
-          selectedKeys={[location.pathname]}
-          defaultOpenKeys={['settings']}
+          selectedKeys={[selectedMenuKey]}
           items={menuItems}
           onClick={({ key }) => navigate(key)}
         />
