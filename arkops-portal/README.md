@@ -377,6 +377,116 @@ Implementation notes:
 - Translation dictionaries live in `src/app/i18n.tsx` and expose a typed `TranslationKey`.
 - Repeated Agent task card styling is centralized in `src/styles/global.css`.
 
+## Directory and File Reference
+
+Use this table as the first stop when a collaborator or AI coding tool needs to decide where to make a change.
+
+### Project root
+
+| Path | Type | Purpose | Change when |
+| --- | --- | --- | --- |
+| `README.md` | Documentation | Frontend implementation guide, directory map, collaboration rules, and AI-assisted coding workflow. | Project structure, coding workflow, navigation, or collaboration conventions change. |
+| `product-design.md` | Product spec | Canonical product scope for navigation, roles, modules, and roadmap. | Page scope, navigation, user roles, or module behavior changes. |
+| `package.json` | Config | Defines scripts and frontend dependencies. | Adding/removing packages or scripts. |
+| `package-lock.json` | Lockfile | Locks exact dependency versions. | `npm install` changes dependencies. |
+| `index.html` | App shell | Vite HTML entry point. | App title, root container, or global meta tags change. |
+| `vite.config.ts` | Build config | Vite and dev-server configuration. | Build behavior, dev host/port, aliases, or plugins change. |
+| `tsconfig.json` | TypeScript config | Type checking for app source. | TypeScript compiler behavior changes. |
+| `tsconfig.node.json` | TypeScript config | Type checking for Node-side config files. | Vite/config TypeScript behavior changes. |
+| `.gitignore` | Git config | Excludes local dependencies, build output, and local-only files. | New generated/local files should not be tracked. |
+
+### Source root
+
+| Path | Type | Purpose | Change when |
+| --- | --- | --- | --- |
+| `src/main.tsx` | Entry point | Mounts React app and global providers. | App bootstrap or global provider setup changes. |
+| `src/vite-env.d.ts` | Type declarations | Vite environment type declarations. | Vite environment typing changes. |
+| `src/types/domain.ts` | Domain types | Shared frontend domain models for stores, tasks, Agents, approvals, billing, and models. | A UI-facing data shape changes. |
+| `src/utils/id.ts` | Utility | Parses route params into numeric AllMall IDs. | Route ID parsing rules change. |
+| `src/styles/global.css` | Global styles | Layout, shared component styling, page-level utility classes. | Shared styling or repeated UI patterns change. |
+| `src/styles/tokens.css` | Design tokens | Theme variables and token-level styling. | Color, spacing, or token conventions change. |
+
+### App infrastructure
+
+| Path | Type | Purpose | Change when |
+| --- | --- | --- | --- |
+| `src/app/router.tsx` | Router | Defines lazy-loaded routes and route-to-page mapping. | Adding/removing/renaming a page route. |
+| `src/app/layout/AppShell.tsx` | Layout | Main SaaS frame, sidebar navigation, badges, header, theme and language controls. | Navigation, shell layout, badge behavior, or header controls change. |
+| `src/app/providers.tsx` | Providers | Root app providers such as query client, theme, and i18n wrappers. | Global provider setup changes. |
+| `src/app/theme.tsx` | Theme | Light/dark/system theme state and Ant Design theme integration. | Theme behavior or token mapping changes. |
+| `src/app/i18n.tsx` | I18n | Chinese/English dictionaries, typed translation keys, and language state. | Any user-facing text is added or changed. |
+
+### Mock API layer
+
+| Path | Type | Purpose | Change when |
+| --- | --- | --- | --- |
+| `src/api/client.ts` | API utility | Mock delay and connect-token helper functions. | Shared mock API utilities change. |
+| `src/api/mockRepository.ts` | Mock state helper | Centralized insert, replace, remove, and update helpers for in-memory mock state. | Mock state mutation patterns change. |
+| `src/api/mockData.ts` | Mock data | Shared mock stores, tasks, approvals, audit logs, and dashboard-ish entities. | Shared demo records change. |
+| `src/api/storeMockData.ts` | Mock data | Store config mock records. | Store settings/config demos change. |
+| `src/api/agentMockData.ts` | Mock data | Agent configs, stats, dependencies, strategy config, and Agent demo records. | Agent catalog, dependencies, or strategy demos change. |
+| `src/api/dashboard.ts` | Mock API | Sidebar summary and global dashboard counts. | Sidebar badges or summary data change. |
+| `src/api/businessDashboard.ts` | Mock API | Business dashboard metric data. | Dashboard business metrics change. |
+| `src/api/storeBusiness.ts` | Mock API | Store detail business metrics. | Store detail business panels change. |
+| `src/api/stores.ts` | Mock API | Store list, creation, connection, status, and config APIs. | Store workflows change. |
+| `src/api/agents.ts` | Mock API | Agent list/detail/task/config APIs. | Agent workflows, task creation, or strategy state changes. |
+| `src/api/tasks.ts` | Mock API | Task-oriented access layer. | Cross-Agent task behavior changes. |
+| `src/api/approvals.ts` | Mock API | Approval list/detail/actions. | Approval workflows change. |
+| `src/api/approvalPolicies.ts` | Mock API | Approval-policy mock data for legacy or embedded policy views. | Agent approval rule demos change. |
+| `src/api/auditLogs.ts` | Mock API | Audit log records. | Audit trail demos change. |
+| `src/api/models.ts` | Mock API | Model center, model assignment, and custom model mocks. | Model center behavior changes. |
+| `src/api/finance.ts` | Mock API | Billing, subscription, invoice, and usage mocks. | Billing or subscription demos change. |
+| `src/api/settings.ts` | Mock API | Members and notification settings mocks. | Settings pages change. |
+
+### Shared components
+
+| Path | Type | Purpose | Change when |
+| --- | --- | --- | --- |
+| `src/components/PageHeader.tsx` | Shared component | Standard page title, subtitle, and action row. | Page header layout changes globally. |
+| `src/components/StatusBadge.tsx` | Shared component | Localized status and risk tags. | Status/risk display mapping changes. |
+| `src/components/EmptyState.tsx` | Shared component | Common empty-state UI. | Empty state style or behavior changes. |
+| `src/components/AgentLiveConsole.tsx` | Shared component | Task-level simulated Agent/runtime execution console. | Agent task live-console behavior changes. |
+| `src/components/DashboardLiveFeed.tsx` | Shared component | Dashboard-level rolling event feed. | Global live-feed behavior changes. |
+| `src/components/metrics/MetricCard.tsx` | Shared component | KPI/stat card wrapper. | Metric card layout changes across pages. |
+| `src/components/charts/TrendBarChart.tsx` | Shared component | Compact multi-bar trend chart. | Reusable trend visualization changes. |
+| `src/components/table/DataTableCard.tsx` | Shared component | Card-wrapped Ant Design table with toolbar/description support. | Table container behavior changes. |
+| `src/components/table/TableActionGroup.tsx` | Shared component | Compact row action wrapper. | Table action spacing changes. |
+| `src/components/filters/PageFilterBar.tsx` | Shared component | Inline or card-style filter bar. | Filter layout changes across pages. |
+| `src/components/detail/DetailSection.tsx` | Shared component | Detail card wrapper. | Detail section spacing/card behavior changes. |
+| `src/components/detail/DescriptionPanel.tsx` | Shared component | Reusable `Descriptions` panel inside `DetailSection`. | Description panel layout changes. |
+| `src/components/agents/AgentTaskCard.tsx` | Shared component | Agent built-in task card and grid. | Built-in task card UI changes. |
+
+### Page domains
+
+| Path | Type | Purpose | Change when |
+| --- | --- | --- | --- |
+| `src/pages/auth/LoginPage.tsx` | Page | Mock login entry. | Login screen or mock auth flow changes. |
+| `src/pages/dashboard/DashboardPage.tsx` | Page | Business overview and Agent monitoring dashboard. | Dashboard metrics, tabs, or panels change. |
+| `src/pages/stores/StoreListPage.tsx` | Page | Store list and store entry point. | Store table, columns, or add-store entry changes. |
+| `src/pages/stores/StoreDetailPage.tsx` | Page | Add-store flow, store business overview, and store settings. | Store onboarding, detail tabs, or service connection flows change. |
+| `src/pages/agents/AgentListPage.tsx` | Page | Agent center list, enabled Agents, and available Agent catalog. | Agent catalog/list UI changes. |
+| `src/pages/agents/AgentConfigPage.tsx` | Page | Agent detail orchestration, stats, strategy config, task creation, active runs, and logs. | Agent detail behavior changes. |
+| `src/pages/agents/AgentBuiltinTasksSection.tsx` | Page section | Agent built-in task entry points. | Built-in task card behavior changes. |
+| `src/pages/agents/AgentStrategyConfigSection.tsx` | Page section | Agent strategy configuration dispatcher. | Strategy config routing changes. |
+| `src/pages/agents/AgentWorkflowModals.tsx` | Page section | Coordinates Agent workflow modals. | Agent modal wiring changes. |
+| `src/pages/agents/strategy-config/*` | Page sections | Strategy config sections for pricing, risk, and advanced/basic options. | Agent strategy forms change. |
+| `src/pages/agents/workflow-modals/*` | Page sections | Agent-specific demo workflow modals. | Agent workflow demos change. |
+| `src/pages/agents/agentConfigMockData.ts` | Page data | Large Agent detail demo datasets. | Agent detail demo content changes. |
+| `src/pages/models/ModelListPage.tsx` | Page | Model center and Agent-to-model assignment. | Model assignment or custom model UI changes. |
+| `src/pages/approvals/ApprovalListPage.tsx` | Page | Approval list. | Approval table or filters change. |
+| `src/pages/approvals/ApprovalDetailPage.tsx` | Page | Approval detail and approve/reject actions. | Approval decision UI changes. |
+| `src/pages/operations/ExceptionCenterPage.tsx` | Page | Operator exception queue. | Exception workflow or filters change. |
+| `src/pages/operations/OperationsCenterPage.tsx` | Page | Business, cost, product, and efficiency analysis. | Operations analysis UI changes. |
+| `src/pages/operations/exceptionCenterColumns.tsx` | Page helper | Exception center table columns. | Exception table column/action definitions change. |
+| `src/pages/operations/exceptionCenterMockData.ts` | Page data | Exception center demo records. | Exception demo content changes. |
+| `src/pages/orders/OrderAutomationPage.tsx` | Page | Order automation, exception handling, order detail, and timeline. | Order workflow UI changes. |
+| `src/pages/billing/BillingSettingsPage.tsx` | Page | Billing page composition. | Billing page tabs/sections change. |
+| `src/pages/billing/billing-sections/*` | Page sections | Subscription and usage billing sections. | Billing sub-sections change. |
+| `src/pages/audit/AuditLogsPage.tsx` | Page | Audit log table. | Audit table, filters, or display changes. |
+| `src/pages/settings/MembersSettingsPage.tsx` | Page | Member management. | Team/member workflows change. |
+| `src/pages/settings/NotificationsSettingsPage.tsx` | Page | Notification settings. | Notification channel/preference UI changes. |
+| `src/pages/guide/UsageGuideSettingsPage.tsx` | Page | Usage guide and product help. | Help content changes. |
+
 ## Component and Page Boundaries
 
 Use this section as the default map for AI-assisted coding.
@@ -477,6 +587,95 @@ Avoid:
 - Storing secrets, API keys, cookies, platform passwords, or runtime tokens in mock data.
 - Creating duplicate table/card/filter components inside page folders when a shared component already exists.
 - Adding raw string IDs for AllMall-owned entities; use numeric `AllMallId`.
+
+## Documentation and Commenting Conventions
+
+The goal is to make the codebase easy for humans and AI coding tools to navigate without turning comments into a second codebase.
+
+### Ownership model
+
+- Important files should name an individual responsible developer in the file header.
+- Use the real owner or primary maintainer, for example `Author: Li Peng`.
+- If ownership changes, add a `Maintainer:` line rather than deleting historical authorship.
+- AI tools should not invent an author name. If the owner is unknown, use `Author: TBD` and ask a human to fill it in.
+- Git history remains the source of truth for exact line-by-line changes; file headers record responsibility and major design intent.
+
+### File header comments
+
+Add a file header to important files, especially:
+
+- Route and app infrastructure files: `router.tsx`, `AppShell.tsx`, `providers.tsx`, `theme.tsx`, `i18n.tsx`.
+- Domain model files: `types/domain.ts`.
+- Mock data/API entry points: `mockData.ts`, `agentMockData.ts`, `stores.ts`, `agents.ts`.
+- Route-level pages and large page sections: `AgentConfigPage.tsx`, `OrderAutomationPage.tsx`, `StoreDetailPage.tsx`.
+- Reusable shared components: `DataTableCard.tsx`, `MetricCard.tsx`, `AgentLiveConsole.tsx`.
+
+Recommended file header format:
+
+```ts
+/**
+ * File: AgentConfigPage.tsx
+ * Purpose: Route-level Agent detail page. Composes Agent status, strategy config,
+ * built-in tasks, task creation, active runs, and task logs.
+ *
+ * Author: <developer name>
+ * Maintainer: <developer name or team area>
+ * Created: YYYY-MM-DD
+ *
+ * Main exports:
+ * - AgentConfigPage: page component for /agents/:agentType.
+ *
+ * Major updates:
+ * - YYYY-MM-DD: Split strategy config and workflow modals into page-local modules.
+ */
+```
+
+### Function comments
+
+Use JSDoc for exported functions/components and non-trivial internal functions.
+
+Required for:
+
+- Exported React components.
+- Exported helper functions.
+- Complex data builders, state transitions, column builders, and mock API mutation helpers.
+- Functions whose behavior is not obvious from their name and TypeScript signature.
+
+Optional for:
+
+- Small render helpers.
+- Simple event handlers.
+- Inline callbacks whose behavior is obvious from surrounding code.
+
+Recommended function comment format:
+
+```ts
+/**
+ * Builds visible runtime events for the task-level live console.
+ *
+ * @param task - Current task shown in the Agent detail page.
+ * @param language - Active UI language.
+ * @returns Ordered live-event list used by AgentLiveConsole.
+ *
+ * Author: <developer name>
+ * Created: YYYY-MM-DD
+ */
+function buildLiveEvents(task: Task, language: 'en' | 'zh'): LiveEvent[] {
+  // ...
+}
+```
+
+### Change logs
+
+- Use file-level `Major updates` only for large design or ownership changes.
+- Do not record every small edit in comments; use Git commits for detailed history.
+- When a refactor moves logic across files, update the affected file headers in the same commit.
+
+### README maintenance
+
+- When adding a directory or important file, update the `Directory and File Reference` table.
+- When moving page scope or navigation, update `product-design.md`, this README, and `src/app/router.tsx` together.
+- When adding a reusable component, update the shared components table and the component boundary notes.
 
 ## UX Principles
 
