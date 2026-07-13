@@ -51,11 +51,11 @@ export function ReviewManagementModal(props: ReviewManagementModalProps) {
               items={[
                 {
                   key: 'pending',
-                  label: `待处理 (${mockReviews.filter(r => reviewState[r.id] === 'pending').length})`,
+                  label: t('review.pendingTab', { count: mockReviews.filter(r => reviewState[r.id] === 'pending').length }),
                   children: (
                     <div style={{ maxHeight: 460, overflow: 'auto' }}>
                       {mockReviews.filter(r => reviewState[r.id] === 'pending').length === 0 ? (
-                        <EmptyState description="所有差评已处理完毕" />
+                        <EmptyState description={t('review.allProcessed')} />
                       ) : (
                         mockReviews.filter(r => reviewState[r.id] === 'pending').map(review => (
                           <Card
@@ -77,7 +77,7 @@ export function ReviewManagementModal(props: ReviewManagementModalProps) {
                               </div>
                               <Space size={4}>
                                 <Tag color={review.severity === 'high' ? 'red' : review.severity === 'medium' ? 'orange' : 'gold'} style={{ fontSize: 10 }}>
-                                  {review.severity === 'high' ? '严重' : review.severity === 'medium' ? '中等' : '轻微'}
+                                  {review.severity === 'high' ? t('review.severityHigh') : review.severity === 'medium' ? t('review.severityMedium') : t('review.severityLow')}
                                 </Tag>
                                 <Typography.Text type="secondary" style={{ fontSize: 10 }}>
                                   {review.platform} · {review.orderId}
@@ -114,14 +114,14 @@ export function ReviewManagementModal(props: ReviewManagementModalProps) {
                               {editingReviewId === review.id ? (
                                 <>
                                   <Button size="small" onClick={() => { setEditingReviewId(null); setReviewEdits(prev => { const next = { ...prev }; delete next[review.id]; return next; }); }}>
-                                    取消编辑
+                                    {t('review.cancelEdit')}
                                   </Button>
                                   <Button size="small" type="primary" icon={<CheckCircleOutlined />} onClick={() => {
                                     setEditingReviewId(null);
                                     setReviewState(prev => ({ ...prev, [review.id]: 'replied' }));
                                     message.success(t('agent.reviewSent'));
                                   }}>
-                                    确认并发送
+                                    {t('review.confirmSend')}
                                   </Button>
                                 </>
                               ) : (
@@ -149,11 +149,11 @@ export function ReviewManagementModal(props: ReviewManagementModalProps) {
                 },
                 {
                   key: 'replied',
-                  label: `已回复 (${mockReviews.filter(r => reviewState[r.id] === 'replied').length})`,
+                  label: t('review.repliedTab', { count: mockReviews.filter(r => reviewState[r.id] === 'replied').length }),
                   children: (
                     <div style={{ maxHeight: 460, overflow: 'auto' }}>
                       {mockReviews.filter(r => reviewState[r.id] === 'replied').length === 0 ? (
-                        <EmptyState description="暂无已回复的差评" />
+                        <EmptyState description={t('review.noReplied')} />
                       ) : (
                         mockReviews.filter(r => reviewState[r.id] === 'replied').map(review => (
                           <Card key={review.id} size="small" style={{ marginBottom: 12, borderLeft: '4px solid #16a34a' }}>
@@ -164,7 +164,7 @@ export function ReviewManagementModal(props: ReviewManagementModalProps) {
                                 <Typography.Text type="secondary" style={{ fontSize: 11 }}>{review.product}</Typography.Text>
                               </Space>
                               <Tag color="green" style={{ fontSize: 10 }}>
-                                <CheckCircleOutlined /> 已回复 · {new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+                                <CheckCircleOutlined /> {t('review.repliedTag')} · {new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
                               </Tag>
                             </div>
                             <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '0 0 6px', padding: '6px 10px', background: '#fef2f2', borderRadius: 6 }}>
@@ -181,11 +181,11 @@ export function ReviewManagementModal(props: ReviewManagementModalProps) {
                 },
                 {
                   key: 'dismissed',
-                  label: `已忽略 (${mockReviews.filter(r => reviewState[r.id] === 'dismissed').length})`,
+                  label: t('review.dismissedTab', { count: mockReviews.filter(r => reviewState[r.id] === 'dismissed').length }),
                   children: (
                     <div style={{ maxHeight: 460, overflow: 'auto' }}>
                       {mockReviews.filter(r => reviewState[r.id] === 'dismissed').length === 0 ? (
-                        <EmptyState description="暂无已忽略的差评" />
+                        <EmptyState description={t('review.noDismissed')} />
                       ) : (
                         mockReviews.filter(r => reviewState[r.id] === 'dismissed').map(review => (
                           <Card key={review.id} size="small" style={{ marginBottom: 12, borderLeft: '4px solid #94a3b8' }}>
@@ -195,7 +195,7 @@ export function ReviewManagementModal(props: ReviewManagementModalProps) {
                                 <Typography.Text strong style={{ fontSize: 12 }}>{review.buyer}</Typography.Text>
                                 <Typography.Text type="secondary" style={{ fontSize: 11 }}>{review.product}</Typography.Text>
                               </Space>
-                              <Tag style={{ fontSize: 10 }}>已忽略</Tag>
+                              <Tag style={{ fontSize: 10 }}>{t('review.dismissedTag')}</Tag>
                             </div>
                             <Typography.Paragraph type="secondary" style={{ fontSize: 11, margin: '6px 0 0', padding: '6px 10px', background: '#f8fafc', borderRadius: 6 }}>
                               "{review.content.slice(0, 80)}..."

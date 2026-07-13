@@ -1,33 +1,10 @@
-import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Col, Input, InputNumber, Row, Select, Space, Switch, Tag, Typography, Upload, message } from 'antd';
-import { agentsApi } from '../../../api/agents';
+import { Card, Input, InputNumber, Space, Switch, Typography } from 'antd';
 import { useI18n } from '../../../app/i18n';
-import type { AgentConfig } from '../../../types/domain';
-
-type AgentWithStrategyConfig = AgentConfig & { strategyConfig: NonNullable<AgentConfig['strategyConfig']> };
+import { updateConfigSection, type AgentWithStrategyConfig } from './sharedUtils';
 
 interface AdvancedStrategySectionsProps {
   agent: AgentWithStrategyConfig;
-}
-
-/** 安全更新 strategyConfig 子段，触发 React 重新渲染 */
-function updateConfigSection(
-  queryClient: ReturnType<typeof useQueryClient>,
-  agent: AgentWithStrategyConfig,
-  sectionKey: string,
-  updater: (section: any) => any,
-) {
-  queryClient.setQueryData(['agent', agent.agentType], (prev: any) => {
-    if (!prev?.strategyConfig) return prev;
-    return {
-      ...prev,
-      strategyConfig: {
-        ...prev.strategyConfig,
-        [sectionKey]: updater(prev.strategyConfig[sectionKey]),
-      },
-    };
-  });
 }
 
 export function AdvancedStrategySections({ agent }: AdvancedStrategySectionsProps) {
@@ -269,6 +246,78 @@ export function AdvancedStrategySections({ agent }: AdvancedStrategySectionsProp
                     }}
                   />
                 </div>
+                {agent.strategyConfig.promotionConfig.autoTriggerRules && (
+                  <Card size="small" style={{ background: '#f0fdf4', border: '1px solid #86efac' }}>
+                    <Typography.Title level={5} style={{ fontSize: 13, marginBottom: 8 }}>{t('agent.autoTriggerRules')}</Typography.Title>
+                    <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                      <Space wrap>
+                        <Typography.Text type="secondary" style={{ fontSize: 12 }}>{t('agent.deadStockDays')}:</Typography.Text>
+                        <InputNumber
+                          min={30} max={180} step={10}
+                          style={{ width: 70 }} size="small"
+                          suffix={t('agent.days')}
+                          value={agent.strategyConfig.promotionConfig.autoTriggerRules.deadStockDays}
+                          onChange={(v) => {
+                            updateConfigSection(queryClient, agent, 'promotionConfig', (s) => ({
+                              ...s, autoTriggerRules: { ...s.autoTriggerRules!, deadStockDays: v ?? 60 },
+                            }));
+                          }}
+                        />
+                        <Typography.Text type="secondary" style={{ fontSize: 12 }}>→ {t('agent.autoDiscount')}:</Typography.Text>
+                        <InputNumber
+                          min={5} max={50} step={5}
+                          style={{ width: 60 }} size="small"
+                          suffix="%"
+                          value={agent.strategyConfig.promotionConfig.autoTriggerRules.deadStockDiscount}
+                          onChange={(v) => {
+                            updateConfigSection(queryClient, agent, 'promotionConfig', (s) => ({
+                              ...s, autoTriggerRules: { ...s.autoTriggerRules!, deadStockDiscount: v ?? 35 },
+                            }));
+                          }}
+                        />
+                      </Space>
+                      <Space wrap>
+                        <Space>
+                          <Typography.Text type="secondary" style={{ fontSize: 12 }}>{t('agent.lowStockClearance')}:</Typography.Text>
+                          <Switch size="small"
+                            checked={agent.strategyConfig.promotionConfig.autoTriggerRules.lowStockClearance}
+                            onChange={(v) => {
+                              updateConfigSection(queryClient, agent, 'promotionConfig', (s) => ({
+                                ...s, autoTriggerRules: { ...s.autoTriggerRules!, lowStockClearance: v },
+                              }));
+                            }}
+                          />
+                        </Space>
+                        <Space>
+                          <Typography.Text type="secondary" style={{ fontSize: 12 }}>{t('agent.seasonalAutoPromo')}:</Typography.Text>
+                          <Switch size="small"
+                            checked={agent.strategyConfig.promotionConfig.autoTriggerRules.seasonalAutoPromo}
+                            onChange={(v) => {
+                              updateConfigSection(queryClient, agent, 'promotionConfig', (s) => ({
+                                ...s, autoTriggerRules: { ...s.autoTriggerRules!, seasonalAutoPromo: v },
+                              }));
+                            }}
+                          />
+                        </Space>
+                      </Space>
+                      <Space>
+                        <Typography.Text type="secondary" style={{ fontSize: 12 }}>{t('agent.competitorPriceDropThreshold')}:</Typography.Text>
+                        <InputNumber
+                          min={5} max={50} step={5}
+                          style={{ width: 60 }} size="small"
+                          suffix="%"
+                          value={agent.strategyConfig.promotionConfig.autoTriggerRules.competitorPriceDropThreshold}
+                          onChange={(v) => {
+                            updateConfigSection(queryClient, agent, 'promotionConfig', (s) => ({
+                              ...s, autoTriggerRules: { ...s.autoTriggerRules!, competitorPriceDropThreshold: v ?? 15 },
+                            }));
+                          }}
+                        />
+                        <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('agent.competitorPriceDropDesc')}</Typography.Text>
+                      </Space>
+                    </Space>
+                  </Card>
+                )}
               </Space>
             </div>
           )}

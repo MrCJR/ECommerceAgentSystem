@@ -113,7 +113,7 @@ export const agentsApi = {
     }
     return mockDelay(tags);
   },
-  saveStrategyConfig: (agentType: AgentType, config: { costMultiplier?: number; dailyCap?: number }): Promise<AgentConfig | undefined> => {
+  saveStrategyConfig: (agentType: AgentType, config: { costMultiplier?: number; dailyCap?: number; monthlyCap?: number }): Promise<AgentConfig | undefined> => {
     const agent = agentConfigs.find((a) => a.agentType === agentType);
     if (agent?.strategyConfig) {
       const updated = replaceItem(agentConfigs, (a) => a.agentType === agentType, (current) => ({
@@ -124,8 +124,11 @@ export const agentsApi = {
               pricingRule: current.strategyConfig.pricingRule && config.costMultiplier !== undefined
                 ? { ...current.strategyConfig.pricingRule, costMultiplier: config.costMultiplier }
                 : current.strategyConfig.pricingRule,
-              adSpendBudget: current.strategyConfig.adSpendBudget && config.dailyCap !== undefined
-                ? { ...current.strategyConfig.adSpendBudget, dailyCap: config.dailyCap }
+              adSpendBudget: current.strategyConfig.adSpendBudget && (config.dailyCap !== undefined || config.monthlyCap !== undefined)
+                ? { ...current.strategyConfig.adSpendBudget,
+                    ...(config.dailyCap !== undefined ? { dailyCap: config.dailyCap } : {}),
+                    ...(config.monthlyCap !== undefined ? { monthlyCap: config.monthlyCap } : {}),
+                  }
                 : current.strategyConfig.adSpendBudget
             }
           : undefined

@@ -5,11 +5,13 @@ import {
   LockOutlined,
   PlusOutlined,
   SafetyOutlined,
+  SearchOutlined,
   SettingOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React from 'react';
-import { Card, Progress, Space, Switch, Table, Tag, Typography, message } from 'antd';
+import React, { useState } from 'react';
+import { Button, Card, Input, Popconfirm, Progress, Space, Switch, Table, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useNavigate } from 'react-router-dom';
 import { agentsApi } from '../../api/agents';
@@ -21,19 +23,20 @@ import { StatusBadge } from '../../components/StatusBadge';
 import type { AgentConfig, AgentLayer, AgentType } from '../../types/domain';
 import type { AgentRunStats } from '../../types/domain';
 
-function getRecentRunText(stats?: AgentRunStats): string {
+function getRecentRunText(stats: AgentRunStats | undefined, t: (key: string, params?: Record<string, string | number>) => string): string {
   if (!stats) return '-';
-  // 趋势数组最后一个点离现在最近（假设每天一个点）
   const trend = stats.trend;
   if (!trend || trend.length === 0) return '-';
   const last = trend[trend.length - 1];
-  const hoursAgo = (7 - trend.indexOf(last)) * 24; // 粗略估算
-  if (hoursAgo <= 1) return '1 小时内';
-  if (hoursAgo <= 24) return `${Math.round(hoursAgo)} 小时前`;
-  return `${Math.round(hoursAgo / 24)} 天前`;
+  // Use the actual date from trend data to compute elapsed time
+  const lastDate = new Date(last.date);
+  const now = new Date();
+  const hoursAgo = Math.max(0, (now.getTime() - lastDate.getTime()) / (1000 * 60 * 60));
+  if (hoursAgo <= 1) return t('agent.recentWithin1h');
+  if (hoursAgo <= 24) return t('agent.recentHoursAgo', { hours: Math.round(hoursAgo) });
+  return t('agent.recentDaysAgo', { days: Math.round(hoursAgo / 24) });
 }
 
-const layerOrder: AgentLayer[] = ['foundation', 'traffic', 'growth', 'support', 'standalone'];
 const layerColors: Record<AgentLayer, string> = {
   foundation: '#dc2626',
   traffic: '#2563eb',
@@ -49,6 +52,16 @@ export function AgentListPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: agents = [] } = useQuery({ queryKey: ['agents'], queryFn: agentsApi.list });
+  const [searchText, setSearchText] = useState('');
+  const [enabling, setEnabling] = useState(false);
+
+  // Filter agents by search text (match displayName or agentType)
+  const filteredAgents = searchText
+    ? agents.filter(a =>
+        a.displayName.toLowerCase().includes(searchText.toLowerCase()) ||
+        a.agentType.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : agents;
 
   const { data: trialStatus } = useQuery({
     queryKey: ['trialStatus'],
@@ -88,6 +101,45 @@ export function AgentListPage() {
     }
   });
 
+  const disabledAgents = agents.filter(a => !a.enabled && !isPremiumLocked(a.agentType)).length;
+
+  const handleEnableAll = async () => {
+    const candidates = agents.filter(a => !a.enabled && !isPremiumLocked(a.agentType));
+    if (candidates.length === 0) return;
+
+    // Topological sort: enable agents whose dependencies are already enabled first
+    const enabledSet = new Set(agents.filter(a => a.enabled).map(a => a.agentType));
+    const toEnable: AgentListItem[] = [];
+    const remaining = [...candidates];
+    while (remaining.length > 0) {
+      const before = remaining.length;
+      for (let i = 0; i < remaining.length; i++) {
+        const agent = remaining[i];
+        if (agent.dependsOn.every(dep => enabledSet.has(dep))) {
+          toEnable.push(agent);
+          enabledSet.add(agent.agentType);
+          remaining.splice(i, 1);
+          i--;
+        }
+      }
+      if (remaining.length === before) break;
+    }
+
+    setEnabling(true);
+    try {
+      for (const agent of toEnable) {
+        await agentsApi.toggle(agent.agentType);
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+      queryClient.invalidateQueries({ queryKey: ['agents'] });
+      message.success(t('auto.enableAllSuccess', { count: toEnable.length }));
+    } catch (error) {
+      message.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setEnabling(false);
+    }
+  };
+
   const getMissingDeps = (agent: AgentListItem) =>
     agent.dependsOn
       .filter((dep) => !agents.find((a) => a.agentType === dep)?.enabled)
@@ -122,6 +174,16 @@ export function AgentListPage() {
           </div>
         );
       }
+    },
+    {
+      title: t('agent.layer'),
+      width: 90,
+      dataIndex: 'layer',
+      render: (layer: AgentLayer) => (
+        <Tag color={layerColors[layer]} style={{ fontSize: 10 }}>
+          {t(`agent.layer_${layer}`)}
+        </Tag>
+      )
     },
     {
       title: t('agent.enable'),
@@ -159,7 +221,7 @@ export function AgentListPage() {
       render: (risk: string) => <StatusBadge value={risk as AgentConfig['riskLevel']} />
     },
     {
-      title: '活跃任务',
+      title: t('agent.colActiveTasks'),
       width: 90,
       align: 'center',
       render: (_: unknown, record: AgentListItem) => {
@@ -180,7 +242,7 @@ export function AgentListPage() {
       }
     },
     {
-      title: '成功率',
+      title: t('agent.colSuccessRate'),
       width: 110,
       render: (_: unknown, record: AgentListItem) => {
         const rate = record.runStats?.successRate ?? 0;
@@ -202,14 +264,14 @@ export function AgentListPage() {
       }
     },
     {
-      title: '最近执行',
+      title: t('agent.colRecentRun'),
       width: 100,
       render: (_: unknown, record: AgentListItem) => {
         if (!record.enabled) return <Typography.Text type="secondary" style={{ fontSize: 12 }}>-</Typography.Text>;
         return (
           <Typography.Text style={{ fontSize: 11 }} type="secondary">
             <ClockCircleOutlined style={{ marginRight: 4, fontSize: 10 }} />
-            {getRecentRunText(record.runStats)}
+            {getRecentRunText(record.runStats, t)}
           </Typography.Text>
         );
       }
@@ -241,8 +303,8 @@ export function AgentListPage() {
     }
   ];
 
-  const enabled = agents.filter((a) => a.enabled);
-  const disabled = agents.filter((a) => !a.enabled);
+  const enabled = filteredAgents.filter((a) => a.enabled);
+  const disabled = filteredAgents.filter((a) => !a.enabled);
 
   return (
     <div className="page-stack">
@@ -250,6 +312,31 @@ export function AgentListPage() {
         title={t('agent.title')}
         description={t('agent.description')}
       />
+
+      {/* Agent 搜索 */}
+      <div style={{ display: 'flex', gap: 12, marginBottom: 16, alignItems: 'center' }}>
+        <Input
+          prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
+          placeholder={t('common.searchPlaceholder')}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          allowClear
+          style={{ maxWidth: 400 }}
+        />
+        {disabledAgents > 0 && (
+          <Popconfirm
+            title={t('auto.enableAll')}
+            description={t('auto.enableAllConfirm', { count: disabledAgents })}
+            onConfirm={handleEnableAll}
+            okText={t('common.confirm')}
+            cancelText={t('common.cancel')}
+          >
+            <Button type="primary" icon={<ThunderboltOutlined />} loading={enabling}>
+              {t('auto.oneClickEnable')} ({disabledAgents})
+            </Button>
+          </Popconfirm>
+        )}
+      </div>
 
       {/* 已开通 */}
       {enabled.length > 0 && (
@@ -264,30 +351,14 @@ export function AgentListPage() {
         </div>
       )}
 
-      {/* 按层级分组 - 可开通 */}
+      {/* 可开通 - 统一表格 */}
       <Typography.Title level={5} style={{ marginBottom: 16 }}>
         <PlusOutlined style={{ color: '#2563eb', marginRight: 8 }} />
         {t('agent.availableAgents')}
       </Typography.Title>
-
-      {layerOrder.map((layer) => {
-        const layerAgents = disabled.filter((a) => a.layer === layer);
-        if (layerAgents.length === 0) return null;
-        return (
-          <div key={layer} style={{ marginBottom: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8, gap: 8 }}>
-              <div style={{ width: 4, height: 18, borderRadius: 2, background: layerColors[layer], flexShrink: 0 }} />
-              <Typography.Text strong style={{ fontSize: 13, color: 'var(--ark-muted)' }}>
-                {t(`agent.layer_${layer}`)}
-              </Typography.Text>
-              <Tag style={{ fontSize: 10 }}>{layerAgents.length}</Tag>
-            </div>
-            <Card>
-              <Table rowKey="agentType" columns={columns} dataSource={layerAgents} pagination={false} size="small" />
-            </Card>
-          </div>
-        );
-      })}
+      <Card>
+        <Table rowKey="agentType" columns={columns} dataSource={disabled} pagination={false} size="small" />
+      </Card>
 
       {/* Agent 运行逻辑图 */}
       <Card
@@ -309,17 +380,17 @@ export function AgentListPage() {
         }}>
           <CheckCircleOutlined style={{ color: '#16a34a' }} />
           <Typography.Text style={{ fontSize: 12 }}>
-            已启用 <b>{enabled.length}</b> / {agents.length} 个 Agent
+            <span dangerouslySetInnerHTML={{ __html: t('agent.enabledCount', { count: enabled.length, total: agents.length }) }} />
           </Typography.Text>
           <div style={{ flex: 1 }} />
           <Space size={12}>
             <Space size={4}>
               <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#16a34a' }} />
-              <Typography.Text type="secondary" style={{ fontSize: 11 }}>已启用</Typography.Text>
+              <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('common.enabled')}</Typography.Text>
             </Space>
             <Space size={4}>
               <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#d4d4d8', border: '1.5px dashed #94a3b8' }} />
-              <Typography.Text type="secondary" style={{ fontSize: 11 }}>未启用</Typography.Text>
+              <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('common.disabled')}</Typography.Text>
             </Space>
           </Space>
         </div>
@@ -399,7 +470,7 @@ export function AgentListPage() {
           {/* 底部: 风险控制 外框包裹 */}
           <div className="agent-flow-guard">
             <Tag icon={<SafetyOutlined />} color={riskControlOn ? 'green' : 'orange'} style={{ fontSize: 10 }}>
-              {t('agent.flowRiskControl')} {riskControlOn ? '● 守护中' : '○ 未启用'}
+              {t('agent.flowRiskControl')} {riskControlOn ? t('agent.guarding') : t('agent.notGuarding')}
             </Tag>
           </div>
 

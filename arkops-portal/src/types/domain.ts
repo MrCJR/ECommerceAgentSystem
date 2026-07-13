@@ -164,6 +164,7 @@ export interface AgentConfig {
     requireApproval: boolean;
     approverRole: string;
     requireSecondApproval: boolean;
+    autoApproveRules?: { maxOrderValue?: number; maxPriceChangePct?: number; maxBudgetChange?: number; lowRiskOnly?: boolean };
   };
   modelBinding: {
     provider: string;
@@ -206,11 +207,11 @@ export interface AgentStrategyConfig {
   inventoryConfig?: { lowStockThreshold: number; deadStockDays: number; autoReplenishEnabled: boolean; replenishLeadTimeDays: number };
   intelConfig?: { monitorFrequencyHours: number; monitoredCategories: string[]; competitorUrls: string[] };
   financeConfig?: { autoReconcileDay: number; discrepancyAlertThreshold: number; autoGenerateReport: boolean };
-  promotionConfig?: { maxDiscountPercent: number; campaignBudget: number; autoSchedule: boolean; targetPlatforms: string[] };
+  promotionConfig?: { maxDiscountPercent: number; campaignBudget: number; autoSchedule: boolean; targetPlatforms: string[]; autoTriggerRules: { deadStockDays: number; deadStockDiscount: number; lowStockClearance: boolean; competitorPriceDropThreshold: number; seasonalAutoPromo: boolean } };
   liveStreamConfig?: { autoPinProducts: boolean; replyTemplate: string; performanceAlertThreshold: number; peakHourBoost: boolean };
   reviewConfig?: { autoReplyThreshold: number; replyTone: string };
   csConfig?: { autoReplyEnabled: boolean; escalateKeywords: string[] };
-  bootstrapConfig?: { notifyChannels: string };
+  bootstrapConfig?: { notifyChannels: string; checkIntervalMinutes: number; maxRetries: number; autoRelaunchEnabled: boolean };
   productLaunchConfig?: { defaultCategory: string; targetMarket: string };
 }
 

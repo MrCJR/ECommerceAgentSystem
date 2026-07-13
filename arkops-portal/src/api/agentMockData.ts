@@ -18,7 +18,7 @@ export const agentConfigs: AgentConfig[] = [
     needsConfig: true,
     needsApproval: false,
     dependsOn: [],
-    servesFor: ['product_launch', 'ads_optimizer', 'crm_retention', 'review_manager', 'customer_service', 'after_sales'],
+    servesFor: ['product_launch', 'ads_optimizer', 'pricing_strategy', 'crm_retention', 'review_manager', 'customer_service', 'after_sales', 'competitor_intel', 'creative_factory', 'inventory_alert', 'live_stream_ops'],
     required: true,
     eventTrigger: 'store_session_expired',
     executionParams: [],
@@ -29,7 +29,7 @@ export const agentConfigs: AgentConfig[] = [
     timeoutMinutes: 10,
     enabled: true,
     strategyConfig: {
-      bootstrapConfig: { notifyChannels: '飞书,邮件' }
+      bootstrapConfig: { notifyChannels: '飞书,邮件', checkIntervalMinutes: 30, maxRetries: 3, autoRelaunchEnabled: true }
     }
   },
   {
@@ -74,7 +74,7 @@ export const agentConfigs: AgentConfig[] = [
     cronExpression: '0 */6 * * *',
     executionParams: [],
     riskGuard: { maxBudgetPerAction: 200, actionWhitelist: ['adjust_budget', 'pause_campaign', 'create_campaign'], actionBlacklist: ['delete_campaign'] },
-    approvalStrategy: { requireApproval: true, approverRole: 'Approver', requireSecondApproval: false },
+    approvalStrategy: { requireApproval: true, approverRole: 'Approver', requireSecondApproval: false, autoApproveRules: { maxBudgetChange: 50 } },
     modelBinding: { provider: 'OpenAI', model: 'gpt-4o' },
     retryPolicy: { maxRetries: 2, retryIntervalMinutes: 5 },
     timeoutMinutes: 30,
@@ -99,7 +99,7 @@ export const agentConfigs: AgentConfig[] = [
     cronExpression: '0 */4 * * *',
     executionParams: [],
     riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['adjust_price', 'set_sale_price'], actionBlacklist: ['set_below_floor'] },
-    approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false },
+    approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false, autoApproveRules: { maxPriceChangePct: 5 } },
     modelBinding: { provider: 'OpenAI', model: 'gpt-4o-mini' },
     retryPolicy: { maxRetries: 1, retryIntervalMinutes: 5 },
     timeoutMinutes: 15,
@@ -279,7 +279,7 @@ export const agentConfigs: AgentConfig[] = [
     layer: 'support',
     riskLevel: 'low',
     triggerMode: 'scheduled',
-    needsConfig: false,
+    needsConfig: true,
     needsApproval: false,
     dependsOn: [],
       required: false,
@@ -289,14 +289,14 @@ export const agentConfigs: AgentConfig[] = [
       { key: 'safetyStockDays', label: '安全库存天数', defaultValue: '7', type: 'number' },
       { key: 'slowMovingDays', label: '滞销判定天数', defaultValue: '30', type: 'number' }
     ],
-    riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['check_inventory', 'notify_operator'], actionBlacklist: ['auto_order'] },
-    approvalStrategy: { requireApproval: false, approverRole: '', requireSecondApproval: false },
+    riskGuard: { maxBudgetPerAction: 500, actionWhitelist: ['check_inventory', 'notify_operator', 'create_replenish_order'], actionBlacklist: [] },
+    approvalStrategy: { requireApproval: false, approverRole: '', requireSecondApproval: false, autoApproveRules: { maxOrderValue: 500, lowRiskOnly: true } },
     modelBinding: { provider: 'DeepSeek', model: 'deepseek-chat' },
     retryPolicy: { maxRetries: 1, retryIntervalMinutes: 10 },
     timeoutMinutes: 10,
     enabled: false,
     strategyConfig: {
-      inventoryConfig: { lowStockThreshold: 50, deadStockDays: 30, autoReplenishEnabled: false, replenishLeadTimeDays: 7 }
+      inventoryConfig: { lowStockThreshold: 50, deadStockDays: 30, autoReplenishEnabled: true, replenishLeadTimeDays: 7 }
     }
   },
 
@@ -380,7 +380,7 @@ export const agentConfigs: AgentConfig[] = [
     icon: 'crm',
     layer: 'growth',
     riskLevel: 'medium',
-    triggerMode: 'manual',
+    triggerMode: 'event',
     needsConfig: true,
     needsApproval: true,
     dependsOn: ['competitor_intel'],
@@ -391,13 +391,13 @@ export const agentConfigs: AgentConfig[] = [
       { key: 'targetPlatforms', label: '目标平台', defaultValue: 'TikTok Shop,Amazon' }
     ],
     riskGuard: { maxBudgetPerAction: 500, actionWhitelist: ['create_campaign', 'set_discount', 'schedule_flash_sale', 'create_coupon_batch'], actionBlacklist: ['set_below_floor'] },
-    approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false },
+    approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false, autoApproveRules: { maxBudgetChange: 200 } },
     modelBinding: { provider: 'OpenAI', model: 'gpt-4o-mini' },
     retryPolicy: { maxRetries: 1, retryIntervalMinutes: 5 },
     timeoutMinutes: 20,
     enabled: false,
     strategyConfig: {
-      promotionConfig: { maxDiscountPercent: 50, campaignBudget: 2000, autoSchedule: true, targetPlatforms: ['TikTok Shop', 'Amazon'] }
+      promotionConfig: { maxDiscountPercent: 50, campaignBudget: 2000, autoSchedule: true, targetPlatforms: ['TikTok Shop', 'Amazon'], autoTriggerRules: { deadStockDays: 60, deadStockDiscount: 35, lowStockClearance: true, competitorPriceDropThreshold: 15, seasonalAutoPromo: true } }
     }
   },
 

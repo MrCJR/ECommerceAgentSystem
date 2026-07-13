@@ -55,6 +55,7 @@ function MetricCompareRow({
   suffix?: string;
   higherIsBetter?: boolean;
 }) {
+  const { t } = useI18n();
   const diff = diffPercent(controlValue, experimentValue);
   const experimentBetter = higherIsBetter ? diff.isUp : !diff.isUp;
   const neutral = diff.value < 0.5;
@@ -83,7 +84,7 @@ function MetricCompareRow({
       {/* 差异 */}
       <div style={{ width: 80, textAlign: 'right', flexShrink: 0 }}>
         {neutral ? (
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>→ 持平</Typography.Text>
+          <Typography.Text type="secondary" style={{ fontSize: 12 }}>{t('agent.abFlatline')}</Typography.Text>
         ) : (
           <Typography.Text
             style={{

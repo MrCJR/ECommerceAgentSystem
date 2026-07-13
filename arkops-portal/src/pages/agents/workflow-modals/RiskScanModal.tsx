@@ -25,13 +25,16 @@ interface RiskScanModalProps {
   onCloseRisk: () => void;
 }
 
+type RiskStatus = 'pending' | 'fixed' | 'ignored';
+
 export function RiskScanModal(props: RiskScanModalProps) {
   const { t } = useI18n();
   const { riskOpen, onCloseRisk } = props;
+  const [riskStatuses, setRiskStatuses] = useState<Record<number, RiskStatus>>({});
 
   return (
     <Modal
-            title={<><SafetyOutlined style={{ color: '#dc2626' }} /> 合规扫描结果</>}
+            title={<><SafetyOutlined style={{ color: '#dc2626' }} /> {t('risk.scanTitle')}</>}
             open={riskOpen}
             onCancel={() => onCloseRisk()}
             footer={null}
@@ -42,7 +45,7 @@ export function RiskScanModal(props: RiskScanModalProps) {
               items={[
                 {
                   key: 'scan',
-                  label: `违规扫描 (${mockRiskScans.filter(r => r.status === 'pending').length})`,
+                  label: t('risk.scanTab', { count: mockRiskScans.filter(r => (riskStatuses[r.id] || 'pending') === 'pending').length }),
                   children: (
                     <div style={{ maxHeight: 420, overflow: 'auto' }}>
                       {mockRiskScans.map(scan => (
@@ -61,7 +64,7 @@ export function RiskScanModal(props: RiskScanModalProps) {
                                 color={scan.severity === 'high' ? 'red' : scan.severity === 'medium' ? 'orange' : 'gold'}
                                 style={{ marginLeft: 8, fontSize: 10 }}
                               >
-                                {scan.severity === 'high' ? '高风险' : scan.severity === 'medium' ? '中风险' : '低风险'}
+                                {scan.severity === 'high' ? t('risk.severityHigh') : scan.severity === 'medium' ? t('risk.severityMedium') : t('risk.severityLow')}
                               </Tag>
                             </div>
                             <Tag style={{ fontSize: 10 }}>{scan.rule}</Tag>
@@ -71,8 +74,22 @@ export function RiskScanModal(props: RiskScanModalProps) {
                           </Typography.Paragraph>
                           <div style={{ fontSize: 12, color: '#16a34a', background: '#f0fdf4', padding: '6px 10px', borderRadius: 6 }}>
                             <CheckCircleOutlined style={{ marginRight: 4 }} />
-                            建议: {scan.suggestion}
+                            {t('risk.suggestion')}: {scan.suggestion}
                           </div>
+                          {(riskStatuses[scan.id] || 'pending') === 'pending' ? (
+                            <div style={{ marginTop: 6, display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
+                              <Button size="small" type="primary" icon={<CheckCircleOutlined />} style={{ fontSize: 10 }} onClick={() => { setRiskStatuses(prev => ({ ...prev, [scan.id]: 'fixed' })); message.success(t('risk.markedFixed')); }}>
+                                {t('risk.markFixed')}
+                              </Button>
+                              <Button size="small" icon={<CloseCircleOutlined />} style={{ fontSize: 10 }} onClick={() => { setRiskStatuses(prev => ({ ...prev, [scan.id]: 'ignored' })); message.success(t('risk.ignoredSuccess')); }}>
+                                {t('risk.ignore')}
+                              </Button>
+                            </div>
+                          ) : (
+                            <Tag color={riskStatuses[scan.id] === 'fixed' ? 'green' : 'default'} style={{ fontSize: 10, marginTop: 6 }}>
+                              {riskStatuses[scan.id] === 'fixed' ? t('risk.fixed') : t('risk.ignored')}
+                            </Tag>
+                          )}
                         </Card>
                       ))}
                     </div>
@@ -80,7 +97,7 @@ export function RiskScanModal(props: RiskScanModalProps) {
                 },
                 {
                   key: 'breaker',
-                  label: `熔断记录 (${mockBreakerLogs.length})`,
+                  label: t('risk.breakerTab', { count: mockBreakerLogs.length }),
                   children: (
                     <div style={{ maxHeight: 420, overflow: 'auto' }}>
                       {mockBreakerLogs.map(log => (
@@ -93,10 +110,10 @@ export function RiskScanModal(props: RiskScanModalProps) {
                             {log.reason}
                           </Typography.Paragraph>
                           <Typography.Text type="secondary" style={{ fontSize: 11, display: 'block' }}>
-                            动作: {log.action}
+                            {t('risk.action')}: {log.action}
                           </Typography.Text>
                           <Tag color={log.recovered ? 'green' : 'red'} style={{ fontSize: 10, marginTop: 4 }}>
-                            {log.recovered ? `✓ 已恢复 · ${log.recoveredAt}` : '✗ 未恢复'}
+                            {log.recovered ? `${t('risk.recovered')} · ${log.recoveredAt}` : t('risk.notRecovered')}
                           </Tag>
                         </Card>
                       ))}

@@ -31,7 +31,7 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
 
   return (
     <Modal
-            title={<><TeamOutlined style={{ color: '#2563eb' }} /> 客户分层与运营概览</>}
+            title={<><TeamOutlined style={{ color: '#2563eb' }} /> {t('crm.title')}</>}
             open={crmOpen}
             onCancel={() => onCloseCrm()}
             footer={null}
@@ -42,7 +42,7 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
               items={[
                 {
                   key: 'segment',
-                  label: '客户分层',
+                  label: t('crm.segmentTab'),
                   children: (
                     <div>
                       <Row gutter={[16, 16]}>
@@ -66,7 +66,7 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
                               <Typography.Text strong style={{ fontSize: 22, color: '#2563eb' }}>
                                 {Object.values(mockSegments).reduce((s, seg) => s + seg.count, 0)}
                               </Typography.Text>
-                              <Typography.Text type="secondary" style={{ fontSize: 10 }}>总客户数</Typography.Text>
+                              <Typography.Text type="secondary" style={{ fontSize: 10 }}>{t('crm.totalCustomers')}</Typography.Text>
                             </div>
                           </div>
                         </Col>
@@ -81,14 +81,14 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
                                   <Tag color="default" style={{ fontSize: 10 }}>{seg.pct}%</Tag>
                                 </Space>
                                 <Typography.Text type="secondary" style={{ fontSize: 11 }}>
-                                  {seg.count} 人 · 均单 ${seg.avgOrderValue}
+                                  {seg.count} {t('crm.people')} · {t('crm.avgOrder')} ${seg.avgOrderValue}
                                 </Typography.Text>
                               </div>
                               <Progress
                                 percent={seg.pct}
                                 strokeColor={seg.color}
                                 size="small"
-                                format={() => `${seg.count}人`}
+                                format={() => `${seg.count}${t('crm.people')}`}
                               />
                             </div>
                           ))}
@@ -99,11 +99,11 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
                 },
                 {
                   key: 'coupon',
-                  label: '优惠券方案',
+                  label: t('crm.couponTab'),
                   children: (
                     <div style={{ maxHeight: 400, overflow: 'auto' }}>
                       <Typography.Text type="secondary" style={{ fontSize: 11, display: 'block', marginBottom: 12 }}>
-                        AI 根据客户分层自动生成 {mockCoupons.length} 张定向优惠券，预计总成本 ${mockCoupons.reduce((s, c) => s + c.estimatedCost, 0)}
+                        {t('crm.couponDesc', { count: mockCoupons.length, cost: mockCoupons.reduce((s, c) => s + c.estimatedCost, 0) })}
                       </Typography.Text>
                       {mockCoupons.map(coupon => (
                         <Card key={coupon.id} size="small" style={{ marginBottom: 10, borderLeft: '4px solid #7c3aed' }}>
@@ -113,7 +113,7 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
                               <div style={{ marginTop: 2 }}>
                                 <Tag color="purple" style={{ fontSize: 9 }}>{coupon.type}</Tag>
                                 <Tag color="blue" style={{ fontSize: 9 }}>
-                                  {coupon.target === 'new' ? '新客' : coupon.target === 'active' ? '活跃' : coupon.target === 'dormant' ? '沉睡' : '流失'}
+                                  {coupon.target === 'new' ? t('crm.targetNew') : coupon.target === 'active' ? t('crm.targetActive') : coupon.target === 'dormant' ? t('crm.targetDormant') : t('crm.targetChurned')}
                                 </Tag>
                               </div>
                             </div>
@@ -121,25 +121,25 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
                           </div>
                           <Row gutter={8} style={{ marginTop: 8 }}>
                             <Col span={6}>
-                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>最低消费</Typography.Text>
-                              <Typography.Text style={{ fontSize: 11 }}>{coupon.minOrder === 0 ? '无门槛' : `$${coupon.minOrder}`}</Typography.Text>
+                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>{t('crm.minOrder')}</Typography.Text>
+                              <Typography.Text style={{ fontSize: 11 }}>{coupon.minOrder === 0 ? t('crm.noThreshold') : `$${coupon.minOrder}`}</Typography.Text>
                             </Col>
                             <Col span={6}>
-                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>有效期</Typography.Text>
-                              <Typography.Text style={{ fontSize: 11 }}>{coupon.expiryDays} 天</Typography.Text>
+                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>{t('crm.validity')}</Typography.Text>
+                              <Typography.Text style={{ fontSize: 11 }}>{coupon.expiryDays} {t('crm.days')}</Typography.Text>
                             </Col>
                             <Col span={6}>
-                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>目标人数</Typography.Text>
-                              <Typography.Text style={{ fontSize: 11 }}>{mockSegments[coupon.target as keyof typeof mockSegments].count} 人</Typography.Text>
+                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>{t('crm.targetCount')}</Typography.Text>
+                              <Typography.Text style={{ fontSize: 11 }}>{mockSegments[coupon.target as keyof typeof mockSegments].count} {t('crm.people')}</Typography.Text>
                             </Col>
                             <Col span={6}>
-                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>预估成本</Typography.Text>
+                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>{t('crm.estimatedCost')}</Typography.Text>
                               <Typography.Text style={{ fontSize: 11, color: '#ea580c' }}>${coupon.estimatedCost}</Typography.Text>
                             </Col>
                           </Row>
                           <div style={{ marginTop: 8, display: 'flex', gap: 4 }}>
-                            <Button size="small" type="primary" ghost style={{ fontSize: 10 }}>一键发放</Button>
-                            <Button size="small" style={{ fontSize: 10 }}>编辑规则</Button>
+                            <Button size="small" type="primary" ghost style={{ fontSize: 10 }} onClick={() => message.success(t('crm.couponSent', { count: mockSegments[coupon.target as keyof typeof mockSegments].count }))}>{t('crm.sendAll')}</Button>
+                            <Button size="small" style={{ fontSize: 10 }} onClick={() => message.success(t('crm.ruleSaved'))}>{t('crm.editRule')}</Button>
                           </div>
                         </Card>
                       ))}
@@ -148,7 +148,7 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
                 },
                 {
                   key: 'churn',
-                  label: `流失预警 (${mockChurnRisks.length})`,
+                  label: t('crm.churnTab', { count: mockChurnRisks.length }),
                   children: (
                     <div style={{ maxHeight: 400, overflow: 'auto' }}>
                       {mockChurnRisks.map(risk => (
@@ -164,25 +164,25 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
                             <div>
                               <Typography.Text strong style={{ fontSize: 13 }}>{risk.name}</Typography.Text>
                               <Typography.Text type="secondary" style={{ fontSize: 11, marginLeft: 8 }}>
-                                {risk.segment === 'dormant' ? '沉睡客户' : risk.segment === 'active' ? '活跃客户' : '新客'}
+                                {risk.segment === 'dormant' ? t('crm.dormantCustomer') : risk.segment === 'active' ? t('crm.activeCustomer') : t('crm.newCustomer')}
                               </Typography.Text>
                             </div>
                             <Tag color={risk.risk >= 70 ? 'red' : risk.risk >= 50 ? 'orange' : 'gold'} style={{ fontSize: 10 }}>
-                              流失风险 {risk.risk}%
+                              {t('crm.churnRisk')} {risk.risk}%
                             </Tag>
                           </div>
                           <Row gutter={8} style={{ marginTop: 6 }}>
                             <Col span={8}>
-                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>最后购买</Typography.Text>
+                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>{t('crm.lastPurchase')}</Typography.Text>
                               <Typography.Text style={{ fontSize: 11 }}>{risk.lastPurchase}</Typography.Text>
                             </Col>
                             <Col span={8}>
-                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>累计消费</Typography.Text>
+                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>{t('crm.totalSpent')}</Typography.Text>
                               <Typography.Text style={{ fontSize: 11 }}>${risk.totalSpent}</Typography.Text>
                             </Col>
                             <Col span={8}>
-                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>历史订单</Typography.Text>
-                              <Typography.Text style={{ fontSize: 11 }}>{risk.orders} 单</Typography.Text>
+                              <Typography.Text type="secondary" style={{ fontSize: 10, display: 'block' }}>{t('crm.historyOrders')}</Typography.Text>
+                              <Typography.Text style={{ fontSize: 11 }}>{risk.orders} {t('crm.orders')}</Typography.Text>
                             </Col>
                           </Row>
                           <div style={{ marginTop: 6, padding: '6px 10px', background: '#fff7ed', borderRadius: 6 }}>
@@ -192,8 +192,8 @@ export function CrmRetentionModal(props: CrmRetentionModalProps) {
                             </Typography.Text>
                           </div>
                           <div style={{ marginTop: 6, display: 'flex', gap: 4 }}>
-                            <Button size="small" type="primary" ghost style={{ fontSize: 10 }}>发送挽留券</Button>
-                            <Button size="small" style={{ fontSize: 10 }}>查看详情</Button>
+                            <Button size="small" type="primary" ghost style={{ fontSize: 10 }} onClick={() => message.success(t('crm.retentionSent', { name: risk.name }))}>{t('crm.sendRetention')}</Button>
+                            <Button size="small" style={{ fontSize: 10 }} onClick={() => message.info(risk.reason)}>{t('crm.viewDetail')}</Button>
                           </div>
                         </Card>
                       ))}

@@ -12,7 +12,7 @@
  * Major updates:
  * - 2026-07-03: Added ownership and page-level documentation for AI-assisted collaboration.
  */
-import { CameraOutlined, CheckCircleOutlined, CloseCircleOutlined, EditOutlined, InfoCircleOutlined, KeyOutlined, LineChartOutlined, PlusOutlined, ReloadOutlined, SafetyOutlined, StopOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { CameraOutlined, CheckCircleOutlined, CloseCircleOutlined, EditOutlined, EyeOutlined, InfoCircleOutlined, KeyOutlined, LineChartOutlined, PlusOutlined, ReloadOutlined, SafetyOutlined, StopOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Button,
@@ -23,6 +23,7 @@ import {
   Form,
   Input,
   Modal,
+  Popconfirm,
   Row,
   Select,
   Space,
@@ -83,6 +84,13 @@ export function AgentConfigPage() {
   const [csModalOpen, setCsModalOpen] = useState(false);
   const [adDashboardOpen, setAdDashboardOpen] = useState(false);
   const [abTestOpen, setAbTestOpen] = useState(false);
+  const [sessionStatusOpen, setSessionStatusOpen] = useState(false);
+  const [competitorIntelOpen, setCompetitorIntelOpen] = useState(false);
+  const [afterSalesOpen, setAfterSalesOpen] = useState(false);
+  const [promotionOpen, setPromotionOpen] = useState(false);
+  const [inventoryOpen, setInventoryOpen] = useState(false);
+  const [financeAuditOpen, setFinanceAuditOpen] = useState(false);
+  const [pricingOpen, setPricingOpen] = useState(false);
 
   const { data: agent, isLoading } = useQuery({
     queryKey: ['agent', agentType],
@@ -117,6 +125,7 @@ export function AgentConfigPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['agent', agentType] });
       queryClient.invalidateQueries({ queryKey: ['agents'] });
+      message.success(t('common.operationSuccess'));
     },
     onError: (error: Error) => {
       message.error(error.message);
@@ -130,7 +139,7 @@ export function AgentConfigPage() {
       }
     },
     onSuccess: () => {
-      message.success(t('agent.depsEnabled') || 'All dependencies enabled');
+      message.success(t('agent.depsEnabled'));
       queryClient.invalidateQueries({ queryKey: ['agent', agentType] });
       queryClient.invalidateQueries({ queryKey: ['agents'] });
     },
@@ -191,21 +200,7 @@ export function AgentConfigPage() {
 
   const needsImages = agentType === 'product_launch';
   const isLoginBootstrap = agentType === 'login_bootstrap';
-  const isCompetitorIntel = agentType === 'competitor_intel';
   const isProductLaunch = agentType === 'product_launch';
-  const isAdsOptimizer = agentType === 'ads_optimizer';
-  const isPricingStrategy = agentType === 'pricing_strategy';
-  const isCrmRetention = agentType === 'crm_retention';
-  const isReviewManager = agentType === 'review_manager';
-  const isCustomerService = agentType === 'customer_service';
-  const isAfterSales = agentType === 'after_sales';
-  const isCreativeFactory = agentType === 'creative_factory';
-  const isInventoryAlert = agentType === 'inventory_alert';
-  const isRiskControl = agentType === 'risk_control';
-  const isFinanceAudit = agentType === 'finance_audit';
-  const isPromotionCampaign = agentType === 'promotion_campaign';
-  const isLiveStreamOps = agentType === 'live_stream_ops';
-  const hasBuiltinTasks = isLoginBootstrap || isCompetitorIntel || isProductLaunch || isAdsOptimizer || isPricingStrategy || isCrmRetention || isReviewManager || isCustomerService || isAfterSales || isCreativeFactory || isInventoryAlert || isRiskControl || isFinanceAudit;
 
   const activeStatuses: TaskStatus[] = ['draft', 'queued', 'running', 'waiting_approval'];
   const logStatuses: TaskStatus[] = ['succeeded', 'failed', 'cancelled'];
@@ -221,27 +216,26 @@ export function AgentConfigPage() {
   const depsMissing = agent.dependsOn.filter((d) => !allAgents.find((a) => a.agentType === d)?.enabled);
   const switchDisabled = agent.required || depsMissing.length > 0;
   const riskControlOn = allAgents.find((a) => a.agentType === 'risk_control')?.enabled === true;
-  const isGuarded = riskControlOn && agent.agentType !== 'risk_control' && agent.agentType !== 'finance_audit';
+  const riskControlAgent = allAgents.find((a) => a.agentType === 'risk_control');
+  const isGuarded = riskControlOn && agent.agentType !== 'risk_control' && (riskControlAgent?.servesFor.includes(agent.agentType) ?? false);
 
   /** 将 cron 表达式渲染为人类可读描述 */
   function cronToHuman(cron: string): { freq: string; next: string } {
     const parts = cron.split(' ');
-    if (parts.length < 5) return { freq: '自定义', next: '-' };
+    if (parts.length < 5) return { freq: t('agent.cronCustom'), next: '-' };
     const [min, hour] = parts;
     let freq = '';
     if (hour === '*' && min.startsWith('*/')) {
       const interval = parseInt(min.replace('*/', ''));
-      if (interval === 1) freq = '每分钟';
-      else freq = `每 ${interval} 分钟`;
+      if (interval === 1) freq = t('agent.cronEveryMinute');
+      else freq = t('agent.cronEveryNMinutes', { n: interval });
     } else if (min === '0' && hour.startsWith('*/')) {
       const interval = parseInt(hour.replace('*/', ''));
-      if (interval === 1) freq = '每小时';
-      else freq = `每 ${interval} 小时`;
+      if (interval === 1) freq = t('agent.cronEveryHour');
+      else freq = t('agent.cronEveryNHours', { n: interval });
     } else if (min === '0' && hour !== '*') {
       const hours = hour.split(',').join(':00, ') + ':00';
-      freq = `每日 ${hours}`;
-    } else if (min === '0' && hour === '0') {
-      freq = '每日 0:00';
+      freq = t('agent.cronDaily', { time: hours });
     } else {
       freq = `${cron}`;
     }
@@ -264,7 +258,16 @@ export function AgentConfigPage() {
         actions={
           <Space>
             <span>{agent.enabled ? t('agent.enable') : t('agent.disable')}</span>
-            <Switch checked={agent.enabled} disabled={switchDisabled} onChange={() => toggleMutation.mutate()} />
+            <Popconfirm
+              title={t('agent.toggleConfirmTitle', { action: agent.enabled ? t('agent.toggleDisable') : t('agent.toggleEnable') })}
+              description={t('agent.toggleConfirmContent', { action: agent.enabled ? t('agent.toggleDisable') : t('agent.toggleEnable') })}
+              onConfirm={() => toggleMutation.mutate()}
+              okText={t('common.confirm')}
+              cancelText={t('common.cancel')}
+              disabled={switchDisabled}
+            >
+              <Switch checked={agent.enabled} disabled={switchDisabled} />
+            </Popconfirm>
             {depsMissing.length > 0 && (
               <Typography.Text type="danger" style={{ fontSize: 11, display: 'block' }}>
                 {t('agent.dependsOn')}: {depsMissing.map((d) => t(`agent.${d}`)).join(', ')}
@@ -305,34 +308,34 @@ export function AgentConfigPage() {
       {/* 运行说明 */}
       <Card title={<><InfoCircleOutlined /> {t('agent.operationGuide')}</>} style={{ marginBottom: 16 }}>
           <Descriptions column={2} size="small">
-            <Descriptions.Item label="触发方式">
+            <Descriptions.Item label={t('agent.triggerMode')}>
               {agent.triggerMode === 'scheduled' && cronDesc
                 ? <><Tag color="purple">{cronDesc.freq}</Tag><Typography.Text type="secondary" style={{ fontSize: 11 }}>（{agent.cronExpression}）</Typography.Text></>
-                : agent.triggerMode === 'event' ? `事件驱动（${agent.eventTrigger}）`
-                : '手动触发'}
+                : agent.triggerMode === 'event' ? t('agent.eventDriven', { event: agent.eventTrigger ?? '' })
+                : t('agent.manualTrigger')}
             </Descriptions.Item>
-            <Descriptions.Item label="风险等级">
+            <Descriptions.Item label={t('agent.riskLevel')}>
               <Tag color={agent.riskLevel === 'high' ? 'red' : agent.riskLevel === 'medium' ? 'orange' : 'green'}>
-                {agent.riskLevel === 'high' ? '高风险' : agent.riskLevel === 'medium' ? '中风险' : '低风险'}
+                {agent.riskLevel === 'high' ? t('agent.highRisk') : agent.riskLevel === 'medium' ? t('agent.mediumRisk') : t('agent.lowRisk')}
               </Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="依赖Agent">
+            <Descriptions.Item label={t('agent.depAgents')}>
               {agent.dependsOn.length > 0
                 ? agent.dependsOn.map(d => t(`agent.${d}`)).join(' · ')
-                : '无依赖'}
+                : t('agent.noDeps')}
             </Descriptions.Item>
-            <Descriptions.Item label="服务对象">
+            <Descriptions.Item label={t('agent.servesFor')}>
               {agent.servesFor.length > 0
                 ? agent.servesFor.map(s => t(`agent.${s}`)).join(' · ')
-                : '无'}
+                : t('agent.none')}
             </Descriptions.Item>
-            <Descriptions.Item label="审批要求">
+            <Descriptions.Item label={t('agent.approvalReq')}>
               {agent.approvalStrategy?.requireApproval
-                ? `需要审批（${agent.approvalStrategy.approverRole}）${agent.approvalStrategy.requireSecondApproval ? ' · 需双人审批' : ''}`
-                : '无需审批'}
+                ? t('agent.needsApproval', { role: agent.approvalStrategy.approverRole, second: agent.approvalStrategy.requireSecondApproval ? t('agent.needsSecondApproval') : '' })
+                : t('agent.noApprovalNeeded')}
             </Descriptions.Item>
-            <Descriptions.Item label="绑定模型">
-              {agent.modelBinding ? `${agent.modelBinding.provider} / ${agent.modelBinding.model}` : '未绑定'}
+            <Descriptions.Item label={t('agent.boundModel')}>
+              {agent.modelBinding ? `${agent.modelBinding.provider} / ${agent.modelBinding.model}` : t('agent.notBound')}
             </Descriptions.Item>
           </Descriptions>
         </Card>
@@ -347,6 +350,14 @@ export function AgentConfigPage() {
         onOpenRiskModal={() => setRiskModalOpen(true)}
         onOpenLiveModal={() => setLiveModalOpen(true)}
         onOpenABTest={() => setAbTestOpen(true)}
+        onOpenSessionStatus={() => setSessionStatusOpen(true)}
+        onOpenCompetitorIntel={() => setCompetitorIntelOpen(true)}
+        onOpenAfterSales={() => setAfterSalesOpen(true)}
+        onOpenPromotion={() => setPromotionOpen(true)}
+        onOpenInventory={() => setInventoryOpen(true)}
+        onOpenFinanceAudit={() => setFinanceAuditOpen(true)}
+        onOpenPricing={() => setPricingOpen(true)}
+        onOpenProductDraft={() => setTaskModalOpen(true)}
       />
 
       <AgentStrategyConfigSection agent={agent} />
@@ -360,9 +371,13 @@ export function AgentConfigPage() {
       {/* 运行中任务 */}
       {activeTasks.length > 0 && (
         <Card
-          title={<><UnorderedListOutlined /> {t('agent.activeTasks')} ({activeTasks.length})</>}
+          title={<><UnorderedListOutlined /> {isLoginBootstrap ? t('agent.sessionTasks') : t('agent.activeTasks')} ({activeTasks.length})</>}
           extra={
-            isProductLaunch ? (
+            isLoginBootstrap ? (
+              <Button type="primary" icon={<EyeOutlined />} onClick={() => setSessionStatusOpen(true)}>
+                {t('agent.viewSessionStatus')}
+              </Button>
+            ) : isProductLaunch ? (
               <Button type="primary" icon={<PlusOutlined />} onClick={() => setTaskModalOpen(true)}>
                 {t('agent.uploadProduct')}
               </Button>
@@ -536,7 +551,7 @@ export function AgentConfigPage() {
               onClick={() => {
                 createTaskMutation.mutate({
                   title: recognitionResult.seoTitle,
-                  goal: `上架商品「${recognitionResult.productName}」到 ${stores.find(s => s.id === taskForm.getFieldValue('storeId'))?.name || stores[0]?.name || ''}`,
+                  goal: t('agent.taskTitle', { name: recognitionResult.productName, store: stores.find(s => s.id === taskForm.getFieldValue('storeId'))?.name || stores[0]?.name || '' }),
                   storeId: taskForm.getFieldValue('storeId') || stores[0]?.id
                 });
               }}
@@ -552,9 +567,9 @@ export function AgentConfigPage() {
         <Card style={{ marginBottom: 16 }}>
           <div style={{ textAlign: 'center', padding: 16 }}>
             <Typography.Paragraph type="secondary">{t('agent.noActiveTasks')}</Typography.Paragraph>
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => setTaskModalOpen(true)}>
-              {isLoginBootstrap ? '查看会话状态' : isProductLaunch ? t('agent.uploadProduct') : t('agent.newTask')}
-            </Button>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => isLoginBootstrap ? setSessionStatusOpen(true) : setTaskModalOpen(true)}>
+                {isLoginBootstrap ? t('agent.viewSessionStatus') : isProductLaunch ? t('agent.uploadProduct') : t('agent.newTask')}
+              </Button>
           </div>
         </Card>
       )}
@@ -712,6 +727,20 @@ export function AgentConfigPage() {
         onCloseCrm={() => setCrmModalOpen(false)}
         abTestOpen={abTestOpen}
         onCloseABTest={() => setAbTestOpen(false)}
+        sessionStatusOpen={sessionStatusOpen}
+        onCloseSessionStatus={() => setSessionStatusOpen(false)}
+        competitorIntelOpen={competitorIntelOpen}
+        onCloseCompetitorIntel={() => setCompetitorIntelOpen(false)}
+        afterSalesOpen={afterSalesOpen}
+        onCloseAfterSales={() => setAfterSalesOpen(false)}
+        promotionOpen={promotionOpen}
+        onClosePromotion={() => setPromotionOpen(false)}
+        inventoryOpen={inventoryOpen}
+        onCloseInventory={() => setInventoryOpen(false)}
+        financeAuditOpen={financeAuditOpen}
+        onCloseFinanceAudit={() => setFinanceAuditOpen(false)}
+        pricingOpen={pricingOpen}
+        onClosePricing={() => setPricingOpen(false)}
       />
     </div>
   );
