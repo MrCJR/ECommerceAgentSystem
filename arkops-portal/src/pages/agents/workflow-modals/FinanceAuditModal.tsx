@@ -1,7 +1,8 @@
 import { CheckCircleOutlined, DownloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Col, Empty, message, Modal, Progress, Row, Space, Statistic, Table, Tabs, Tag, Typography } from 'antd';
+import { Button, Card, Col, Empty, Progress, Row, Statistic, Table, Tag, Typography, message } from 'antd';
 import { useState } from 'react';
 import { useI18n } from '../../../app/i18n';
+import { BaseWorkflowModal } from './BaseWorkflowModal';
 
 interface FinanceAuditModalProps {
   open: boolean;
@@ -31,6 +32,7 @@ export function FinanceAuditModal({ open, onClose }: FinanceAuditModalProps) {
   const totalRevenue = mockSummary.reduce((s, r) => s + r.platformRevenue, 0);
   const totalDiscrepancy = mockSummary.reduce((s, r) => s + r.discrepancy, 0);
   const matchRate = Math.round((1 - totalDiscrepancy / totalRevenue) * 1000) / 10;
+  const discrepancyCount = discrepancies.filter(d => d.status !== 'matched').length;
 
   const statusConfig: Record<string, { color: string; tag: string }> = {
     matched: { color: 'green', tag: t('finAudit.matched') },
@@ -74,24 +76,32 @@ export function FinanceAuditModal({ open, onClose }: FinanceAuditModalProps) {
   ];
 
   return (
-    <Modal open={open} onCancel={onClose} footer={null} width={900}
-      title={<Space><Badge status="processing" /><Typography.Text strong>{t('finAudit.title')}</Typography.Text></Space>}>
-      <Row gutter={16} style={{ marginBottom: 16 }}>
-        <Col span={8}><Card size="small"><Statistic title={t('finAudit.totalRevenue')} value={totalRevenue} prefix="$" /></Card></Col>
-        <Col span={8}><Card size="small"><Statistic title={t('finAudit.totalDiscrepancy')} value={totalDiscrepancy} prefix="$" valueStyle={{ color: '#dc2626' }} /></Card></Col>
-        <Col span={8}><Card size="small"><div style={{ fontSize: 14, color: '#64748b', marginBottom: 8 }}>{t('finAudit.matchRate')}</div><Progress percent={matchRate} size="small" strokeColor="#16a34a" format={(p) => <span style={{ fontSize: 12 }}>{p}%</span>} /></Card></Col>
-      </Row>
-      <Tabs size="small" items={[
+    <BaseWorkflowModal
+      open={open}
+      onClose={onClose}
+      title={t('finAudit.title')}
+      icon={<SearchOutlined />}
+      iconColor="#2563eb"
+      width={900}
+      preContent={
+        <Row gutter={16} style={{ marginBottom: 16 }}>
+          <Col span={8}><Card size="small"><Statistic title={t('finAudit.totalRevenue')} value={totalRevenue} prefix="$" /></Card></Col>
+          <Col span={8}><Card size="small"><Statistic title={t('finAudit.totalDiscrepancy')} value={totalDiscrepancy} prefix="$" valueStyle={{ color: '#dc2626' }} /></Card></Col>
+          <Col span={8}><Card size="small"><div style={{ fontSize: 14, color: '#64748b', marginBottom: 8 }}>{t('finAudit.matchRate')}</div><Progress percent={matchRate} size="small" strokeColor="#16a34a" format={(p) => <span style={{ fontSize: 12 }}>{p}%</span>} /></Card></Col>
+        </Row>
+      }
+      tabs={[
         { key: 'summary', label: t('finAudit.summaryTab'), children: <Table dataSource={mockSummary} columns={summaryColumns} rowKey="id" pagination={false} size="small" /> },
         {
-          key: 'discrepancy', label: t('finAudit.discrepancyTab', { count: discrepancies.filter(d => d.status !== 'matched').length }),
-          children: discrepancies.filter(d => d.status !== 'matched').length > 0 ? <Table dataSource={discrepancies} columns={discrepancyColumns} rowKey="id" pagination={false} size="small" /> : <Empty description={t('finAudit.noDiscrepancies')} />,
+          key: 'discrepancy',
+          label: t('finAudit.discrepancyTab', { count: discrepancyCount }),
+          children: discrepancyCount > 0 ? <Table dataSource={discrepancies} columns={discrepancyColumns} rowKey="id" pagination={false} size="small" /> : <Empty description={t('finAudit.noDiscrepancies')} />,
         },
         {
           key: 'report', label: t('finAudit.reportTab'),
           children: <Card><Button type="primary" icon={<DownloadOutlined />} onClick={() => message.success(t('finAudit.reportGenerated'))}>{t('finAudit.downloadReport')}</Button></Card>,
         },
-      ]} />
-    </Modal>
+      ]}
+    />
   );
 }

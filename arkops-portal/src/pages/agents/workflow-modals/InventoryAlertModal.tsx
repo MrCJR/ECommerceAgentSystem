@@ -1,7 +1,8 @@
-import { ExclamationCircleOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
-import { Badge, Button, message, Modal, Progress, Space, Table, Tabs, Tag, Typography } from 'antd';
+import { ExclamationCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Space, Table, Tag, Typography, message } from 'antd';
 import { useState } from 'react';
 import { useI18n } from '../../../app/i18n';
+import { BaseWorkflowModal } from './BaseWorkflowModal';
 
 interface InventoryAlertModalProps {
   open: boolean;
@@ -82,13 +83,18 @@ export function InventoryAlertModal({ open, onClose }: InventoryAlertModalProps)
   ];
 
   return (
-    <Modal open={open} onCancel={onClose} footer={null} width={800}
-      title={<Space><Badge status="error" /><Typography.Text strong>{t('inventory.title')}</Typography.Text></Space>}>
-      <Tabs size="small" items={[
+    <BaseWorkflowModal
+      open={open}
+      onClose={onClose}
+      title={t('inventory.title')}
+      icon={<ExclamationCircleOutlined />}
+      iconColor="#dc2626"
+      width={800}
+      tabs={[
         { key: 'low', label: t('inventory.lowStockTab', { count: mockLowStock.length }), children: <Table dataSource={mockLowStock} columns={lowStockColumns} rowKey="id" pagination={false} size="small" /> },
         { key: 'dead', label: t('inventory.deadStockTab', { count: mockDeadStock.length }), children: <Table dataSource={mockDeadStock} columns={deadStockColumns} rowKey="id" pagination={false} size="small" /> },
         { key: 'replenish', label: t('inventory.replenishTab', { count: mockReplenish.length }), children: <Table dataSource={mockReplenish} columns={replenishColumns} rowKey="id" pagination={false} size="small" /> },
-      ]} />
-    </Modal>
+      ]}
+    />
   );
 }

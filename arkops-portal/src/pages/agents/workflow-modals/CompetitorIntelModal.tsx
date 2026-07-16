@@ -1,7 +1,7 @@
-import { ArrowDownOutlined, ArrowUpOutlined, FireOutlined, MinusOutlined, RiseOutlined, ShopOutlined, ShoppingOutlined } from '@ant-design/icons';
-import { Badge, Card, Col, Empty, Modal, Progress, Row, Space, Statistic, Table, Tabs, Tag, Typography } from 'antd';
+import { ArrowDownOutlined, MinusOutlined, RiseOutlined, ShopOutlined } from '@ant-design/icons';
+import { Card, Col, Progress, Row, Space, Table, Tag, Typography } from 'antd';
 import { useI18n } from '../../../app/i18n';
-import { EmptyState } from '../../../components/EmptyState';
+import { BaseWorkflowModal } from './BaseWorkflowModal';
 
 interface CompetitorIntelModalProps {
   open: boolean;
@@ -133,77 +133,68 @@ export function CompetitorIntelModal({ open, onClose }: CompetitorIntelModalProp
   ];
 
   return (
-    <Modal
+    <BaseWorkflowModal
       open={open}
-      onCancel={onClose}
-      footer={null}
+      onClose={onClose}
+      title={t('intel.title')}
+      icon={<RiseOutlined />}
+      iconColor="#2563eb"
       width={900}
-      title={
-        <Space>
-          <Badge status="processing" />
-          <Typography.Text strong>{t('intel.title')}</Typography.Text>
-          <Tag color="blue" style={{ fontSize: 11 }}>{t('intel.addDataFuel', { count: 4 })}</Tag>
-        </Space>
-      }
-    >
-      <Tabs
-        defaultActiveKey="price"
-        size="small"
-        items={[
-          {
-            key: 'price',
-            label: t('intel.priceMonitorTab', { count: mockCompetitorPrices.length }),
-            children: (
-              <Table dataSource={mockCompetitorPrices} columns={priceColumns} rowKey="id" pagination={false} size="small" />
-            ),
-          },
-          {
-            key: 'research',
-            label: t('intel.productResearchTab', { count: mockProductResearch.length }),
-            children: (
-              <Row gutter={[12, 12]} style={{ marginBottom: 12 }}>
-                {mockProductResearch.map(r => (
-                  <Col xs={24} sm={12} key={r.id}>
-                    <Card size="small" style={{ borderLeft: `3px solid ${r.opportunityScore >= 75 ? '#16a34a' : r.opportunityScore >= 50 ? '#f59e0b' : '#dc2626'}` }}>
-                      <Space direction="vertical" size={4} style={{ width: '100%' }}>
-                        <Space style={{ justifyContent: 'space-between', width: '100%' }}>
-                          <Typography.Text strong style={{ fontSize: 13 }}>{r.category}</Typography.Text>
-                          <Tag color={r.opportunityScore >= 75 ? 'green' : r.opportunityScore >= 50 ? 'gold' : 'red'} style={{ fontSize: 11 }}>{r.opportunityScore}</Tag>
-                        </Space>
-                        <Space size="large">
-                          <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.marketCapacity')}: {r.marketCapacity}</Typography.Text>
-                          <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.competitorCount')}: {r.competitorCount}</Typography.Text>
-                        </Space>
-                        <Space size="large">
-                          <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.avgPrice')}: ${r.avgPrice.toFixed(2)}</Typography.Text>
-                          <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.priceRange')}: {r.priceRange}</Typography.Text>
-                        </Space>
-                        <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.monthlySales')}: {r.monthlySales.toLocaleString()}</Typography.Text>
+      defaultActiveKey="price"
+      tabs={[
+        {
+          key: 'price',
+          label: t('intel.priceMonitorTab', { count: mockCompetitorPrices.length }),
+          children: (
+            <Table dataSource={mockCompetitorPrices} columns={priceColumns} rowKey="id" pagination={false} size="small" />
+          ),
+        },
+        {
+          key: 'research',
+          label: t('intel.productResearchTab', { count: mockProductResearch.length }),
+          children: (
+            <Row gutter={[12, 12]} style={{ marginBottom: 12 }}>
+              {mockProductResearch.map(r => (
+                <Col xs={24} sm={12} key={r.id}>
+                  <Card size="small" style={{ borderLeft: `3px solid ${r.opportunityScore >= 75 ? '#16a34a' : r.opportunityScore >= 50 ? '#f59e0b' : '#dc2626'}` }}>
+                    <Space direction="vertical" size={4} style={{ width: '100%' }}>
+                      <Space style={{ justifyContent: 'space-between', width: '100%' }}>
+                        <Typography.Text strong style={{ fontSize: 13 }}>{r.category}</Typography.Text>
+                        <Tag color={r.opportunityScore >= 75 ? 'green' : r.opportunityScore >= 50 ? 'gold' : 'red'} style={{ fontSize: 11 }}>{r.opportunityScore}</Tag>
                       </Space>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            ),
-          },
-          {
-            key: 'trends',
-            label: t('intel.trendTab', { count: mockTrendingKeywords.length }),
-            children: (
-              <Row gutter={[16, 16]}>
-                <Col xs={24} md={14}>
-                  <Typography.Title level={5} style={{ fontSize: 13, marginBottom: 8 }}>{t('intel.trendingKeywords')}</Typography.Title>
-                  <Table dataSource={mockTrendingKeywords} columns={keywordColumns} rowKey="keyword" pagination={false} size="small" />
+                      <Space size="large">
+                        <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.marketCapacity')}: {r.marketCapacity}</Typography.Text>
+                        <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.competitorCount')}: {r.competitorCount}</Typography.Text>
+                      </Space>
+                      <Space size="large">
+                        <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.avgPrice')}: ${r.avgPrice.toFixed(2)}</Typography.Text>
+                        <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.priceRange')}: {r.priceRange}</Typography.Text>
+                      </Space>
+                      <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('intel.monthlySales')}: {r.monthlySales.toLocaleString()}</Typography.Text>
+                    </Space>
+                  </Card>
                 </Col>
-                <Col xs={24} md={10}>
-                  <Typography.Title level={5} style={{ fontSize: 13, marginBottom: 8 }}>{t('intel.newProducts', { count: mockNewProducts.length })}</Typography.Title>
-                  <Table dataSource={mockNewProducts} columns={newProductColumns} rowKey="id" pagination={false} size="small" scroll={{ y: 240 }} />
-                </Col>
-              </Row>
-            ),
-          },
-        ]}
-      />
-    </Modal>
+              ))}
+            </Row>
+          ),
+        },
+        {
+          key: 'trends',
+          label: t('intel.trendTab', { count: mockTrendingKeywords.length }),
+          children: (
+            <Row gutter={[16, 16]}>
+              <Col xs={24} md={14}>
+                <Typography.Title level={5} style={{ fontSize: 13, marginBottom: 8 }}>{t('intel.trendingKeywords')}</Typography.Title>
+                <Table dataSource={mockTrendingKeywords} columns={keywordColumns} rowKey="keyword" pagination={false} size="small" />
+              </Col>
+              <Col xs={24} md={10}>
+                <Typography.Title level={5} style={{ fontSize: 13, marginBottom: 8 }}>{t('intel.newProducts', { count: mockNewProducts.length })}</Typography.Title>
+                <Table dataSource={mockNewProducts} columns={newProductColumns} rowKey="id" pagination={false} size="small" scroll={{ y: 240 }} />
+              </Col>
+            </Row>
+          ),
+        },
+      ]}
+    />
   );
 }

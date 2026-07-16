@@ -3,6 +3,29 @@ import type { Member } from '../types/domain';
 export type Role = Member['role'];
 
 /**
+ * Operation-level permission actions.
+ * Used for fine-grained access control within pages.
+ */
+export type PermissionAction = 'create' | 'read' | 'update' | 'delete' | 'approve' | 'export';
+
+/**
+ * Resource identifiers for operation-level permission checks.
+ */
+export type PermissionResource =
+  | 'orders'
+  | 'products'
+  | 'agents'
+  | 'stores'
+  | 'members'
+  | 'models'
+  | 'billing'
+  | 'audit_logs'
+  | 'notifications'
+  | 'exceptions'
+  | 'approvals'
+  | 'setup';
+
+/**
  * Centralized role permission matrix.
  * Defines which routes each role can access.
  * true = allowed, false = denied
@@ -57,6 +80,100 @@ const ROLE_PERMISSIONS: Record<Role, Record<string, boolean>> = {
     '/settings/models': true, '/settings/billing': true,
     '/settings/audit-logs': true, '/settings/notifications': false,
     '/settings/guide': true, '/setup': false,
+  },
+};
+
+/**
+ * Operation-level permission matrix.
+ * Defines which CRUD actions each role can perform on each resource.
+ *
+ * Owner and Admin have full access (all actions on all resources).
+ * Other roles have restricted access based on their responsibilities.
+ */
+const OPERATION_PERMISSIONS: Record<Role, Record<PermissionResource, PermissionAction[]>> = {
+  Owner: {
+    orders: ['create', 'read', 'update', 'delete', 'export'],
+    products: ['create', 'read', 'update', 'delete', 'export'],
+    agents: ['create', 'read', 'update', 'delete'],
+    stores: ['create', 'read', 'update', 'delete'],
+    members: ['create', 'read', 'update', 'delete'],
+    models: ['create', 'read', 'update', 'delete'],
+    billing: ['read', 'update', 'export'],
+    audit_logs: ['read', 'export'],
+    notifications: ['read', 'update'],
+    exceptions: ['read', 'update'],
+    approvals: ['read', 'approve'],
+    setup: ['read', 'update'],
+  },
+  Admin: {
+    orders: ['create', 'read', 'update', 'delete', 'export'],
+    products: ['create', 'read', 'update', 'delete', 'export'],
+    agents: ['create', 'read', 'update', 'delete'],
+    stores: ['create', 'read', 'update', 'delete'],
+    members: ['create', 'read', 'update', 'delete'],
+    models: ['create', 'read', 'update', 'delete'],
+    billing: ['read', 'update', 'export'],
+    audit_logs: ['read', 'export'],
+    notifications: ['read', 'update'],
+    exceptions: ['read', 'update'],
+    approvals: ['read', 'approve'],
+    setup: ['read', 'update'],
+  },
+  Operator: {
+    orders: ['create', 'read', 'update'],
+    products: ['create', 'read', 'update'],
+    agents: ['create', 'read', 'update'],
+    stores: ['read', 'update'],
+    members: [],
+    models: ['read'],
+    billing: ['read'],
+    audit_logs: ['read'],
+    notifications: ['read'],
+    exceptions: ['read', 'update'],
+    approvals: ['read'],
+    setup: ['read'],
+  },
+  Approver: {
+    orders: ['read'],
+    products: ['read'],
+    agents: ['read'],
+    stores: ['read'],
+    members: [],
+    models: [],
+    billing: ['read'],
+    audit_logs: [],
+    notifications: [],
+    exceptions: ['read'],
+    approvals: ['read', 'approve'],
+    setup: [],
+  },
+  Finance: {
+    orders: [],
+    products: [],
+    agents: [],
+    stores: [],
+    members: [],
+    models: [],
+    billing: ['read', 'update', 'export'],
+    audit_logs: [],
+    notifications: [],
+    exceptions: [],
+    approvals: [],
+    setup: [],
+  },
+  Viewer: {
+    orders: ['read'],
+    products: ['read'],
+    agents: ['read'],
+    stores: ['read'],
+    members: [],
+    models: ['read'],
+    billing: ['read'],
+    audit_logs: ['read'],
+    notifications: [],
+    exceptions: ['read'],
+    approvals: ['read'],
+    setup: [],
   },
 };
 
@@ -118,6 +235,31 @@ export function canAccess(role: Role, pathname: string): boolean {
   }
 
   return false;
+}
+
+/**
+ * Check if a role can perform a specific operation on a resource.
+ *
+ * @example
+ * canOperate('Operator', 'orders', 'delete') // false
+ * canOperate('Admin', 'stores', 'create')     // true
+ */
+export function canOperate(role: Role, resource: PermissionResource, action: PermissionAction): boolean {
+  const resourcePermissions = OPERATION_PERMISSIONS[role];
+  if (!resourcePermissions) return false;
+  const allowed = resourcePermissions[resource];
+  if (!allowed) return false;
+  return allowed.includes(action);
+}
+
+/**
+ * Get all allowed actions for a role on a given resource.
+ * Returns empty array if the role has no access.
+ */
+export function getAllowedActions(role: Role, resource: PermissionResource): PermissionAction[] {
+  const resourcePermissions = OPERATION_PERMISSIONS[role];
+  if (!resourcePermissions) return [];
+  return resourcePermissions[resource] ?? [];
 }
 
 /**

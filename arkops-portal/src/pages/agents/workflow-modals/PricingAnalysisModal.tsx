@@ -1,7 +1,8 @@
 import { ArrowUpOutlined, CheckOutlined, LineChartOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Col, message, Modal, Progress, Row, Space, Statistic, Table, Tabs, Tag, Typography } from 'antd';
+import { Button, Card, Col, Progress, Row, Statistic, Table, Tag, Typography, message } from 'antd';
 import { useState } from 'react';
 import { useI18n } from '../../../app/i18n';
+import { BaseWorkflowModal } from './BaseWorkflowModal';
 
 interface PricingAnalysisModalProps {
   open: boolean;
@@ -67,17 +68,24 @@ export function PricingAnalysisModal({ open, onClose }: PricingAnalysisModalProp
   const avgMargin = Math.round(mockComparison.reduce((s, r) => s + r.margin, 0) / mockComparison.length);
 
   return (
-    <Modal open={open} onCancel={onClose} footer={null} width={900}
-      title={<Space><Badge status="processing" /><Typography.Text strong>{t('pricing.title')}</Typography.Text></Space>}>
-      <Row gutter={16} style={{ marginBottom: 16 }}>
-        <Col span={12}><Card size="small"><Statistic title={t('pricing.competitorAvg')} value={mockComparison.length} suffix="products" /></Card></Col>
-        <Col span={12}><Card size="small"><Statistic title={t('pricing.margin')} value={avgMargin} suffix="%" valueStyle={{ color: avgMargin >= 50 ? '#16a34a' : '#f59e0b' }} /></Card></Col>
-      </Row>
-      <Tabs size="small" items={[
+    <BaseWorkflowModal
+      open={open}
+      onClose={onClose}
+      title={t('pricing.title')}
+      icon={<LineChartOutlined />}
+      iconColor="#2563eb"
+      width={900}
+      preContent={
+        <Row gutter={16} style={{ marginBottom: 16 }}>
+          <Col span={12}><Card size="small"><Statistic title={t('pricing.competitorAvg')} value={mockComparison.length} suffix="products" /></Card></Col>
+          <Col span={12}><Card size="small"><Statistic title={t('pricing.margin')} value={avgMargin} suffix="%" valueStyle={{ color: avgMargin >= 50 ? '#16a34a' : '#f59e0b' }} /></Card></Col>
+        </Row>
+      }
+      tabs={[
         { key: 'comparison', label: t('pricing.comparisonTab', { count: mockComparison.length }), children: <Table dataSource={mockComparison} columns={comparisonColumns} rowKey="id" pagination={false} size="small" /> },
         { key: 'history', label: t('pricing.historyTab'), children: <Card size="small"><div style={{ textAlign: 'center', padding: 32 }}><LineChartOutlined style={{ fontSize: 48, color: '#cbd5e1' }} /><Typography.Text type="secondary" style={{ display: 'block', marginTop: 8 }}>{t('pricing.last30Days')}</Typography.Text></div></Card> },
         { key: 'suggestion', label: t('pricing.suggestionTab', { count: mockSuggestions.length }), children: <Table dataSource={mockSuggestions} columns={suggestionColumns} rowKey="id" pagination={false} size="small" /> },
-      ]} />
-    </Modal>
+      ]}
+    />
   );
 }

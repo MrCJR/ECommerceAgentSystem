@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { Badge, Button, Card, Col, Progress, Row, Segmented, Space, Statistic, Table, Tag, Typography } from 'antd';
-import { useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { agentsApi } from '../../api/agents';
 import { businessDashboardApi } from '../../api/businessDashboard';
@@ -54,7 +54,7 @@ function changePercent(current: number, previous: number) {
 
 // ===== 统一运营总览 =====
 
-function OperationsOverview({ storesData }: { storesData: Store[] }) {
+const OperationsOverview = memo(function OperationsOverview({ storesData }: { storesData: Store[] }) {
   const { t } = useI18n();
   const [timeRange, setTimeRange] = useState<'today' | '7d' | '30d'>('today');
 
@@ -69,7 +69,7 @@ function OperationsOverview({ storesData }: { storesData: Store[] }) {
   const storeByName = new Map(storesData.map(s => [s.name, s]));
 
   // Agent 实时动态 mock 数据
-  const agentFeed = [
+  const agentFeed = useMemo(() => [
     { time: '10:32', agent: 'pricing_strategy', action: '将充电器价格从 $42.00 调整为 $39.99', store: 'TikTok Shop 美国旗舰店', color: '#7c3aed' },
     { time: '10:28', agent: 'review_manager', action: '回复了 John D. 的 1 星差评', store: 'Amazon 户外用品店', color: '#16a34a' },
     { time: '10:15', agent: 'ads_optimizer', action: '将 CA-002 预算从 $300 削减至 $150，ROI 偏低 0.8×', store: 'TikTok Shop 美国旗舰店', color: '#2563eb' },
@@ -77,7 +77,7 @@ function OperationsOverview({ storesData }: { storesData: Store[] }) {
     { time: '09:48', agent: 'competitor_intel', action: '监测到竞品降价 8%，建议调整运动T恤定价', store: 'Amazon 户外用品店', color: '#6366f1' },
     { time: '09:30', agent: 'crm_retention', action: '向 320 名沉睡客户发放 $5 唤醒优惠券', store: 'TikTok Shop 美国旗舰店', color: '#0f766e' },
     { time: '09:15', agent: 'customer_service', action: 'AI 自动回复 3 条买家咨询，0 条转人工', store: 'Shopify 独立站', color: '#0891b2' },
-  ];
+  ], []);
 
   return (
     <>
@@ -398,7 +398,7 @@ function OperationsOverview({ storesData }: { storesData: Store[] }) {
       )}
     </>
   );
-}
+});
 
 // ===== 主页面 =====
 

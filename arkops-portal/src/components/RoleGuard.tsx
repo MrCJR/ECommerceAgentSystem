@@ -14,7 +14,7 @@ export function RoleGuard({ path, children }: PropsWithChildren<{ path: string }
   const { t } = useI18n();
   const navigate = useNavigate();
 
-  if (!canAccess(role, path)) {
+  if (!role || !canAccess(role, path)) {
     return (
       <Result
         status="403"

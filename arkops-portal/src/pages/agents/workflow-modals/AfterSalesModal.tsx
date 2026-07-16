@@ -1,7 +1,8 @@
 import { CheckOutlined, CloseOutlined, TruckOutlined } from '@ant-design/icons';
-import { Badge, Button, message, Modal, Space, Table, Tabs, Tag, Typography } from 'antd';
+import { Button, Space, Table, Tag, Typography, message } from 'antd';
 import { useState } from 'react';
 import { useI18n } from '../../../app/i18n';
+import { BaseWorkflowModal } from './BaseWorkflowModal';
 
 interface AfterSalesModalProps {
   open: boolean;
@@ -97,13 +98,18 @@ export function AfterSalesModal({ open, onClose }: AfterSalesModalProps) {
   ];
 
   return (
-    <Modal open={open} onCancel={onClose} footer={null} width={850}
-      title={<Space><Badge status="warning" /><Typography.Text strong>{t('aftersales.title')}</Typography.Text></Space>}>
-      <Tabs size="small" items={[
+    <BaseWorkflowModal
+      open={open}
+      onClose={onClose}
+      title={t('aftersales.title')}
+      icon={<TruckOutlined />}
+      iconColor="#ea580c"
+      width={850}
+      tabs={[
         { key: 'returns', label: t('aftersales.returnTab', { count: returns.filter(r => r.status === 'pending').length }), children: <Table dataSource={returns} columns={returnColumns} rowKey="id" pagination={false} size="small" /> },
         { key: 'refunds', label: t('aftersales.refundTab', { count: mockRefunds.length }), children: <Table dataSource={mockRefunds} columns={refundColumns} rowKey="id" pagination={false} size="small" /> },
         { key: 'logistics', label: t('aftersales.logisticsTab', { count: mockLogistics.length }), children: <Table dataSource={mockLogistics} columns={logisticsColumns} rowKey="id" pagination={false} size="small" /> },
-      ]} />
-    </Modal>
+      ]}
+    />
   );
 }

@@ -1,6 +1,6 @@
 import { InboxOutlined } from '@ant-design/icons';
 import { Button, Empty } from 'antd';
-import type { ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 import { useI18n } from '../app/i18n';
 
 interface EmptyStateProps {
@@ -17,7 +17,7 @@ interface EmptyStateProps {
  * Renders a reusable localized empty state with optional action button.
  * Unified template: icon + description + primary action button.
  */
-export function EmptyState({ description, actionText, actionIcon, onAction }: EmptyStateProps) {
+export const EmptyState = memo(function EmptyState({ description, actionText, actionIcon, onAction }: EmptyStateProps) {
   const { t } = useI18n();
   return (
     <Empty
@@ -31,4 +31,4 @@ export function EmptyState({ description, actionText, actionIcon, onAction }: Em
       )}
     </Empty>
   );
-}
+});

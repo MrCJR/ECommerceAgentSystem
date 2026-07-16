@@ -1,6 +1,6 @@
 import { ReloadOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
-import { Button, Input, InputNumber, Select, Space, Switch, Tag, Typography, message } from 'antd';
+import { Button, Col, Input, InputNumber, Row, Select, Space, Switch, Tag, Typography, message } from 'antd';
 import { agentsApi } from '../../../api/agents';
 import { useI18n } from '../../../app/i18n';
 import { updateConfigSection, type AgentWithStrategyConfig } from './sharedUtils';
@@ -32,7 +32,6 @@ export function BasicStrategySections({ agent }: BasicStrategySectionsProps) {
                       updateConfigSection(queryClient, agent, 'adSpendBudget', (s) => ({
                         ...s, dailyCap: newVal,
                       }));
-                      agentsApi.saveStrategyConfig(agent.agentType, { dailyCap: newVal });
                     }}
                   />
                 </Space>
@@ -48,7 +47,6 @@ export function BasicStrategySections({ agent }: BasicStrategySectionsProps) {
                       updateConfigSection(queryClient, agent, 'adSpendBudget', (s) => ({
                         ...s, monthlyCap: newVal,
                       }));
-                      agentsApi.saveStrategyConfig(agent.agentType, { monthlyCap: newVal });
                     }}
                   />
                 </Space>
@@ -313,6 +311,45 @@ export function BasicStrategySections({ agent }: BasicStrategySectionsProps) {
             </div>
           )}
 
+          {agent.strategyConfig.seoKeywords && (
+            <div style={{ marginBottom: 24 }}>
+              <Typography.Title level={5} style={{ marginBottom: 8 }}>{t('agent.seoKeywordsTitle')}</Typography.Title>
+              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 12 }}>{t('agent.seoKeywordsDesc')}</Typography.Paragraph>
+              <Row gutter={[24, 16]}>
+                <Col xs={24} sm={12}>
+                  <div>
+                    <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4, fontSize: 13 }}>{t('agent.seoKeywords')}:</Typography.Text>
+                    <Input
+                      style={{ maxWidth: 400 }}
+                      placeholder="fast charger, GaN charger, 65W"
+                      value={agent.strategyConfig.seoKeywords.keywords.join(', ')}
+                      onChange={(e) => {
+                        updateConfigSection(queryClient, agent, 'seoKeywords', (s) => ({
+                          ...s, keywords: e.target.value.split(/[,，]/).map((s2) => s2.trim()).filter(Boolean),
+                        }));
+                      }}
+                    />
+                  </div>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <div>
+                    <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4, fontSize: 13 }}>{t('agent.targetAudience')}:</Typography.Text>
+                    <Input
+                      style={{ maxWidth: 400 }}
+                      placeholder="tech enthusiasts, travelers"
+                      value={agent.strategyConfig.targetAudience?.tags.join(', ') ?? ''}
+                      onChange={(e) => {
+                        updateConfigSection(queryClient, agent, 'targetAudience', (s) => ({
+                          ...s, tags: e.target.value.split(/[,，]/).map((s2) => s2.trim()).filter(Boolean),
+                        }));
+                      }}
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          )}
+
           {agent.strategyConfig.reviewConfig && (
             <div style={{ marginBottom: 24 }}>
               <Typography.Title level={5} style={{ marginBottom: 8 }}>{t('agent.reviewConfigTitle')}</Typography.Title>
@@ -394,43 +431,49 @@ export function BasicStrategySections({ agent }: BasicStrategySectionsProps) {
           {agent.strategyConfig.creativeConfig && (
             <div style={{ marginBottom: 8 }}>
               <Typography.Title level={5} style={{ marginBottom: 8 }}>{t('agent.creativeSizes')}</Typography.Title>
-              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 12 }}>{t('agent.creativeConfigDesc')}</Typography.Paragraph>
-              <Space size="large">
-                <Space>
-                  <Typography.Text type="secondary">{t('agent.creativeSizes')}:</Typography.Text>
-                  <Input
-                    style={{ width: 180 }}
-                    size="small"
-                    placeholder="1:1,16:9,9:16"
-                    value={agent.strategyConfig.creativeConfig.outputSizes}
-                    onChange={(e) => {
-                      updateConfigSection(queryClient, agent, 'creativeConfig', (s) => ({
-                        ...s, outputSizes: e.target.value,
-                      }));
-                    }}
-                  />
-                  <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('agent.creativeSizesDesc')}</Typography.Text>
-                </Space>
-              </Space>
-              <Space style={{ marginTop: 8 }}>
-                <Typography.Text type="secondary">{t('agent.creativeTone')}:</Typography.Text>
-                <Select
-                  size="small"
-                  style={{ width: 120 }}
-                  value={agent.strategyConfig.creativeConfig.copyTone}
-                  onChange={(v) => {
-                    updateConfigSection(queryClient, agent, 'creativeConfig', (s) => ({
-                      ...s, copyTone: v,
-                    }));
-                  }}
-                  options={[
-                    { value: '简洁卖点', label: '简洁卖点' },
-                    { value: '促销感', label: '促销感' },
-                    { value: '高端品牌', label: '高端品牌' },
-                    { value: '年轻潮流', label: '年轻潮流' }
-                  ]}
-                />
-              </Space>
+              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 16 }}>{t('agent.creativeConfigDesc')}</Typography.Paragraph>
+              <Row gutter={[24, 16]}>
+                <Col xs={24} sm={12}>
+                  <div>
+                    <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4, fontSize: 13 }}>{t('agent.creativeSizes')}:</Typography.Text>
+                    <Space>
+                      <Input
+                        style={{ width: 200 }}
+                        size="small"
+                        placeholder="1:1,16:9,9:16"
+                        value={agent.strategyConfig.creativeConfig.outputSizes}
+                        onChange={(e) => {
+                          updateConfigSection(queryClient, agent, 'creativeConfig', (s) => ({
+                            ...s, outputSizes: e.target.value,
+                          }));
+                        }}
+                      />
+                      <Typography.Text type="secondary" style={{ fontSize: 11 }}>{t('agent.creativeSizesDesc')}</Typography.Text>
+                    </Space>
+                  </div>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <div>
+                    <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4, fontSize: 13 }}>{t('agent.creativeTone')}:</Typography.Text>
+                    <Select
+                      size="small"
+                      style={{ width: 160 }}
+                      value={agent.strategyConfig.creativeConfig.copyTone}
+                      onChange={(v) => {
+                        updateConfigSection(queryClient, agent, 'creativeConfig', (s) => ({
+                          ...s, copyTone: v,
+                        }));
+                      }}
+                      options={[
+                        { value: '简洁卖点', label: '简洁卖点' },
+                        { value: '促销感', label: '促销感' },
+                        { value: '高端品牌', label: '高端品牌' },
+                        { value: '年轻潮流', label: '年轻潮流' }
+                      ]}
+                    />
+                  </div>
+                </Col>
+              </Row>
             </div>
           )}
     </>

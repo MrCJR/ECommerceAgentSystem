@@ -61,7 +61,7 @@ export function AppShell() {
   const { mode, setMode } = useTheme();
   const { isDemo, exitDemo } = useDemoMode();
   const { role, setRole } = useAuth();
-  const accessiblePaths = getAccessiblePaths(role);
+  const accessiblePaths = getAccessiblePaths(role ?? 'Owner');
 
   /** Filter menu items based on role permissions */
   function filterMenuByRole(items: any[]): any[] {
@@ -216,7 +216,7 @@ export function AppShell() {
             <Button icon={<BellOutlined />}>{t('app.alerts')}</Button>
             <Select
               size="small"
-              value={role}
+              value={role ?? 'Owner'}
               onChange={(v) => setRole(v as Role)}
               style={{ width: 110 }}
               options={[

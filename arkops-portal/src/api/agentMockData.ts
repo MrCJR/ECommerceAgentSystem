@@ -1,6 +1,6 @@
 import type { AgentConfig, AgentRunStats } from '../types/domain';
 
-/* ===== 13 Agent 完整配置 ===== */
+/* ===== 15 Agent 完整配置 ===== */
 
 const nowStr = () => new Date().toISOString();
 const hoursAgo = (h: number) => new Date(Date.now() - h * 3600 * 1000).toISOString();
@@ -42,9 +42,9 @@ export const agentConfigs: AgentConfig[] = [
     triggerMode: 'manual',
     needsConfig: true,
     needsApproval: true,
-    dependsOn: ['competitor_intel'],
-      required: false,
-    servesFor: ['ads_optimizer', 'creative_factory'],
+    dependsOn: ['risk_control'],
+    required: false,
+    servesFor: ['ads_optimizer', 'live_stream_ops'],
     executionParams: [],
     riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['create_draft', 'publish_product'], actionBlacklist: [] },
     approvalStrategy: { requireApproval: true, approverRole: 'Operator', requireSecondApproval: false },
@@ -53,7 +53,9 @@ export const agentConfigs: AgentConfig[] = [
     timeoutMinutes: 20,
     enabled: false,
     strategyConfig: {
-      productLaunchConfig: { defaultCategory: '', targetMarket: 'US' }
+      productLaunchConfig: { defaultCategory: '', targetMarket: 'US' },
+      seoKeywords: { keywords: ['fast charger', 'GaN charger', '65W charger', 'USB-C PD', '快充充电器'], lastGenerated: '2h ago', source: 'AI generated from product images' },
+      targetAudience: { tags: ['tech enthusiasts', 'travelers', 'professionals', '数码爱好者'], lastGenerated: '2h ago', source: 'AI inferred from product category' }
     }
   },
 
@@ -229,7 +231,7 @@ export const agentConfigs: AgentConfig[] = [
     needsApproval: false,
     dependsOn: [],
     required: false,
-    servesFor: ['product_launch', 'ads_optimizer', 'pricing_strategy', 'creative_factory'],
+    servesFor: ['product_launch', 'ads_optimizer', 'pricing_strategy', 'creative_factory', 'promotion_campaign'],
     cronExpression: '0 0 */2 * *',
     executionParams: [
       { key: 'competitorUrls', label: '竞品店铺 URL（换行分隔）', defaultValue: '' },
@@ -243,7 +245,7 @@ export const agentConfigs: AgentConfig[] = [
     timeoutMinutes: 25,
     enabled: false,
     strategyConfig: {
-      intelConfig: { monitorFrequencyHours: 2, monitoredCategories: ['消费电子', '服装', '家居'], competitorUrls: [] }
+      intelConfig: { monitorFrequencyHours: 2, monitoredCategories: ['消费电子', '服装', '家居'], competitorUrls: [], priceAlertThresholdPct: 5, autoPushDownstream: true }
     }
   },
   {
@@ -256,9 +258,9 @@ export const agentConfigs: AgentConfig[] = [
     triggerMode: 'event',
     needsConfig: true,
     needsApproval: true,
-    dependsOn: ['product_launch', 'competitor_intel'],
+    dependsOn: [],
       required: false,
-    servesFor: ['ads_optimizer'],
+    servesFor: ['ads_optimizer', 'product_launch'],
     eventTrigger: 'product_published',
     executionParams: [],
     riskGuard: { maxBudgetPerAction: 0, actionWhitelist: ['generate_image', 'generate_video', 'generate_copy'], actionBlacklist: ['use_competitor_logo'] },

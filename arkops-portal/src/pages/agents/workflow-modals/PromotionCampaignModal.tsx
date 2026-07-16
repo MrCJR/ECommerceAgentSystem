@@ -1,7 +1,8 @@
-import { ArrowRightOutlined, FireOutlined, GiftOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Col, Empty, Form, InputNumber, message, Modal, Row, Select, Space, Statistic, Table, Tabs, Tag, Typography } from 'antd';
+import { FireOutlined, GiftOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { Button, Col, Form, InputNumber, Row, Select, Table, Tag, Typography, message } from 'antd';
 import { useState } from 'react';
 import { useI18n } from '../../../app/i18n';
+import { BaseWorkflowModal } from './BaseWorkflowModal';
 
 interface PromotionCampaignModalProps {
   open: boolean;
@@ -63,9 +64,14 @@ export function PromotionCampaignModal({ open, onClose }: PromotionCampaignModal
   ];
 
   return (
-    <Modal open={open} onCancel={onClose} footer={null} width={900}
-      title={<Space><Badge status="processing" /><Typography.Text strong>{t('promo.title')}</Typography.Text></Space>}>
-      <Tabs size="small" items={[
+    <BaseWorkflowModal
+      open={open}
+      onClose={onClose}
+      title={t('promo.title')}
+      icon={<FireOutlined />}
+      iconColor="#ea580c"
+      width={900}
+      tabs={[
         {
           key: 'active', label: t('promo.activeTab', { count: active.filter(c => c.status === 'running').length }),
           children: <Table dataSource={active.filter(c => c.status === 'running')} columns={columns} rowKey="id" pagination={false} size="small" />,
@@ -108,7 +114,7 @@ export function PromotionCampaignModal({ open, onClose }: PromotionCampaignModal
             </Form>
           ),
         },
-      ]} />
-    </Modal>
+      ]}
+    />
   );
 }

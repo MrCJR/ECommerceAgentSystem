@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { Card, Input, InputNumber, Space, Switch, Typography } from 'antd';
+import { Card, Col, Input, InputNumber, Row, Space, Switch, Typography } from 'antd';
 import { useI18n } from '../../../app/i18n';
 import { updateConfigSection, type AgentWithStrategyConfig } from './sharedUtils';
 
@@ -85,50 +85,85 @@ export function AdvancedStrategySections({ agent }: AdvancedStrategySectionsProp
           {agent.strategyConfig.intelConfig && (
             <div style={{ marginBottom: 24 }}>
               <Typography.Title level={5} style={{ marginBottom: 8 }}>{t('agent.intelConfig')}</Typography.Title>
-              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 12 }}>{t('agent.intelConfigDesc')}</Typography.Paragraph>
-              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                <Space>
-                  <Typography.Text type="secondary">{t('agent.monitorFrequency')}:</Typography.Text>
-                  <InputNumber
-                    min={1} max={168} step={1}
-                    style={{ width: 100 }}
-                    value={agent.strategyConfig.intelConfig.monitorFrequencyHours}
-                    onChange={(v) => {
-                      updateConfigSection(queryClient, agent, 'intelConfig', (s) => ({
-                        ...s, monitorFrequencyHours: v ?? 2,
-                      }));
-                    }}
-                    suffix={t('agent.monitorFrequencyUnit')}
-                  />
-                </Space>
-                <div>
-                  <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4 }}>{t('agent.monitoredCategories')}:</Typography.Text>
-                  <Input
-                    style={{ maxWidth: 400 }}
-                    placeholder={t('agent.monitoredCategoriesDesc')}
-                    value={agent.strategyConfig.intelConfig.monitoredCategories.join('，')}
-                    onChange={(e) => {
-                      updateConfigSection(queryClient, agent, 'intelConfig', (s) => ({
-                        ...s, monitoredCategories: e.target.value.split(/[,，]/).map((s2) => s2.trim()).filter(Boolean),
-                      }));
-                    }}
-                  />
-                </div>
-                <div>
-                  <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4 }}>{t('agent.competitorUrls')}:</Typography.Text>
-                  <Input.TextArea
-                    style={{ maxWidth: 400 }}
-                    rows={3}
-                    placeholder={t('agent.competitorUrlsDesc')}
-                    value={agent.strategyConfig.intelConfig.competitorUrls.join('\n')}
-                    onChange={(e) => {
-                      updateConfigSection(queryClient, agent, 'intelConfig', (s) => ({
-                        ...s, competitorUrls: e.target.value.split('\n').filter(Boolean),
-                      }));
-                    }}
-                  />
-                </div>
-              </Space>
+              <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 16 }}>{t('agent.intelConfigDesc')}</Typography.Paragraph>
+              <Row gutter={[24, 16]}>
+                <Col xs={24} sm={12} md={8}>
+                  <Space>
+                    <Typography.Text type="secondary" style={{ fontSize: 13 }}>{t('agent.monitorFrequency')}:</Typography.Text>
+                    <InputNumber
+                      min={1} max={168} step={1}
+                      style={{ width: 100 }}
+                      value={agent.strategyConfig.intelConfig.monitorFrequencyHours}
+                      onChange={(v) => {
+                        updateConfigSection(queryClient, agent, 'intelConfig', (s) => ({
+                          ...s, monitorFrequencyHours: v ?? 2,
+                        }));
+                      }}
+                      suffix={t('agent.monitorFrequencyUnit')}
+                    />
+                  </Space>
+                </Col>
+                <Col xs={24} sm={12} md={8}>
+                  <Space>
+                    <Typography.Text type="secondary" style={{ fontSize: 13 }}>{t('agent.priceAlertThreshold')}:</Typography.Text>
+                    <InputNumber
+                      min={1} max={50} step={1}
+                      style={{ width: 100 }}
+                      value={agent.strategyConfig.intelConfig.priceAlertThresholdPct}
+                      onChange={(v) => {
+                        updateConfigSection(queryClient, agent, 'intelConfig', (s) => ({
+                          ...s, priceAlertThresholdPct: v ?? 5,
+                        }));
+                      }}
+                      suffix="%"
+                    />
+                  </Space>
+                </Col>
+                <Col xs={24} sm={12} md={8}>
+                  <Space>
+                    <Typography.Text type="secondary" style={{ fontSize: 13 }}>{t('agent.autoPushDownstream')}:</Typography.Text>
+                    <Switch
+                      checked={agent.strategyConfig.intelConfig.autoPushDownstream}
+                      onChange={(checked) => {
+                        updateConfigSection(queryClient, agent, 'intelConfig', (s) => ({
+                          ...s, autoPushDownstream: checked,
+                        }));
+                      }}
+                    />
+                  </Space>
+                </Col>
+                <Col xs={24} sm={12} md={8}>
+                  <div>
+                    <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4, fontSize: 13 }}>{t('agent.monitoredCategories')}:</Typography.Text>
+                    <Input
+                      style={{ maxWidth: 300 }}
+                      placeholder={t('agent.monitoredCategoriesDesc')}
+                      value={agent.strategyConfig.intelConfig.monitoredCategories.join('，')}
+                      onChange={(e) => {
+                        updateConfigSection(queryClient, agent, 'intelConfig', (s) => ({
+                          ...s, monitoredCategories: e.target.value.split(/[,，]/).map((s2) => s2.trim()).filter(Boolean),
+                        }));
+                      }}
+                    />
+                  </div>
+                </Col>
+                <Col xs={24} md={16}>
+                  <div>
+                    <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 4, fontSize: 13 }}>{t('agent.competitorUrls')}:</Typography.Text>
+                    <Input.TextArea
+                      style={{ maxWidth: 500 }}
+                      rows={3}
+                      placeholder={t('agent.competitorUrlsDesc')}
+                      value={agent.strategyConfig.intelConfig.competitorUrls.join('\n')}
+                      onChange={(e) => {
+                        updateConfigSection(queryClient, agent, 'intelConfig', (s) => ({
+                          ...s, competitorUrls: e.target.value.split('\n').filter(Boolean),
+                        }));
+                      }}
+                    />
+                  </div>
+                </Col>
+              </Row>
             </div>
           )}
 
